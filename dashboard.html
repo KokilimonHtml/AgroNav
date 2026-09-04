@@ -1,485 +1,602 @@
 <!DOCTYPE html>
+
 <html lang="bg">
 
 <head>
 
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-    <title>AgroNav - Начало</title>
+<title>AgroNav - Начало</title>
 
-    <link
-        rel="stylesheet"
-        href="../style.css"
-    >
+<link
+    rel="stylesheet"
+    href="../style.css"
+>
 
-    <style>
+<style>
 
-        .add-crop-section {
+    .add-crop-section {
+        margin-top: 25px;
+        padding: 20px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.06);
+    }
 
-            margin-top: 25px;
-            padding: 20px;
-            border-radius: 16px;
-            background: rgba(255, 255, 255, 0.06);
+    .add-crop-section h3 {
+        margin-top: 0;
+    }
 
-        }
+    .add-crop-form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: end;
+    }
 
+    .add-crop-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        flex: 1;
+        min-width: 180px;
+    }
 
-        .add-crop-section h3 {
+    .add-crop-field label {
+        font-weight: 600;
+    }
 
-            margin-top: 0;
+    .add-crop-field select,
+    .add-crop-field input {
+        padding: 11px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        font-size: 15px;
+    }
 
-        }
+    .add-crop-button {
+        padding: 11px 18px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 600;
+    }
 
+    .crop-date-info {
+        margin-top: 12px;
+        padding: 12px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .crop-age {
+        font-weight: 600;
+    }
+
+    .crop-date-control {
+        margin-top: 20px;
+        padding: 16px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .crop-date-control label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+
+    .crop-date-control input {
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        font-size: 15px;
+        margin-right: 8px;
+    }
+
+    .crop-date-control button {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .crop-date-message {
+        display: block;
+        margin-top: 10px;
+        font-weight: 600;
+    }
+
+    .crop-status {
+        margin-top: 5px;
+    }
+
+    .crop-stage-box {
+        margin-top: 20px;
+        padding: 16px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .crop-stage-box strong {
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    .crop-stage-name {
+        font-size: 18px;
+        font-weight: 700;
+        display: block;
+        margin-bottom: 6px;
+    }
+
+    .crop-stage-description {
+        display: block;
+        line-height: 1.5;
+    }
+
+    .crop-stage-progress {
+        margin-top: 14px;
+        width: 100%;
+        height: 10px;
+        border-radius: 20px;
+        overflow: hidden;
+        background: rgba(255, 255, 255, 0.12);
+    }
+
+    .crop-stage-progress-bar {
+        height: 100%;
+        width: 0%;
+        border-radius: 20px;
+        transition: width 0.4s ease;
+    }
+
+    .crop-stage-days {
+        display: block;
+        margin-top: 8px;
+        font-size: 14px;
+        opacity: 0.8;
+    }
+
+    .crop-stage-note {
+        display: block;
+        margin-top: 8px;
+        font-size: 13px;
+        opacity: 0.7;
+    }
+
+    @media (max-width: 600px) {
 
         .add-crop-form {
-
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            align-items: end;
-
+            flex-direction: column;
+            align-items: stretch;
         }
-
 
         .add-crop-field {
-
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            flex: 1;
-            min-width: 180px;
-
+            width: 100%;
         }
-
-
-        .add-crop-field label {
-
-            font-weight: 600;
-
-        }
-
-
-        .add-crop-field select,
-        .add-crop-field input {
-
-            padding: 11px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            font-size: 15px;
-
-        }
-
 
         .add-crop-button {
-
-            padding: 11px 18px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: 600;
-
+            width: 100%;
         }
 
-
-        .crop-date-info {
-
-            margin-top: 12px;
-            padding: 12px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.05);
-
+        .crop-date-control input,
+        .crop-date-control button {
+            width: 100%;
+            margin: 5px 0;
         }
 
+    }
 
-        .crop-age {
-
-            font-weight: 600;
-
-        }
-
-
-        .crop-status {
-
-            margin-top: 5px;
-
-        }
-
-
-        @media (max-width: 600px) {
-
-            .add-crop-form {
-
-                flex-direction: column;
-                align-items: stretch;
-
-            }
-
-
-            .add-crop-field {
-
-                width: 100%;
-
-            }
-
-
-            .add-crop-button {
-
-                width: 100%;
-
-            }
-
-        }
-
-    </style>
+</style>
 
 </head>
 
-
 <body>
 
+<div class="dashboard-header">
 
-    <!-- =========================
-         ЗАГЛАВНА ЧАСТ
-         ========================= -->
+    <div class="dashboard-greeting">
+        <h1 id="greeting"></h1>
+    </div>
 
-    <div class="dashboard-header">
+    <div class="dashboard-datetime">
+        <div id="date"></div>
+        <div id="clock"></div>
+    </div>
 
-        <div class="dashboard-greeting">
-
-            <h1 id="greeting"></h1>
-
-        </div>
+</div>
 
 
-        <div class="dashboard-datetime">
+<div class="dashboard-content">
 
-            <div id="date"></div>
+    <h2 id="dashboard-title">
+        Твоят ден в земеделието
+    </h2>
 
-            <div id="clock"></div>
+    <p id="profile-description"></p>
 
-        </div>
+
+    <div class="crops-section">
+
+        <h3>
+            🌱 Моите култури
+        </h3>
+
+        <div
+            id="crops-list"
+            class="crops-list"
+        ></div>
 
     </div>
 
 
-    <div class="dashboard-content">
+    <div class="add-crop-section">
 
+        <h3>
+            ➕ Добави култура
+        </h3>
 
-        <!-- =========================
-             ПРОФИЛ
-             ========================= -->
+        <form
+            id="add-crop-form"
+            class="add-crop-form"
+        >
 
-        <h2 id="dashboard-title">
+            <div class="add-crop-field">
 
-            Твоят ден в земеделието
+                <label for="new-crop">
+                    Култура
+                </label>
 
-        </h2>
-
-
-        <p id="profile-description"></p>
-
-
-        <!-- =========================
-             МОИТЕ КУЛТУРИ
-             ========================= -->
-
-        <div class="crops-section">
-
-            <h3>
-                🌱 Моите култури
-            </h3>
-
-
-            <div
-                id="crops-list"
-                class="crops-list"
-            ></div>
-
-        </div>
-
-
-        <!-- =========================
-             ДОБАВИ КУЛТУРА
-             ========================= -->
-
-        <div class="add-crop-section">
-
-            <h3>
-                ➕ Добави култура
-            </h3>
-
-
-            <form
-                id="add-crop-form"
-                class="add-crop-form"
-            >
-
-
-                <div class="add-crop-field">
-
-                    <label for="new-crop">
-                        Култура
-                    </label>
-
-
-                    <select
-                        id="new-crop"
-                        required
-                    >
-
-                        <option value="">
-                            Избери култура
-                        </option>
-
-
-                        <option value="домати">
-                            🍅 Домати
-                        </option>
-
-
-                        <option value="краставици">
-                            🥒 Краставици
-                        </option>
-
-
-                        <option value="пипер">
-                            🌶️ Пипер
-                        </option>
-
-
-                        <option value="царевица">
-                            🌽 Царевица
-                        </option>
-
-
-                        <option value="пшеница">
-                            🌾 Пшеница
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="add-crop-field">
-
-                    <label for="new-crop-date">
-
-                        <span id="crop-date-label">
-                            Дата на засаждане
-                        </span>
-
-                    </label>
-
-
-                    <input
-                        type="date"
-                        id="new-crop-date"
-                        required
-                    >
-
-                </div>
-
-
-                <button
-                    type="submit"
-                    class="add-crop-button"
+                <select
+                    id="new-crop"
+                    required
                 >
 
-                    Добави култура
+                    <option value="">
+                        Избери култура
+                    </option>
 
-                </button>
+                    <option value="домати">
+                        🍅 Домати
+                    </option>
 
-            </form>
+                    <option value="краставици">
+                        🥒 Краставици
+                    </option>
 
-        </div>
+                    <option value="пипер">
+                        🌶️ Пипер
+                    </option>
+
+                    <option value="царевица">
+                        🌽 Царевица
+                    </option>
+
+                    <option value="пшеница">
+                        🌾 Пшеница
+                    </option>
+
+                </select>
+
+            </div>
 
 
-        <!-- =========================
-             ПОДРОБНОСТИ ЗА КУЛТУРА
-             ========================= -->
+            <div class="add-crop-field">
 
-        <div
-            id="crop-details"
-            class="crop-details"
-            style="display: none;"
-        >
+                <label for="new-crop-date">
+
+                    <span id="crop-date-label">
+                        Дата на засаждане
+                    </span>
+
+                </label>
+
+                <input
+                    type="date"
+                    id="new-crop-date"
+                    required
+                >
+
+            </div>
 
 
             <button
-                id="close-crop-details"
-                class="close-crop-details"
+                type="submit"
+                class="add-crop-button"
             >
-                ✕
+                Добави култура
             </button>
+
+        </form>
+
+    </div>
+
+
+    <div
+        id="crop-details"
+        class="crop-details"
+        style="display: none;"
+    >
+
+        <button
+            id="close-crop-details"
+            class="close-crop-details"
+        >
+            ✕
+        </button>
+
+
+        <div
+            class="crop-details-icon"
+            id="crop-details-icon"
+        >
+            🌱
+        </div>
+
+
+        <h2 id="crop-details-name">
+            Култура
+        </h2>
+
+
+        <p id="crop-details-description"></p>
+
+
+        <div class="crop-info-grid">
+
+
+            <div class="crop-info-box">
+
+                <strong>
+                    🌱 Засаждане / сеитба
+                </strong>
+
+                <span id="crop-planting">
+                    -
+                </span>
+
+            </div>
+
+
+            <div class="crop-info-box">
+
+                <strong>
+                    💧 Поливане
+                </strong>
+
+                <span id="crop-watering">
+                    -
+                </span>
+
+            </div>
+
+
+            <div class="crop-info-box">
+
+                <strong>
+                    🌡️ Температура
+                </strong>
+
+                <span id="crop-temperature">
+                    -
+                </span>
+
+            </div>
+
+
+            <div class="crop-info-box">
+
+                <strong>
+                    🧪 Торене
+                </strong>
+
+                <span id="crop-fertilizing">
+                    -
+                </span>
+
+            </div>
+
+
+            <div class="crop-info-box">
+
+                <strong>
+                    🐛 Болести и вредители
+                </strong>
+
+                <span id="crop-diseases">
+                    -
+                </span>
+
+            </div>
+
+
+            <div class="crop-info-box">
+
+                <strong>
+                    📅 Грижи
+                </strong>
+
+                <span id="crop-care">
+                    -
+                </span>
+
+            </div>
+
+
+            <div class="crop-info-box">
+
+                <strong>
+                    📆 Възраст на културата
+                </strong>
+
+                <span
+                    id="crop-age"
+                    class="crop-age"
+                >
+                    -
+                </span>
+
+            </div>
+
+
+            <div class="crop-stage-box">
+
+                <strong>
+                    🌿 Фаза на развитие
+                </strong>
+
+                <span
+                    id="crop-stage-name"
+                    class="crop-stage-name"
+                >
+                    -
+                </span>
+
+
+                <span
+                    id="crop-stage-description"
+                    class="crop-stage-description"
+                >
+                    -
+                </span>
+
+
+                <div class="crop-stage-progress">
+
+                    <div
+                        id="crop-stage-progress-bar"
+                        class="crop-stage-progress-bar"
+                    ></div>
+
+                </div>
+
+
+                <span
+                    id="crop-stage-days"
+                    class="crop-stage-days"
+                >
+                    -
+                </span>
+
+
+                <span class="crop-stage-note">
+                    Фазата е ориентировъчна и се изчислява според културата и времето от засаждането/сеитбата.
+                </span>
+
+            </div>
+
+
+            <div class="crop-date-control">
+
+                <label for="crop-details-date">
+
+                    <span id="details-date-label">
+                        Дата на засаждане
+                    </span>
+
+                </label>
+
+
+                <input
+                    type="date"
+                    id="crop-details-date"
+                >
+
+
+                <button
+                    type="button"
+                    id="save-crop-details-date"
+                >
+                    Запази датата
+                </button>
+
+
+                <span
+                    id="crop-date-message"
+                    class="crop-date-message"
+                ></span>
+
+            </div>
+
+        </div>
+
+
+        <div class="agro-recommendation">
+
+            <h3>
+                🤖 AgroNav анализ
+            </h3>
 
 
             <div
-                class="crop-details-icon"
-                id="crop-details-icon"
+                id="agro-status"
+                class="agro-status"
             >
-                🌱
+                Изчакване на метеорологичните данни...
             </div>
 
 
-            <h2 id="crop-details-name">
-                Култура
-            </h2>
+            <div class="agro-data">
 
-
-            <p id="crop-details-description"></p>
-
-
-            <div class="crop-info-grid">
-
-
-                <div class="crop-info-box">
-
-                    <strong>
-                        🌱 Засаждане / сеитба
-                    </strong>
-
-                    <span id="crop-planting">
-                        -
-                    </span>
-
+                <div>
+                    <strong>🌡️ Температура</strong>
+                    <span id="agro-temperature">--°C</span>
                 </div>
 
-
-                <div class="crop-info-box">
-
-                    <strong>
-                        💧 Поливане
-                    </strong>
-
-                    <span id="crop-watering">
-                        -
-                    </span>
-
+                <div>
+                    <strong>💧 Влажност</strong>
+                    <span id="agro-humidity">--%</span>
                 </div>
 
-
-                <div class="crop-info-box">
-
-                    <strong>
-                        🌡️ Температура
-                    </strong>
-
-                    <span id="crop-temperature">
-                        -
-                    </span>
-
+                <div>
+                    <strong>🌧️ Валежи</strong>
+                    <span id="agro-rain">-- mm</span>
                 </div>
 
-
-                <div class="crop-info-box">
-
-                    <strong>
-                        🧪 Торене
-                    </strong>
-
-                    <span id="crop-fertilizing">
-                        -
-                    </span>
-
+                <div>
+                    <strong>💨 Вятър</strong>
+                    <span id="agro-wind">-- km/h</span>
                 </div>
 
-
-                <div class="crop-info-box">
-
-                    <strong>
-                        🐛 Болести и вредители
-                    </strong>
-
-                    <span id="crop-diseases">
-                        -
-                    </span>
-
+                <div>
+                    <strong>🌦️ Следващи 48 ч.</strong>
+                    <span id="agro-forecast-rain">-- mm</span>
                 </div>
 
-
-                <div class="crop-info-box">
-
-                    <strong>
-                        📅 Грижи
-                    </strong>
-
-                    <span id="crop-care">
-                        -
-                    </span>
-
-                </div>
-
-
-                <div class="crop-info-box">
-
-                    <strong>
-                        📆 Възраст на културата
-                    </strong>
-
-                    <span
-                        id="crop-age"
-                        class="crop-age"
-                    >
-                        -
-                    </span>
-
+                <div>
+                    <strong>☔ Вероятност</strong>
+                    <span id="agro-rain-probability">--%</span>
                 </div>
 
             </div>
 
 
-            <!-- =========================
-                 AGRO NAV АНАЛИЗ
-                 ========================= -->
+            <div
+                id="agro-farm-data"
+                class="agro-farm-data"
+                style="display: none;"
+            >
 
-            <div class="agro-recommendation">
-
-
-                <h3>
-                    🤖 AgroNav анализ
-                </h3>
-
-
-                <div
-                    id="agro-status"
-                    class="agro-status"
-                >
-
-                    Изчакване на метеорологичните данни...
-
-                </div>
-
+                <h4>
+                    🚜 Допълнителни агрономични данни
+                </h4>
 
                 <div class="agro-data">
 
-
                     <div>
 
                         <strong>
-                            🌡️ Температура
+                            🌱 Почвена влажност
                         </strong>
 
-                        <span id="agro-temperature">
-                            --°C
-                        </span>
-
-                    </div>
-
-
-                    <div>
-
-                        <strong>
-                            💧 Влажност
-                        </strong>
-
-                        <span id="agro-humidity">
+                        <span id="agro-soil-moisture">
                             --%
                         </span>
 
@@ -489,228 +606,72 @@
                     <div>
 
                         <strong>
-                            🌧️ Валежи
+                            💦 ET₀
                         </strong>
 
-                        <span id="agro-rain">
+                        <span id="agro-et0">
                             -- mm
                         </span>
 
                     </div>
 
-
-                    <div>
-
-                        <strong>
-                            💨 Вятър
-                        </strong>
-
-                        <span id="agro-wind">
-                            -- km/h
-                        </span>
-
-                    </div>
-
-
-                    <div>
-
-                        <strong>
-                            🌦️ Следващи 48 ч.
-                        </strong>
-
-                        <span id="agro-forecast-rain">
-                            -- mm
-                        </span>
-
-                    </div>
-
-
-                    <div>
-
-                        <strong>
-                            ☔ Вероятност
-                        </strong>
-
-                        <span id="agro-rain-probability">
-                            --%
-                        </span>
-
-                    </div>
-
                 </div>
-
-
-                <!-- =========================
-                     САМО ЗА СТОПАНСТВО
-                     ========================= -->
-
-                <div
-                    id="agro-farm-data"
-                    class="agro-farm-data"
-                    style="display: none;"
-                >
-
-
-                    <h4>
-                        🚜 Допълнителни агрономични данни
-                    </h4>
-
-
-                    <div class="agro-data">
-
-
-                        <div>
-
-                            <strong>
-                                🌱 Почвена влажност
-                            </strong>
-
-                            <span id="agro-soil-moisture">
-                                --%
-                            </span>
-
-                        </div>
-
-
-                        <div>
-
-                            <strong>
-                                💦 ET₀
-                            </strong>
-
-                            <span id="agro-et0">
-                                -- mm
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <p id="agro-recommendation-text">
-
-                    Изчакване на метеорологичните данни...
-
-                </p>
 
             </div>
 
-        </div>
 
-
-        <!-- =========================
-             ТЕКУЩО ВРЕМЕ
-             ========================= -->
-
-        <div class="weather-card">
-
-
-            <h3>
-                🌤️ Времето
-            </h3>
-
-
-            <p
-                class="weather-location"
-                id="weather-location"
-            >
-                Местоположение: зареждане...
+            <p id="agro-recommendation-text">
+                Изчакване на метеорологичните данни...
             </p>
 
+        </div>
 
-            <div class="weather-main">
-
-                <span class="weather-temperature">
-                    --°C
-                </span>
+    </div>
 
 
-                <span class="weather-condition">
-                    Зареждане...
-                </span>
+    <div class="weather-card">
 
-            </div>
+        <h3>
+            🌤️ Времето
+        </h3>
 
+        <p
+            class="weather-location"
+            id="weather-location"
+        >
+            Местоположение: зареждане...
+        </p>
 
-            <div class="weather-details">
+        <div class="weather-main">
 
+            <span class="weather-temperature">
+                --°C
+            </span>
 
-                <div>
-
-                    <strong>💧</strong>
-
-                    <span>
-                        Влажност
-                    </span>
-
-                    <b>
-                        --%
-                    </b>
-
-                </div>
-
-
-                <div>
-
-                    <strong>🌧️</strong>
-
-                    <span>
-                        Валежи
-                    </span>
-
-                    <b>
-                        -- mm
-                    </b>
-
-                </div>
-
-
-                <div>
-
-                    <strong>💨</strong>
-
-                    <span>
-                        Вятър
-                    </span>
-
-                    <b>
-                        -- km/h
-                    </b>
-
-                </div>
-
-            </div>
+            <span class="weather-condition">
+                Зареждане...
+            </span>
 
         </div>
 
+        <div class="weather-details">
 
-        <!-- =========================
-             7-ДНЕВНА ПРОГНОЗА
-             ========================= -->
+            <div>
+                <strong>💧</strong>
+                <span>Влажност</span>
+                <b>--%</b>
+            </div>
 
-        <div class="forecast-card">
+            <div>
+                <strong>🌧️</strong>
+                <span>Валежи</span>
+                <b>-- mm</b>
+            </div>
 
-
-            <h3>
-                📅 7-дневна прогноза
-            </h3>
-
-
-            <div
-                class="forecast-list"
-                id="forecast-list"
-            >
-
-                <div class="forecast-day">
-
-                    <strong>
-                        Зареждане...
-                    </strong>
-
-                </div>
-
+            <div>
+                <strong>💨</strong>
+                <span>Вятър</span>
+                <b>-- km/h</b>
             </div>
 
         </div>
@@ -718,502 +679,1087 @@
     </div>
 
 
-    <!-- =========================
-         ПРОФИЛ
-         ========================= -->
+    <div class="forecast-card">
 
-    <script>
+        <h3>
+            📅 7-дневна прогноза
+        </h3>
 
-        const profile =
+        <div
+            class="forecast-list"
+            id="forecast-list"
+        >
+
+            <div class="forecast-day">
+
+                <strong>
+                    Зареждане...
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    const profile =
+        localStorage.getItem(
+            "agronavProfile"
+        );
+
+
+    const dashboardTitle =
+        document.querySelector(
+            "#dashboard-title"
+        );
+
+
+    const profileDescription =
+        document.querySelector(
+            "#profile-description"
+        );
+
+
+    const cropDateLabel =
+        document.querySelector(
+            "#crop-date-label"
+        );
+
+
+    if (profile === "home") {
+
+        dashboardTitle.textContent =
+            "🌱 Твоята домашна градина";
+
+        profileDescription.textContent =
+            "Управлявай своите растения, поливане и грижи.";
+
+        cropDateLabel.textContent =
+            "Дата на засаждане";
+
+    }
+
+
+    else if (profile === "farm") {
+
+        dashboardTitle.textContent =
+            "🚜 Твоето стопанство";
+
+        profileDescription.textContent =
+            "Следи своите култури, полета и земеделски дейности.";
+
+        cropDateLabel.textContent =
+            "Дата на сеитба / засаждане";
+
+    }
+
+
+    else {
+
+        dashboardTitle.textContent =
+            "Твоят ден в земеделието";
+
+        profileDescription.textContent =
+            "Добре дошъл в AgroNav.";
+
+    }
+
+</script>
+
+
+<script>
+
+    const cropData = {
+
+        "домати": {
+
+            icon: "🍅",
+
+            description:
+                "Топлолюбива зеленчукова култура, която се нуждае от много светлина и равномерно поливане.",
+
+            planting:
+                "Обикновено след преминаване на опасността от слани.",
+
+            watering:
+                "Редовно и умерено. Избягвай продължително преовлажняване.",
+
+            temperature:
+                "Най-добър растеж приблизително при 20–30°C.",
+
+            fertilizing:
+                "Нуждае се от балансирано торене, особено по време на растеж и плододаване.",
+
+            diseases:
+                "Мана, брашнеста мана, листни въшки и други вредители.",
+
+            care:
+                "Следене на влагата, премахване на болни листа и подходящо подпиране на растенията."
+
+        },
+
+
+        "краставици": {
+
+            icon: "🥒",
+
+            description:
+                "Топлолюбива култура с висока нужда от вода и достатъчно слънчева светлина.",
+
+            planting:
+                "След затопляне на почвата и преминаване на опасността от слани.",
+
+            watering:
+                "Редовно поливане. Краставиците са чувствителни към недостиг на вода.",
+
+            temperature:
+                "Най-добър растеж приблизително при 20–30°C.",
+
+            fertilizing:
+                "Редовно подхранване по време на активен растеж и плододаване.",
+
+            diseases:
+                "Мана, брашнеста мана, листни въшки и акари.",
+
+            care:
+                "Следене на влагата, проветряване и редовно наблюдение за вредители."
+
+        },
+
+
+        "пипер": {
+
+            icon: "🌶️",
+
+            description:
+                "Топлолюбива зеленчукова култура, която се развива добре при топло и слънчево време.",
+
+            planting:
+                "След преминаване на опасността от слани.",
+
+            watering:
+                "Редовно, без прекомерно преовлажняване.",
+
+            temperature:
+                "Предпочита приблизително 20–30°C.",
+
+            fertilizing:
+                "Подходящо балансирано торене през вегетацията.",
+
+            diseases:
+                "Листни въшки, акари и различни гъбни заболявания.",
+
+            care:
+                "Редовно наблюдение, плевене и поддържане на равномерна почвена влажност."
+
+        },
+
+
+        "царевица": {
+
+            icon: "🌽",
+
+            description:
+                "Важна полска култура, която се нуждае от достатъчно топлина, вода и хранителни вещества.",
+
+            planting:
+                "Когато почвата се затопли достатъчно и рискът от слани е минимален.",
+
+            watering:
+                "Особено важна е влагата през критичните фази на развитие.",
+
+            temperature:
+                "Развива се добре при топло време.",
+
+            fertilizing:
+                "Азотното хранене е особено важно за добър растеж.",
+
+            diseases:
+                "Телени червеи, царевичен стъблопробивач и различни гъбни заболявания.",
+
+            care:
+                "Контрол на плевели, наблюдение за вредители и осигуряване на достатъчно вода."
+
+        },
+
+
+        "пшеница": {
+
+            icon: "🌾",
+
+            description:
+                "Основна житна култура, при която правилният момент на сеитба и доброто хранене са ключови.",
+
+            planting:
+                "Сеитбеният период зависи от сорта, региона и конкретните агроклиматични условия.",
+
+            watering:
+                "Зависи от валежите, почвата и фазата на развитие.",
+
+            temperature:
+                "Оптималните условия се различават според фазата на развитие.",
+
+            fertilizing:
+                "Азотното хранене е важно за добива, но трябва да се съобрази с почвата.",
+
+            diseases:
+                "Ръжди, брашнеста мана, септориоза и други заболявания.",
+
+            care:
+                "Наблюдение на посева, плевели, болести, вредители и хранителен статус."
+
+        }
+
+    };
+
+
+    const cropStages = {
+
+        "домати": [
+
+            {
+                max: 14,
+                name: "🌱 Начален растеж",
+                description:
+                    "Растението се установява и започва активно развитие.",
+                next: 15
+            },
+
+            {
+                max: 35,
+                name: "🌿 Вегетативен растеж",
+                description:
+                    "Развиват се стъблото, листата и кореновата система.",
+                next: 36
+            },
+
+            {
+                max: 55,
+                name: "🌼 Цъфтеж",
+                description:
+                    "Започва образуване и развитие на цветовете.",
+                next: 56
+            },
+
+            {
+                max: 85,
+                name: "🍅 Плододаване",
+                description:
+                    "Формират се и нарастват плодовете.",
+                next: 86
+            },
+
+            {
+                max: Infinity,
+                name: "🔴 Узряване",
+                description:
+                    "Плодовете преминават към узряване и прибиране.",
+                next: null
+            }
+
+        ],
+
+
+        "краставици": [
+
+            {
+                max: 10,
+                name: "🌱 Поникване и установяване",
+                description:
+                    "Културата се установява и започва начален растеж.",
+                next: 11
+            },
+
+            {
+                max: 30,
+                name: "🌿 Вегетативен растеж",
+                description:
+                    "Развиват се листата, стъблата и кореновата система.",
+                next: 31
+            },
+
+            {
+                max: 45,
+                name: "🌼 Цъфтеж",
+                description:
+                    "Започва активен цъфтеж и образуване на завръзи.",
+                next: 46
+            },
+
+            {
+                max: 70,
+                name: "🥒 Плододаване",
+                description:
+                    "Плодовете се формират и нарастват.",
+                next: 71
+            },
+
+            {
+                max: Infinity,
+                name: "🥒 Масово плододаване",
+                description:
+                    "Културата е в напреднал период на плододаване.",
+                next: null
+            }
+
+        ],
+
+
+        "пипер": [
+
+            {
+                max: 20,
+                name: "🌱 Начален растеж",
+                description:
+                    "Растенията се установяват след засаждането.",
+                next: 21
+            },
+
+            {
+                max: 50,
+                name: "🌿 Вегетативен растеж",
+                description:
+                    "Развиват се стъблата, листата и корените.",
+                next: 51
+            },
+
+            {
+                max: 70,
+                name: "🌼 Цъфтеж",
+                description:
+                    "Формират се цветовете и първите завръзи.",
+                next: 71
+            },
+
+            {
+                max: 100,
+                name: "🌶️ Плододаване",
+                description:
+                    "Плодовете нарастват и се развиват.",
+                next: 101
+            },
+
+            {
+                max: Infinity,
+                name: "🔴 Узряване",
+                description:
+                    "Плодовете преминават към узряване.",
+                next: null
+            }
+
+        ],
+
+
+        "царевица": [
+
+            {
+                max: 10,
+                name: "🌱 Поникване",
+                description:
+                    "Семената поникват и растенията се установяват.",
+                next: 11
+            },
+
+            {
+                max: 35,
+                name: "🌿 Вегетативен растеж",
+                description:
+                    "Бързо развитие на листата и стъблото.",
+                next: 36
+            },
+
+            {
+                max: 55,
+                name: "🌼 Цъфтеж и опрашване",
+                description:
+                    "Критичен период за формиране на добива.",
+                next: 56
+            },
+
+            {
+                max: 90,
+                name: "🌽 Наливане на зърното",
+                description:
+                    "Зърната се формират и натрупват сухо вещество.",
+                next: 91
+            },
+
+            {
+                max: Infinity,
+                name: "🌾 Узряване",
+                description:
+                    "Зърното преминава към физиологична и технологична зрялост.",
+                next: null
+            }
+
+        ],
+
+
+        "пшеница": [
+
+            {
+                max: 20,
+                name: "🌱 Поникване",
+                description:
+                    "Семената поникват и растенията се установяват.",
+                next: 21
+            },
+
+            {
+                max: 60,
+                name: "🌿 Начален вегетативен растеж",
+                description:
+                    "Развиват се листата и кореновата система.",
+                next: 61
+            },
+
+            {
+                max: 150,
+                name: "🌿 Братене и развитие",
+                description:
+                    "Формират се братя и растенията развиват надземната си маса.",
+                next: 151
+            },
+
+            {
+                max: 210,
+                name: "🌾 Вретенене и изкласяване",
+                description:
+                    "Посевът преминава към репродуктивно развитие.",
+                next: 211
+            },
+
+            {
+                max: 250,
+                name: "🌼 Цъфтеж и наливане",
+                description:
+                    "Формира се и се налива зърното.",
+                next: 251
+            },
+
+            {
+                max: Infinity,
+                name: "🌾 Узряване",
+                description:
+                    "Зърното преминава към узряване и прибиране.",
+                next: null
+            }
+
+        ]
+
+    };
+
+
+    let cropDates =
+        JSON.parse(
             localStorage.getItem(
-                "agronavProfile"
+                "agronavCropDates"
+            ) || "{}"
+        );
+
+
+    function getTodayISO() {
+
+        const today = new Date();
+
+        return (
+            today.getFullYear() +
+            "-" +
+            String(
+                today.getMonth() + 1
+            ).padStart(2, "0") +
+            "-" +
+            String(
+                today.getDate()
+            ).padStart(2, "0")
+        );
+
+    }
+
+
+    function formatCropDate(dateString) {
+
+        if (!dateString) {
+            return "-";
+        }
+
+        const parts =
+            dateString.split("-");
+
+        if (parts.length !== 3) {
+            return dateString;
+        }
+
+        return (
+            parts[2] +
+            "." +
+            parts[1] +
+            "." +
+            parts[0]
+        );
+
+    }
+
+
+    function getCropAge(dateString) {
+
+        if (!dateString) {
+            return null;
+        }
+
+        const parts =
+            dateString.split("-");
+
+        if (parts.length !== 3) {
+            return null;
+        }
+
+        const plantingDate =
+            new Date(
+                Number(parts[0]),
+                Number(parts[1]) - 1,
+                Number(parts[2])
             );
 
+        const today =
+            new Date();
 
-        const dashboardTitle =
-            document.querySelector(
-                "#dashboard-title"
+        const todayStart =
+            new Date(
+                today.getFullYear(),
+                today.getMonth(),
+                today.getDate()
             );
 
+        const difference =
+            todayStart.getTime() -
+            plantingDate.getTime();
 
-        const profileDescription =
-            document.querySelector(
-                "#profile-description"
+        return Math.floor(
+            difference /
+            (
+                1000 *
+                60 *
+                60 *
+                24
+            )
+        );
+
+    }
+
+
+    function getCropAgeText(dateString) {
+
+        const days =
+            getCropAge(
+                dateString
             );
 
+        const action =
+            profile === "farm"
+                ? "сеитбата/засаждането"
+                : "засаждането";
 
-        const cropDateLabel =
-            document.querySelector(
-                "#crop-date-label"
+        if (days === null) {
+            return "Няма въведена дата.";
+        }
+
+        if (days < 0) {
+            return "Датата е в бъдещето.";
+        }
+
+        if (days === 0) {
+            return "Днес е денят на " + action + ".";
+        }
+
+        if (days === 1) {
+            return "1 ден от " + action + ".";
+        }
+
+        return (
+            days +
+            " дни от " +
+            action +
+            "."
+        );
+
+    }
+
+
+    function getCropStage(
+        cropName,
+        dateString
+    ) {
+
+        const cropKey =
+            cropName
+                .toLowerCase()
+                .trim();
+
+        const stages =
+            cropStages[
+                cropKey
+            ];
+
+        const age =
+            getCropAge(
+                dateString
             );
 
+        if (
+            !stages ||
+            age === null ||
+            age < 0
+        ) {
 
-        if (profile === "home") {
-
-            dashboardTitle.textContent =
-                "🌱 Твоята домашна градина";
-
-
-            profileDescription.textContent =
-                "Управлявай своите растения, поливане и грижи.";
-
-
-            cropDateLabel.textContent =
-                "Дата на засаждане";
+            return null;
 
         }
 
+        for (
+            let i = 0;
+            i < stages.length;
+            i++
+        ) {
 
-        else if (profile === "farm") {
+            if (
+                age <=
+                stages[i].max
+            ) {
 
-            dashboardTitle.textContent =
-                "🚜 Твоето стопанство";
+                const stage =
+                    stages[i];
 
+                const previousMax =
+                    i === 0
+                        ? 0
+                        : stages[i - 1].max + 1;
 
-            profileDescription.textContent =
-                "Следи своите култури, полета и земеделски дейности.";
+                let progress;
 
+                if (
+                    stage.max === Infinity
+                ) {
 
-            cropDateLabel.textContent =
-                "Дата на сеитба / засаждане";
+                    progress = 100;
+
+                }
+
+                else {
+
+                    const duration =
+                        stage.max -
+                        previousMax +
+                        1;
+
+                    const elapsed =
+                        age -
+                        previousMax +
+                        1;
+
+                    progress =
+                        Math.round(
+                            (
+                                elapsed /
+                                duration
+                            ) *
+                            100
+                        );
+
+                }
+
+                progress =
+                    Math.max(
+                        0,
+                        Math.min(
+                            100,
+                            progress
+                        )
+                    );
+
+                return {
+
+                    name:
+                        stage.name,
+
+                    description:
+                        stage.description,
+
+                    progress:
+                        progress,
+
+                    age:
+                        age,
+
+                    next:
+                        stage.next
+
+                };
+
+            }
 
         }
 
+        return null;
+
+    }
+
+
+    function renderCropStage(
+        cropName,
+        dateString
+    ) {
+
+        const stage =
+            getCropStage(
+                cropName,
+                dateString
+            );
+
+        const stageName =
+            document.querySelector(
+                "#crop-stage-name"
+            );
+
+        const stageDescription =
+            document.querySelector(
+                "#crop-stage-description"
+            );
+
+        const stageProgress =
+            document.querySelector(
+                "#crop-stage-progress-bar"
+            );
+
+        const stageDays =
+            document.querySelector(
+                "#crop-stage-days"
+            );
+
+        if (!stage) {
+
+            stageName.textContent =
+                "Няма достатъчно данни";
+
+            stageDescription.textContent =
+                "Въведи валидна дата на засаждане или сеитба.";
+
+            stageProgress.style.width =
+                "0%";
+
+            stageDays.textContent =
+                "-";
+
+            return;
+
+        }
+
+        stageName.textContent =
+            stage.name;
+
+        stageDescription.textContent =
+            stage.description;
+
+        stageProgress.style.width =
+            stage.progress + "%";
+
+        if (
+            stage.next !== null
+        ) {
+
+            stageDays.textContent =
+                "Ден " +
+                stage.age +
+                " • Ориентировъчен прогрес на фазата: " +
+                stage.progress +
+                "%";
+
+        }
 
         else {
 
-            dashboardTitle.textContent =
-                "Твоят ден в земеделието";
-
-
-            profileDescription.textContent =
-                "Добре дошъл в AgroNav.";
+            stageDays.textContent =
+                "Ден " +
+                stage.age +
+                " • Напреднала фаза на развитие";
 
         }
 
-    </script>
+    }
 
 
-    <!-- =========================
-         КУЛТУРИ
-         ========================= -->
+    function renderCrops() {
 
-    <script>
-
-        const cropData = {
-
-
-            "домати": {
-
-                icon: "🍅",
-
-                description:
-                    "Топлолюбива зеленчукова култура, която се нуждае от много светлина и равномерно поливане.",
-
-                planting:
-                    "Обикновено след преминаване на опасността от слани.",
-
-                watering:
-                    "Редовно и умерено. Избягвай продължително преовлажняване.",
-
-                temperature:
-                    "Най-добър растеж приблизително при 20–30°C.",
-
-                fertilizing:
-                    "Нуждае се от балансирано торене, особено по време на растеж и плододаване.",
-
-                diseases:
-                    "Мана, брашнеста мана, листни въшки и други вредители.",
-
-                care:
-                    "Следене на влагата, премахване на болни листа и подходящо подпиране на растенията."
-
-            },
-
-
-            "краставици": {
-
-                icon: "🥒",
-
-                description:
-                    "Топлолюбива култура с висока нужда от вода и достатъчно слънчева светлина.",
-
-                planting:
-                    "След затопляне на почвата и преминаване на опасността от слани.",
-
-                watering:
-                    "Редовно поливане. Краставиците са чувствителни към недостиг на вода.",
-
-                temperature:
-                    "Най-добър растеж приблизително при 20–30°C.",
-
-                fertilizing:
-                    "Редовно подхранване по време на активен растеж и плододаване.",
-
-                diseases:
-                    "Мана, брашнеста мана, листни въшки и акари.",
-
-                care:
-                    "Следене на влагата, проветряване и редовно наблюдение за вредители."
-
-            },
-
-
-            "пипер": {
-
-                icon: "🌶️",
-
-                description:
-                    "Топлолюбива зеленчукова култура, която се развива добре при топло и слънчево време.",
-
-                planting:
-                    "След преминаване на опасността от слани.",
-
-                watering:
-                    "Редовно, без прекомерно преовлажняване.",
-
-                temperature:
-                    "Предпочита приблизително 20–30°C.",
-
-                fertilizing:
-                    "Подходящо балансирано торене през вегетацията.",
-
-                diseases:
-                    "Листни въшки, акари и различни гъбни заболявания.",
-
-                care:
-                    "Редовно наблюдение, плевене и поддържане на равномерна почвена влажност."
-
-            },
-
-
-            "царевица": {
-
-                icon: "🌽",
-
-                description:
-                    "Важна полска култура, която се нуждае от достатъчно топлина, вода и хранителни вещества.",
-
-                planting:
-                    "Когато почвата се затопли достатъчно и рискът от слани е минимален.",
-
-                watering:
-                    "Особено важна е влагата през критичните фази на развитие.",
-
-                temperature:
-                    "Развива се добре при топло време.",
-
-                fertilizing:
-                    "Азотното хранене е особено важно за добър растеж.",
-
-                diseases:
-                    "Телени червеи, царевичен стъблопробивач и различни гъбни заболявания.",
-
-                care:
-                    "Контрол на плевели, наблюдение за вредители и осигуряване на достатъчно вода."
-
-            },
-
-
-            "пшеница": {
-
-                icon: "🌾",
-
-                description:
-                    "Основна житна култура, при която правилният момент на сеитба и доброто хранене са ключови.",
-
-                planting:
-                    "Сеитбеният период зависи от сорта, региона и конкретните агроклиматични условия.",
-
-                watering:
-                    "Зависи от валежите, почвата и фазата на развитие.",
-
-                temperature:
-                    "Оптималните условия се различават според фазата на развитие.",
-
-                fertilizing:
-                    "Азотното хранене е важно за добива, но трябва да се съобрази с почвата.",
-
-                diseases:
-                    "Ръжди, брашнеста мана, септориоза и други заболявания.",
-
-                care:
-                    "Наблюдение на посева, плевели, болести, вредители и хранителен статус."
-
-            }
-
-        };
-
-
-        /* =========================
-           ДАТИ НА КУЛТУРИТЕ
-           ========================= */
-
-        let cropDates =
-            JSON.parse(
-                localStorage.getItem(
-                    "agronavCropDates"
-                ) || "{}"
+        const cropsList =
+            document.querySelector(
+                "#crops-list"
             );
 
-
-        /* =========================
-           ДНЕШНА ДАТА
-           ========================= */
-
-        function getTodayISO() {
-
-            const today =
-                new Date();
-
-
-            const year =
-                today.getFullYear();
-
-
-            const month =
-                String(
-                    today.getMonth() + 1
-                ).padStart(
-                    2,
-                    "0"
-                );
-
-
-            const day =
-                String(
-                    today.getDate()
-                ).padStart(
-                    2,
-                    "0"
-                );
-
-
-            return (
-                year +
-                "-" +
-                month +
-                "-" +
-                day
-            );
-
-        }
-
-
-        /*
-         * Форматиране на дата
-         */
-
-        function formatCropDate(
-            dateString
-        ) {
-
-            if (!dateString) {
-
-                return "-";
-
-            }
-
-
-            const parts =
-                dateString.split("-");
-
-
-            if (
-                parts.length !== 3
-            ) {
-
-                return dateString;
-
-            }
-
-
-            return (
-                parts[2] +
-                "." +
-                parts[1] +
-                "." +
-                parts[0]
-            );
-
-        }
-
-
-        /*
-         * Изчисляване на възрастта
-         */
-
-        function getCropAge(
-            dateString
-        ) {
-
-            if (!dateString) {
-
-                return null;
-
-            }
-
-
-            const parts =
-                dateString.split("-");
-
-
-            if (
-                parts.length !== 3
-            ) {
-
-                return null;
-
-            }
-
-
-            const plantingDate =
-                new Date(
-                    Number(parts[0]),
-                    Number(parts[1]) - 1,
-                    Number(parts[2])
-                );
-
-
-            const today =
-                new Date();
-
-
-            const todayStart =
-                new Date(
-                    today.getFullYear(),
-                    today.getMonth(),
-                    today.getDate()
-                );
-
-
-            const difference =
-                todayStart.getTime() -
-                plantingDate.getTime();
-
-
-            return Math.floor(
-                difference /
-                (
-                    1000 *
-                    60 *
-                    60 *
-                    24
-                )
-            );
-
-        }
-
-
-        /*
-         * Текст за възрастта
-         */
-
-        function getCropAgeText(
-            dateString
-        ) {
-
-            const days =
-                getCropAge(
-                    dateString
-                );
-
-
-            const isFarm =
-                profile === "farm";
-
-
-            const action =
-                isFarm
-                    ? "сеитбата"
-                    : "засаждането";
-
-
-            if (days === null) {
-
-                return "Няма въведена дата.";
-
-            }
-
-
-            if (days < 0) {
-
-                return "Датата е в бъдещето.";
-
-            }
-
-
-            if (days === 0) {
-
-                return (
-                    "Днес е денят на " +
-                    action +
-                    "."
-                );
-
-            }
-
-
-            if (days === 1) {
-
-                return (
-                    "1 ден от " +
-                    action +
-                    "."
-                );
-
-            }
-
-
-            return (
-                days +
-                " дни от " +
-                action +
-                "."
-            );
-
-        }
-
-
-        /*
-         * =========================
-         * ПОКАЗВАНЕ НА КУЛТУРИТЕ
-         * =========================
-         */
-
-        function renderCrops() {
-
-            const cropsList =
-                document.querySelector(
-                    "#crops-list"
-                );
-
+        cropsList.innerHTML =
+            "";
+
+        const savedCrops =
+            localStorage.getItem(
+                "agronavCrops"
+            ) || "";
+
+        if (!savedCrops) {
 
             cropsList.innerHTML =
-                "";
+                "<p>Все още няма добавени култури.</p>";
 
+            return;
 
-            const savedCrops =
-                localStorage.getItem(
-                    "agronavCrops"
-                ) || "";
+        }
 
+        const crops =
+            savedCrops
+                .split(",")
+                .map(
+                    crop =>
+                        crop.trim()
+                )
+                .filter(
+                    crop =>
+                        crop !== ""
+                );
 
-            if (!savedCrops) {
+        const uniqueCrops =
+            [
+                ...new Set(
+                    crops.map(
+                        crop =>
+                            crop.toLowerCase()
+                    )
+                )
+            ];
 
-                cropsList.innerHTML = `
-                    <p>
-                        Все още няма добавени култури.
-                    </p>
+        uniqueCrops.forEach(
+            function(cropKey) {
+
+                const displayName =
+                    crops.find(
+                        crop =>
+                            crop.toLowerCase() ===
+                            cropKey
+                    ) ||
+                    cropKey;
+
+                const crop =
+                    cropData[
+                        cropKey
+                    ];
+
+                const cropCard =
+                    document.createElement(
+                        "div"
+                    );
+
+                cropCard.className =
+                    "crop-card";
+
+                cropCard.setAttribute(
+                    "data-crop",
+                    cropKey
+                );
+
+                const savedDate =
+                    cropDates[
+                        cropKey
+                    ];
+
+                let statusText =
+                    "Натисни за подробности";
+
+                if (savedDate) {
+
+                    const age =
+                        getCropAge(
+                            savedDate
+                        );
+
+                    const action =
+                        profile === "farm"
+                            ? "Сеитба/засаждане"
+                            : "Засаждане";
+
+                    if (age === 0) {
+
+                        statusText =
+                            action +
+                            ": днес";
+
+                    }
+
+                    else if (age === 1) {
+
+                        statusText =
+                            action +
+                            " преди 1 ден";
+
+                    }
+
+                    else if (age > 1) {
+
+                        statusText =
+                            action +
+                            " преди " +
+                            age +
+                            " дни";
+
+                    }
+
+                    const stage =
+                        getCropStage(
+                            displayName,
+                            savedDate
+                        );
+
+                    if (stage) {
+
+                        statusText +=
+                            "<br>" +
+                            stage.name;
+
+                    }
+
+                }
+
+                cropCard.innerHTML = `
+
+                    <div class="crop-icon">
+                        ${
+                            crop
+                                ? crop.icon
+                                : "🌱"
+                        }
+                    </div>
+
+                    <div class="crop-name">
+                        ${displayName}
+                    </div>
+
+                    <div class="crop-status">
+                        ${statusText}
+                    </div>
+
                 `;
+
+                cropCard.addEventListener(
+                    "click",
+                    function() {
+
+                        openCropDetails(
+                            displayName
+                        );
+
+                    }
+                );
+
+                cropsList.appendChild(
+                    cropCard
+                );
+
+            }
+        );
+
+    }
+
+
+    renderCrops();
+
+
+    const addCropForm =
+        document.querySelector(
+            "#add-crop-form"
+        );
+
+    const newCropDate =
+        document.querySelector(
+            "#new-crop-date"
+        );
+
+    newCropDate.max =
+        getTodayISO();
+
+
+    addCropForm.addEventListener(
+        "submit",
+        function(event) {
+
+            event.preventDefault();
+
+            const cropSelect =
+                document.querySelector(
+                    "#new-crop"
+                );
+
+            const dateInput =
+                document.querySelector(
+                    "#new-crop-date"
+                );
+
+            const cropName =
+                cropSelect.value;
+
+            const plantingDate =
+                dateInput.value;
+
+            if (
+                !cropName ||
+                !plantingDate
+            ) {
+
+                alert(
+                    "Моля, избери култура и въведи дата."
+                );
 
                 return;
 
             }
 
+            const age =
+                getCropAge(
+                    plantingDate
+                );
+
+            if (
+                age !== null &&
+                age < 0
+            ) {
+
+                alert(
+                    "Датата не може да бъде в бъдещето."
+                );
+
+                return;
+
+            }
+
+            cropDates[
+                cropName.toLowerCase()
+            ] =
+                plantingDate;
+
+            localStorage.setItem(
+                "agronavCropDates",
+                JSON.stringify(
+                    cropDates
+                )
+            );
+
+            const existingCrops =
+                localStorage.getItem(
+                    "agronavCrops"
+                ) || "";
 
             const crops =
-                savedCrops
+                existingCrops
                     .split(",")
                     .map(
                         crop =>
@@ -1224,542 +1770,147 @@
                             crop !== ""
                     );
 
+            const alreadyExists =
+                crops.some(
+                    crop =>
+                        crop.toLowerCase() ===
+                        cropName.toLowerCase()
+                );
 
-            const uniqueCrops =
-                [
-                    ...new Set(
-                        crops.map(
-                            crop =>
-                                crop.toLowerCase()
-                        )
-                    )
-                ];
+            if (!alreadyExists) {
 
+                crops.push(
+                    cropName
+                );
 
-            uniqueCrops.forEach(
-                function(cropKey) {
+                localStorage.setItem(
+                    "agronavCrops",
+                    crops.join(", ")
+                );
 
+            }
 
-                    const displayName =
-                        crops.find(
-                            crop =>
-                                crop.toLowerCase() ===
-                                cropKey
-                        ) ||
-                        cropKey;
+            renderCrops();
 
+            cropSelect.value =
+                "";
 
-                    const crop =
-                        cropData[
-                            cropKey
-                        ];
+            dateInput.value =
+                "";
 
-
-                    const cropCard =
-                        document.createElement(
-                            "div"
-                        );
-
-
-                    cropCard.className =
-                        "crop-card";
-
-
-                    cropCard.setAttribute(
-                        "data-crop",
-                        cropKey
-                    );
-
-
-                    const savedDate =
-                        cropDates[
-                            cropKey
-                        ];
-
-
-                    let statusText =
-                        "Натисни за подробности";
-
-
-                    if (savedDate) {
-
-                        const age =
-                            getCropAge(
-                                savedDate
-                            );
-
-
-                        const action =
-                            profile === "farm"
-                                ? "Сеитба"
-                                : "Засаждане";
-
-
-                        if (
-                            age === 0
-                        ) {
-
-                            statusText =
-                                action +
-                                ": днес";
-
-                        }
-
-                        else if (
-                            age === 1
-                        ) {
-
-                            statusText =
-                                action +
-                                " преди 1 ден";
-
-                        }
-
-                        else if (
-                            age > 1
-                        ) {
-
-                            statusText =
-                                action +
-                                " преди " +
-                                age +
-                                " дни";
-
-                        }
-
-                    }
-
-
-                    cropCard.innerHTML = `
-
-                        <div class="crop-icon">
-
-                            ${
-                                crop
-                                    ? crop.icon
-                                    : "🌱"
-                            }
-
-                        </div>
-
-
-                        <div class="crop-name">
-
-                            ${displayName}
-
-                        </div>
-
-
-                        <div class="crop-status">
-
-                            ${statusText}
-
-                        </div>
-
-                    `;
-
-
-                    cropCard.addEventListener(
-                        "click",
-                        function() {
-
-                            openCropDetails(
-                                displayName
-                            );
-
-                        }
-                    );
-
-
-                    cropsList.appendChild(
-                        cropCard
-                    );
-
-                }
+            alert(
+                "Културата е запазена успешно."
             );
 
         }
+    );
 
 
-        renderCrops();
+    function openCropDetails(
+        cropName
+    ) {
 
+        const crop =
+            cropData[
+                cropName.toLowerCase()
+            ];
 
-        /*
-         * =========================
-         * ДОБАВЯНЕ НА КУЛТУРА
-         * =========================
-         */
-
-        const addCropForm =
+        const details =
             document.querySelector(
-                "#add-crop-form"
+                "#crop-details"
             );
 
+        const cropDate =
+            cropDates[
+                cropName.toLowerCase()
+            ];
 
-        const newCropDate =
+        const cropDateInput =
             document.querySelector(
-                "#new-crop-date"
+                "#crop-details-date"
             );
 
+        const cropDateMessage =
+            document.querySelector(
+                "#crop-date-message"
+            );
 
-        /*
-         * Не позволяваме бъдеща дата
-         * още в самия календар.
-         */
+        const detailsDateLabel =
+            document.querySelector(
+                "#details-date-label"
+            );
 
-        newCropDate.max =
+        cropDateInput.max =
             getTodayISO();
 
+        cropDateInput.value =
+            cropDate || "";
 
-        addCropForm.addEventListener(
-            "submit",
-            function(event) {
+        if (profile === "farm") {
 
-                event.preventDefault();
+            detailsDateLabel.textContent =
+                "Дата на сеитба / засаждане";
 
+        }
 
-                const cropSelect =
-                    document.querySelector(
-                        "#new-crop"
-                    );
+        else {
 
+            detailsDateLabel.textContent =
+                "Дата на засаждане";
 
-                const dateInput =
-                    document.querySelector(
-                        "#new-crop-date"
-                    );
+        }
 
+        cropDateMessage.textContent =
+            "";
 
-                const cropName =
-                    cropSelect.value;
-
-
-                const plantingDate =
-                    dateInput.value;
-
-
-                if (
-                    !cropName ||
-                    !plantingDate
-                ) {
-
-                    alert(
-                        "Моля, избери култура и въведи дата."
-                    );
-
-                    return;
-
-                }
-
-
-                const age =
-                    getCropAge(
-                        plantingDate
-                    );
-
-
-                if (
-                    age !== null &&
-                    age < 0
-                ) {
-
-                    alert(
-                        "Датата не може да бъде в бъдещето."
-                    );
-
-                    return;
-
-                }
-
-
-                /*
-                 * Запазваме датата.
-                 */
-
-                cropDates[
-                    cropName.toLowerCase()
-                ] =
-                    plantingDate;
-
-
-                localStorage.setItem(
-                    "agronavCropDates",
-                    JSON.stringify(
-                        cropDates
-                    )
-                );
-
-
-                /*
-                 * Запазваме културата.
-                 */
-
-                const existingCrops =
-                    localStorage.getItem(
-                        "agronavCrops"
-                    ) || "";
-
-
-                const crops =
-                    existingCrops
-                        .split(",")
-                        .map(
-                            crop =>
-                                crop.trim()
-                        )
-                        .filter(
-                            crop =>
-                                crop !== ""
-                        );
-
-
-                const alreadyExists =
-                    crops.some(
-                        crop =>
-                            crop.toLowerCase() ===
-                            cropName.toLowerCase()
-                    );
-
-
-                if (!alreadyExists) {
-
-                    crops.push(
-                        cropName
-                    );
-
-
-                    localStorage.setItem(
-                        "agronavCrops",
-                        crops.join(", ")
-                    );
-
-                }
-
-
-                /*
-                 * Обновяваме картите.
-                 */
-
-                renderCrops();
-
-
-                /*
-                 * Почистваме формата.
-                 */
-
-                cropSelect.value =
-                    "";
-
-
-                dateInput.value =
-                    "";
-
-
-                alert(
-                    "Културата е запазена успешно."
-                );
-
-            }
-        );
-
-
-        /*
-         * =========================
-         * ПОДРОБНОСТИ
-         * =========================
-         */
-
-        function openCropDetails(
-            cropName
-        ) {
-
-            const crop =
-                cropData[
-                    cropName.toLowerCase()
-                ];
-
-
-            const details =
-                document.querySelector(
-                    "#crop-details"
-                );
-
-
-            const cropDate =
-                cropDates[
-                    cropName.toLowerCase()
-                ];
-
-
-            /*
-             * Ако културата няма подробни данни.
-             */
-
-            if (!crop) {
-
-                document.querySelector(
-                    "#crop-details-icon"
-                ).textContent =
-                    "🌱";
-
-
-                document.querySelector(
-                    "#crop-details-name"
-                ).textContent =
-                    cropName;
-
-
-                document.querySelector(
-                    "#crop-details-description"
-                ).textContent =
-                    "За тази култура все още нямаме въведена подробна информация.";
-
-
-                document.querySelector(
-                    "#crop-planting"
-                ).textContent =
-                    cropDate
-                        ? formatCropDate(
-                            cropDate
-                        )
-                        : "Няма въведена дата.";
-
-
-                document.querySelector(
-                    "#crop-watering"
-                ).textContent =
-                    "Предстои да бъде добавено.";
-
-
-                document.querySelector(
-                    "#crop-temperature"
-                ).textContent =
-                    "Предстои да бъде добавено.";
-
-
-                document.querySelector(
-                    "#crop-fertilizing"
-                ).textContent =
-                    "Предстои да бъде добавено.";
-
-
-                document.querySelector(
-                    "#crop-diseases"
-                ).textContent =
-                    "Предстои да бъде добавено.";
-
-
-                document.querySelector(
-                    "#crop-care"
-                ).textContent =
-                    "Предстои да бъде добавено.";
-
-
-                document.querySelector(
-                    "#crop-age"
-                ).textContent =
-                    getCropAgeText(
-                        cropDate
-                    );
-
-
-                details.style.display =
-                    "block";
-
-
-                details.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start"
-                });
-
-
-                return;
-
-            }
-
-
-            /*
-             * Основна информация.
-             */
+        if (!crop) {
 
             document.querySelector(
                 "#crop-details-icon"
             ).textContent =
-                crop.icon;
-
+                "🌱";
 
             document.querySelector(
                 "#crop-details-name"
             ).textContent =
                 cropName;
 
-
             document.querySelector(
                 "#crop-details-description"
             ).textContent =
-                crop.description;
+                "За тази култура все още нямаме въведена подробна информация.";
 
+            document.querySelector(
+                "#crop-planting"
+            ).textContent =
+                cropDate
+                    ? formatCropDate(cropDate)
+                    : "Няма въведена дата.";
 
             document.querySelector(
                 "#crop-watering"
             ).textContent =
-                crop.watering;
-
+                "Предстои да бъде добавено.";
 
             document.querySelector(
                 "#crop-temperature"
             ).textContent =
-                crop.temperature;
-
+                "Предстои да бъде добавено.";
 
             document.querySelector(
                 "#crop-fertilizing"
             ).textContent =
-                crop.fertilizing;
-
+                "Предстои да бъде добавено.";
 
             document.querySelector(
                 "#crop-diseases"
             ).textContent =
-                crop.diseases;
-
+                "Предстои да бъде добавено.";
 
             document.querySelector(
                 "#crop-care"
             ).textContent =
-                crop.care;
-
-
-            /*
-             * Дата.
-             */
-
-            if (cropDate) {
-
-                document.querySelector(
-                    "#crop-planting"
-                ).textContent =
-                    formatCropDate(
-                        cropDate
-                    );
-
-            }
-
-            else {
-
-                document.querySelector(
-                    "#crop-planting"
-                ).textContent =
-                    profile === "farm"
-                        ? "Няма въведена дата на сеитба/засаждане."
-                        : "Няма въведена дата на засаждане.";
-
-            }
-
-
-            /*
-             * Възраст.
-             */
+                "Предстои да бъде добавено.";
 
             document.querySelector(
                 "#crop-age"
@@ -1768,1302 +1919,1950 @@
                     cropDate
                 );
 
-
-            /*
-             * Показваме подробностите.
-             */
+            renderCropStage(
+                cropName,
+                cropDate
+            );
 
             details.style.display =
                 "block";
-
 
             details.scrollIntoView({
                 behavior: "smooth",
                 block: "start"
             });
 
-
-            /*
-             * Обновяваме AgroNav анализа.
-             */
-
-            if (
-                typeof generateAgroRecommendation ===
-                "function"
-            ) {
-
-                generateAgroRecommendation(
-                    cropName
-                );
-
-            }
+            return;
 
         }
-
-
-        /*
-         * Затваряне.
-         */
 
         document.querySelector(
-            "#close-crop-details"
-        ).addEventListener(
-            "click",
-            function() {
+            "#crop-details-icon"
+        ).textContent =
+            crop.icon;
 
-                document.querySelector(
-                    "#crop-details"
-                ).style.display =
-                    "none";
+        document.querySelector(
+            "#crop-details-name"
+        ).textContent =
+            cropName;
 
-            }
+        document.querySelector(
+            "#crop-details-description"
+        ).textContent =
+            crop.description;
+
+        document.querySelector(
+            "#crop-watering"
+        ).textContent =
+            crop.watering;
+
+        document.querySelector(
+            "#crop-temperature"
+        ).textContent =
+            crop.temperature;
+
+        document.querySelector(
+            "#crop-fertilizing"
+        ).textContent =
+            crop.fertilizing;
+
+        document.querySelector(
+            "#crop-diseases"
+        ).textContent =
+            crop.diseases;
+
+        document.querySelector(
+            "#crop-care"
+        ).textContent =
+            crop.care;
+
+        if (cropDate) {
+
+            document.querySelector(
+                "#crop-planting"
+            ).textContent =
+                formatCropDate(
+                    cropDate
+                );
+
+        }
+
+        else {
+
+            document.querySelector(
+                "#crop-planting"
+            ).textContent =
+                profile === "farm"
+                    ? "Няма въведена дата на сеитба/засаждане."
+                    : "Няма въведена дата на засаждане.";
+
+        }
+
+        document.querySelector(
+            "#crop-age"
+        ).textContent =
+            getCropAgeText(
+                cropDate
+            );
+
+        renderCropStage(
+            cropName,
+            cropDate
         );
 
-    </script>
+        details.style.display =
+            "block";
+
+        details.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+        if (
+            typeof generateAgroRecommendation ===
+            "function"
+        ) {
+
+            generateAgroRecommendation(
+                cropName
+            );
+
+        }
+
+    }
 
 
-    <!-- =========================
-         ЧАСОВНИК И ДАТА
-         ========================= -->
+    document.querySelector(
+        "#save-crop-details-date"
+    ).addEventListener(
+        "click",
+        function() {
 
-    <script>
+            const cropName =
+                document.querySelector(
+                    "#crop-details-name"
+                ).textContent.trim();
 
-        const name =
+            const dateInput =
+                document.querySelector(
+                    "#crop-details-date"
+                );
+
+            const newDate =
+                dateInput.value;
+
+            const message =
+                document.querySelector(
+                    "#crop-date-message"
+                );
+
+            if (
+                !cropName ||
+                cropName === "Култура"
+            ) {
+
+                return;
+
+            }
+
+            if (!newDate) {
+
+                alert(
+                    "Моля, въведи дата."
+                );
+
+                return;
+
+            }
+
+            const age =
+                getCropAge(
+                    newDate
+                );
+
+            if (
+                age !== null &&
+                age < 0
+            ) {
+
+                alert(
+                    "Датата не може да бъде в бъдещето."
+                );
+
+                return;
+
+            }
+
+            cropDates[
+                cropName.toLowerCase()
+            ] =
+                newDate;
+
+            localStorage.setItem(
+                "agronavCropDates",
+                JSON.stringify(
+                    cropDates
+                )
+            );
+
+            document.querySelector(
+                "#crop-planting"
+            ).textContent =
+                formatCropDate(
+                    newDate
+                );
+
+            document.querySelector(
+                "#crop-age"
+            ).textContent =
+                getCropAgeText(
+                    newDate
+                );
+
+            renderCropStage(
+                cropName,
+                newDate
+            );
+
+            renderCrops();
+
+            message.textContent =
+                "✅ Датата е запазена успешно.";
+
+            generateAgroRecommendation(
+                cropName
+            );
+
+        }
+    );
+
+
+    document.querySelector(
+        "#close-crop-details"
+    ).addEventListener(
+        "click",
+        function() {
+
+            document.querySelector(
+                "#crop-details"
+            ).style.display =
+                "none";
+
+        }
+    );
+
+</script>
+
+
+<script>
+
+    const name =
+        localStorage.getItem(
+            "agronavName"
+        ) ||
+        "потребител";
+
+
+    function updateDateTime() {
+
+        const now =
+            new Date();
+
+        const hour =
+            now.getHours();
+
+        let greeting;
+
+        if (
+            hour >= 5 &&
+            hour < 12
+        ) {
+
+            greeting =
+                "Добро утро";
+
+        }
+
+        else if (
+            hour >= 12 &&
+            hour < 18
+        ) {
+
+            greeting =
+                "Добър ден";
+
+        }
+
+        else {
+
+            greeting =
+                "Добър вечер";
+
+        }
+
+        const date =
+            now.toLocaleDateString(
+                "bg-BG",
+                {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric"
+                }
+            );
+
+        const time =
+            now.toLocaleTimeString(
+                "bg-BG",
+                {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit"
+                }
+            );
+
+        document.querySelector(
+            "#greeting"
+        ).textContent =
+            greeting +
+            ", " +
+            name;
+
+        document.querySelector(
+            "#date"
+        ).textContent =
+            date;
+
+        document.querySelector(
+            "#clock"
+        ).textContent =
+            time;
+
+    }
+
+
+    updateDateTime();
+
+
+    setInterval(
+        updateDateTime,
+        1000
+    );
+
+</script>
+
+
+<script>
+
+    let agroWeather =
+        null;
+
+
+    let agroForecast =
+        null;
+
+
+    async function loadWeather() {
+
+        const savedLocation =
             localStorage.getItem(
-                "agronavName"
-            ) ||
-            "потребител";
+                "agronavLocation"
+            );
 
-
-        function updateDateTime() {
-
-            const now =
-                new Date();
-
-
-            const hour =
-                now.getHours();
-
-
-            let greeting;
-
-
-            if (
-                hour >= 5 &&
-                hour < 12
-            ) {
-
-                greeting =
-                    "Добро утро";
-
-            }
-
-            else if (
-                hour >= 12 &&
-                hour < 18
-            ) {
-
-                greeting =
-                    "Добър ден";
-
-            }
-
-            else {
-
-                greeting =
-                    "Добър вечер";
-
-            }
-
-
-            const date =
-                now.toLocaleDateString(
-                    "bg-BG",
-                    {
-                        day: "2-digit",
-                        month: "long",
-                        year: "numeric"
-                    }
-                );
-
-
-            const time =
-                now.toLocaleTimeString(
-                    "bg-BG",
-                    {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit"
-                    }
-                );
-
-
+        const weatherLocation =
             document.querySelector(
-                "#greeting"
-            ).textContent =
-                greeting +
-                ", " +
-                name;
+                "#weather-location"
+            );
 
+        if (!savedLocation) {
 
-            document.querySelector(
-                "#date"
-            ).textContent =
-                date;
+            weatherLocation.textContent =
+                "Местоположение: не е въведено";
 
-
-            document.querySelector(
-                "#clock"
-            ).textContent =
-                time;
+            return;
 
         }
 
+        try {
 
-        updateDateTime();
-
-
-        setInterval(
-            updateDateTime,
-            1000
-        );
-
-    </script>
-
-
-    <!-- =========================
-         ВРЕМЕ
-         ========================= -->
-
-    <script>
-
-        let agroWeather =
-            null;
-
-
-        let agroForecast =
-            null;
-
-
-        async function loadWeather() {
-
-            const savedLocation =
-                localStorage.getItem(
-                    "agronavLocation"
+            const geocodingResponse =
+                await fetch(
+                    "https://geocoding-api.open-meteo.com/v1/search?name=" +
+                    encodeURIComponent(
+                        savedLocation
+                    ) +
+                    "&count=1&language=bg&format=json"
                 );
 
+            if (!geocodingResponse.ok) {
 
-            const weatherLocation =
-                document.querySelector(
-                    "#weather-location"
+                throw new Error(
+                    "Грешка при намиране на местоположението"
                 );
-
-
-            if (!savedLocation) {
-
-                weatherLocation.textContent =
-                    "Местоположение: не е въведено";
-
-                return;
 
             }
 
-
-            try {
-
-                const geocodingResponse =
-                    await fetch(
-                        "https://geocoding-api.open-meteo.com/v1/search?name=" +
-                        encodeURIComponent(
-                            savedLocation
-                        ) +
-                        "&count=1&language=bg&format=json"
-                    );
-
-
-                if (!geocodingResponse.ok) {
-
-                    throw new Error(
-                        "Грешка при намиране на местоположението"
-                    );
-
-                }
-
-
-                const geocodingData =
-                    await geocodingResponse.json();
-
-
-                if (
-                    !geocodingData.results ||
-                    geocodingData.results.length === 0
-                ) {
-
-                    throw new Error(
-                        "Местоположението не е намерено"
-                    );
-
-                }
-
-
-                const place =
-                    geocodingData.results[0];
-
-
-                const latitude =
-                    place.latitude;
-
-
-                const longitude =
-                    place.longitude;
-
-
-                const weatherResponse =
-                    await fetch(
-                        "https://api.open-meteo.com/v1/forecast" +
-                        "?latitude=" +
-                        latitude +
-                        "&longitude=" +
-                        longitude +
-                        "&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m,weather_code,soil_moisture_0_to_1cm" +
-                        "&temperature_unit=celsius" +
-                        "&wind_speed_unit=kmh" +
-                        "&precipitation_unit=mm" +
-                        "&timezone=auto"
-                    );
-
-
-                if (!weatherResponse.ok) {
-
-                    throw new Error(
-                        "Грешка при зареждане на времето"
-                    );
-
-                }
-
-
-                const weatherData =
-                    await weatherResponse.json();
-
-
-                const current =
-                    weatherData.current;
-
-
-                agroWeather =
-                    current;
-
-
-                weatherLocation.textContent =
-                    "Местоположение: " +
-                    place.name;
-
-
-                document.querySelector(
-                    ".weather-temperature"
-                ).textContent =
-                    Math.round(
-                        current.temperature_2m
-                    ) +
-                    "°C";
-
-
-                document.querySelector(
-                    ".weather-condition"
-                ).textContent =
-                    getWeatherDescription(
-                        current.weather_code
-                    );
-
-
-                document.querySelector(
-                    ".weather-details div:nth-child(1) b"
-                ).textContent =
-                    Math.round(
-                        current.relative_humidity_2m
-                    ) +
-                    "%";
-
-
-                document.querySelector(
-                    ".weather-details div:nth-child(2) b"
-                ).textContent =
-                    current.precipitation +
-                    " mm";
-
-
-                document.querySelector(
-                    ".weather-details div:nth-child(3) b"
-                ).textContent =
-                    Math.round(
-                        current.wind_speed_10m
-                    ) +
-                    " km/h";
-
-
-                const currentCropName =
-                    document.querySelector(
-                        "#crop-details-name"
-                    )?.textContent;
-
-
-                if (
-                    currentCropName &&
-                    currentCropName !== "Култура"
-                ) {
-
-                    generateAgroRecommendation(
-                        currentCropName
-                    );
-
-                }
-
-            }
-
-
-            catch (error) {
-
-                console.error(
-                    error
-                );
-
-
-                weatherLocation.textContent =
-                    "Местоположение: " +
-                    savedLocation;
-
-
-                document.querySelector(
-                    ".weather-condition"
-                ).textContent =
-                    "Неуспешно зареждане на времето";
-
-            }
-
-        }
-
-
-        function getWeatherDescription(
-            code
-        ) {
-
-            if (code === 0)
-                return "☀️ Ясно";
-
+            const geocodingData =
+                await geocodingResponse.json();
 
             if (
-                code >= 1 &&
-                code <= 3
-            )
-                return "🌤️ Облачно";
-
-
-            if (
-                code >= 45 &&
-                code <= 48
-            )
-                return "🌫️ Мъгла";
-
-
-            if (
-                code >= 51 &&
-                code <= 57
-            )
-                return "🌦️ Ръмеж";
-
-
-            if (
-                code >= 61 &&
-                code <= 67
-            )
-                return "🌧️ Дъжд";
-
-
-            if (
-                code >= 71 &&
-                code <= 77
-            )
-                return "❄️ Сняг";
-
-
-            if (
-                code >= 80 &&
-                code <= 82
-            )
-                return "🌧️ Превалявания";
-
-
-            if (
-                code >= 95 &&
-                code <= 99
-            )
-                return "⛈️ Гръмотевична буря";
-
-
-            return "🌤️ Променливо време";
-
-        }
-
-
-        loadWeather();
-
-    </script>
-
-
-    <!-- =========================
-         AGRO NAV АНАЛИЗ
-         ========================= -->
-
-    <script>
-
-        function generateAgroRecommendation(
-            cropName
-        ) {
-
-
-            if (
-                !agroWeather ||
-                !agroForecast
+                !geocodingData.results ||
+                geocodingData.results.length === 0
             ) {
 
-                document.querySelector(
-                    "#agro-status"
-                ).textContent =
-                    "⏳ Изчакване на метеорологичните данни...";
-
-
-                document.querySelector(
-                    "#agro-recommendation-text"
-                ).textContent =
-                    "Анализът ще бъде готов след зареждане на текущото време и прогнозата.";
-
-
-                return;
-
-            }
-
-
-            const currentProfile =
-                localStorage.getItem(
-                    "agronavProfile"
+                throw new Error(
+                    "Местоположението не е намерено"
                 );
 
+            }
 
-            const isFarm =
-                currentProfile === "farm";
+            const place =
+                geocodingData.results[0];
 
+            const latitude =
+                place.latitude;
 
-            const farmData =
-                document.querySelector(
-                    "#agro-farm-data"
+            const longitude =
+                place.longitude;
+
+            const weatherResponse =
+                await fetch(
+                    "https://api.open-meteo.com/v1/forecast" +
+                    "?latitude=" +
+                    latitude +
+                    "&longitude=" +
+                    longitude +
+                    "&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m,weather_code,soil_moisture_0_to_1cm" +
+                    "&temperature_unit=celsius" +
+                    "&wind_speed_unit=kmh" +
+                    "&precipitation_unit=mm" +
+                    "&timezone=auto"
                 );
 
+            if (!weatherResponse.ok) {
 
-            if (farmData) {
-
-                farmData.style.display =
-                    isFarm
-                        ? "block"
-                        : "none";
+                throw new Error(
+                    "Грешка при зареждане на времето"
+                );
 
             }
 
+            const weatherData =
+                await weatherResponse.json();
 
-            const temperature =
-                agroWeather.temperature_2m;
+            const current =
+                weatherData.current;
 
+            agroWeather =
+                current;
 
-            const humidity =
-                agroWeather.relative_humidity_2m;
-
-
-            const rain =
-                agroWeather.precipitation;
-
-
-            const wind =
-                agroWeather.wind_speed_10m;
-
-
-            const soilMoisture =
-                agroWeather.soil_moisture_0_to_1cm ??
-                null;
-
-
-            const daily =
-                agroForecast.daily;
-
-
-            let forecastRain =
-                0;
-
-
-            let forecastRainProbability =
-                0;
-
-
-            let et0 =
-                0;
-
-
-            if (daily) {
-
-                forecastRain =
-                    (
-                        daily.precipitation_sum?.[0] ||
-                        0
-                    ) +
-                    (
-                        daily.precipitation_sum?.[1] ||
-                        0
-                    );
-
-
-                forecastRainProbability =
-                    Math.max(
-                        daily.precipitation_probability_max?.[0] || 0,
-                        daily.precipitation_probability_max?.[1] || 0
-                    );
-
-
-                et0 =
-                    daily.et0_fao_evapotranspiration?.[0] ||
-                    0;
-
-            }
-
+            weatherLocation.textContent =
+                "Местоположение: " +
+                place.name;
 
             document.querySelector(
-                "#agro-temperature"
+                ".weather-temperature"
             ).textContent =
                 Math.round(
-                    temperature
+                    current.temperature_2m
                 ) +
                 "°C";
 
+            document.querySelector(
+                ".weather-condition"
+            ).textContent =
+                getWeatherDescription(
+                    current.weather_code
+                );
 
             document.querySelector(
-                "#agro-humidity"
+                ".weather-details div:nth-child(1) b"
             ).textContent =
                 Math.round(
-                    humidity
+                    current.relative_humidity_2m
                 ) +
                 "%";
 
-
             document.querySelector(
-                "#agro-rain"
+                ".weather-details div:nth-child(2) b"
             ).textContent =
-                rain +
+                current.precipitation +
                 " mm";
 
-
             document.querySelector(
-                "#agro-wind"
+                ".weather-details div:nth-child(3) b"
             ).textContent =
                 Math.round(
-                    wind
+                    current.wind_speed_10m
                 ) +
                 " km/h";
 
-
-            document.querySelector(
-                "#agro-forecast-rain"
-            ).textContent =
-                forecastRain.toFixed(
-                    1
-                ) +
-                " mm";
-
-
-            document.querySelector(
-                "#agro-rain-probability"
-            ).textContent =
-                forecastRainProbability +
-                "%";
-
-
-            if (isFarm) {
-
+            const currentCropName =
                 document.querySelector(
-                    "#agro-soil-moisture"
-                ).textContent =
-                    soilMoisture !== null
-                        ? Math.round(
-                            soilMoisture * 100
-                        ) +
-                        "%"
-                        : "--";
-
-
-                document.querySelector(
-                    "#agro-et0"
-                ).textContent =
-                    et0.toFixed(
-                        1
-                    ) +
-                    " mm";
-
-            }
-
-
-            let status =
-                "🟢 Условията изглеждат подходящи";
-
-
-            let recommendation =
-                "Условията в момента са сравнително подходящи. Следи прогнозата и нуждите на културата.";
-
-
-            /*
-             * ДОМАТИ
-             */
+                    "#crop-details-name"
+                )?.textContent;
 
             if (
-                cropName.toLowerCase() ===
-                "домати"
+                currentCropName &&
+                currentCropName !== "Култура"
             ) {
 
-
-                if (
-                    temperature >= 35
-                ) {
-
-                    status =
-                        "🔴 Висок температурен риск";
-
-
-                    recommendation =
-                        "Температурата е около " +
-                        Math.round(
-                            temperature
-                        ) +
-                        "°C. Това създава висок топлинен стрес за доматите. Следи растенията внимателно и избягвай работа в най-горещите часове.";
-
-                }
-
-
-                else if (
-                    temperature <= 10
-                ) {
-
-                    status =
-                        "🔴 Неблагоприятна температура";
-
-
-                    recommendation =
-                        "Температурата е около " +
-                        Math.round(
-                            temperature
-                        ) +
-                        "°C. Доматите са топлолюбива култура и трябва да се следят за признаци на студов стрес.";
-
-                }
-
-
-                else if (
-                    forecastRain >= 5 &&
-                    forecastRainProbability >= 60
-                ) {
-
-                    status =
-                        "🟢 Очаквани валежи";
-
-
-                    recommendation =
-                        "През следващите 48 часа се очакват около " +
-                        forecastRain.toFixed(
-                            1
-                        ) +
-                        " mm валежи, с максимална вероятност " +
-                        forecastRainProbability +
-                        "%. Съобрази поливането с очакваните валежи.";
-
-
-                    if (
-                        isFarm &&
-                        soilMoisture !== null
-                    ) {
-
-                        recommendation +=
-                            " Моделната влажност в горния почвен слой е около " +
-                            Math.round(
-                                soilMoisture * 100
-                            ) +
-                            "%. Не поливай предварително, ако почвата вече е достатъчно влажна.";
-
-                    }
-
-                }
-
-
-                else if (
-                    isFarm &&
-                    soilMoisture !== null &&
-                    soilMoisture < 0.20 &&
-                    temperature >= 25 &&
-                    forecastRain < 2
-                ) {
-
-                    status =
-                        "🟡 Ниска почвена влажност";
-
-
-                    recommendation =
-                        "Моделната влажност в горния почвен слой е около " +
-                        Math.round(
-                            soilMoisture * 100
-                        ) +
-                        "%. Температурата е " +
-                        Math.round(
-                            temperature
-                        ) +
-                        "°C, а през следващите 48 часа се очакват малко валежи. Провери реалната влажност на почвата преди поливане.";
-
-                }
-
-
-                else if (
-                    isFarm &&
-                    temperature >= 30 &&
-                    et0 >= 4 &&
-                    forecastRain < 2
-                ) {
-
-                    status =
-                        "🟡 Повишена нужда от вода";
-
-
-                    recommendation =
-                        "Очаква се повишено атмосферно потребление на вода. ET₀ за деня е около " +
-                        et0.toFixed(
-                            1
-                        ) +
-                        " mm, температурата е " +
-                        Math.round(
-                            temperature
-                        ) +
-                        "°C, а валежите през следващите 48 часа са малко. Следи внимателно почвената влажност.";
-
-                }
-
-
-                else if (
-                    wind >= 25
-                ) {
-
-                    status =
-                        "🟡 Силен вятър";
-
-
-                    recommendation =
-                        "Вятърът е около " +
-                        Math.round(
-                            wind
-                        ) +
-                        " km/h. Следи растенията и конструкциите за подпиране и избягвай дейности, при които силният вятър затруднява работата.";
-
-                }
-
-
-                else if (
-                    humidity >= 85
-                ) {
-
-                    status =
-                        "🟡 Висока влажност на въздуха";
-
-
-                    recommendation =
-                        "Влажността на въздуха е около " +
-                        Math.round(
-                            humidity
-                        ) +
-                        "%. При продължително висока влажност следи растенията за признаци на гъбни заболявания.";
-
-                }
-
-
-                else if (
-                    temperature >= 28 &&
-                    humidity < 70 &&
-                    forecastRain < 2
-                ) {
-
-                    status =
-                        "🟡 Провери влажността";
-
-
-                    recommendation =
-                        "Температурата е " +
-                        Math.round(
-                            temperature
-                        ) +
-                        "°C, влажността на въздуха е " +
-                        Math.round(
-                            humidity
-                        ) +
-                        "% и се очакват малко валежи. Провери почвата. Ако е суха, доматите може да имат нужда от поливане.";
-
-                }
-
-
-                else {
-
-                    status =
-                        "🟢 Добри условия за домати";
-
-
-                    recommendation =
-                        "Метеорологичните условия са сравнително подходящи за доматите. Продължи да следиш прогнозата и нуждите на растенията.";
-
-
-                    if (
-                        isFarm &&
-                        soilMoisture !== null
-                    ) {
-
-                        recommendation +=
-                            " Моделната почвена влажност е около " +
-                            Math.round(
-                                soilMoisture * 100
-                            ) +
-                            "%.";
-
-                    }
-
-
-                    if (isFarm) {
-
-                        recommendation +=
-                            " ET₀ е около " +
-                            et0.toFixed(
-                                1
-                            ) +
-                            " mm.";
-
-                    }
-
-                }
+                generateAgroRecommendation(
+                    currentCropName
+                );
 
             }
 
+        }
 
-            /*
-             * ДРУГИ КУЛТУРИ
-             */
+        catch (error) {
 
-            else {
+            console.error(
+                error
+            );
 
+            weatherLocation.textContent =
+                "Местоположение: " +
+                savedLocation;
 
-                if (
-                    temperature >= 35
-                ) {
+            document.querySelector(
+                ".weather-condition"
+            ).textContent =
+                "Неуспешно зареждане на времето";
 
-                    status =
-                        "🔴 Висок температурен риск";
+        }
 
-
-                    recommendation =
-                        "Температурата е около " +
-                        Math.round(
-                            temperature
-                        ) +
-                        "°C. Следи културата за признаци на топлинен стрес и за недостиг на вода.";
-
-                }
+    }
 
 
-                else if (
-                    temperature <= 5
-                ) {
+    function getWeatherDescription(
+        code
+    ) {
 
-                    status =
-                        "🔴 Ниска температура";
+        if (code === 0)
+            return "☀️ Ясно";
 
+        if (
+            code >= 1 &&
+            code <= 3
+        )
+            return "🌤️ Облачно";
 
-                    recommendation =
-                        "Температурата е около " +
-                        Math.round(
-                            temperature
-                        ) +
-                        "°C. Провери дали културата е чувствителна към ниски температури.";
+        if (
+            code >= 45 &&
+            code <= 48
+        )
+            return "🌫️ Мъгла";
 
-                }
+        if (
+            code >= 51 &&
+            code <= 57
+        )
+            return "🌦️ Ръмеж";
 
+        if (
+            code >= 61 &&
+            code <= 67
+        )
+            return "🌧️ Дъжд";
 
-                else if (
-                    forecastRain >= 5 &&
-                    forecastRainProbability >= 60
-                ) {
+        if (
+            code >= 71 &&
+            code <= 77
+        )
+            return "❄️ Сняг";
 
-                    status =
-                        "🟢 Очаквани валежи";
+        if (
+            code >= 80 &&
+            code <= 82
+        )
+            return "🌧️ Превалявания";
 
+        if (
+            code >= 95 &&
+            code <= 99
+        )
+            return "⛈️ Гръмотевична буря";
 
-                    recommendation =
-                        "През следващите 48 часа се очакват около " +
-                        forecastRain.toFixed(
-                            1
-                        ) +
-                        " mm валежи, с максимална вероятност " +
-                        forecastRainProbability +
-                        "%. Съобрази поливането с очакваните валежи.";
+        return "🌤️ Променливо време";
 
-                }
-
-
-                else if (
-                    wind >= 25
-                ) {
-
-                    status =
-                        "🟡 Силен вятър";
-
-
-                    recommendation =
-                        "Вятърът е около " +
-                        Math.round(
-                            wind
-                        ) +
-                        " km/h. Следи културата за механични повреди и избягвай дейности, които са неподходящи при силен вятър.";
-
-                }
+    }
 
 
-                else if (
-                    humidity >= 85
-                ) {
+    loadWeather();
 
-                    status =
-                        "🟡 Висока влажност";
+</script>
 
 
-                    recommendation =
-                        "Влажността на въздуха е около " +
-                        Math.round(
-                            humidity
-                        ) +
-                        "%. При продължителна висока влажност следи културата за гъбни заболявания.";
+<!-- =========================
+     НОВИЯТ AGRO NAV АНАЛИЗ
+     ========================= -->
 
-                }
+<script>
 
+    function generateAgroRecommendation(
+        cropName
+    ) {
 
-                else {
-
-                    status =
-                        "🟢 Условията изглеждат подходящи";
-
-
-                    recommendation =
-                        "Текущите метеорологични условия са сравнително подходящи. Следи температурата, валежите и нуждите на културата.";
-
-                }
-
-            }
-
+        if (
+            !agroWeather ||
+            !agroForecast
+        ) {
 
             document.querySelector(
                 "#agro-status"
             ).textContent =
-                status;
-
+                "⏳ Изчакване на метеорологичните данни...";
 
             document.querySelector(
                 "#agro-recommendation-text"
             ).textContent =
-                recommendation;
+                "Анализът ще бъде готов след зареждане на текущото време и прогнозата.";
+
+            return;
 
         }
 
-    </script>
+
+        const currentProfile =
+            localStorage.getItem(
+                "agronavProfile"
+            );
 
 
-    <!-- =========================
-         7-ДНЕВНА ПРОГНОЗА
-         ========================= -->
+        const isFarm =
+            currentProfile === "farm";
 
-    <script>
 
-        async function loadForecast() {
+        const farmData =
+            document.querySelector(
+                "#agro-farm-data"
+            );
 
-            const savedLocation =
-                localStorage.getItem(
-                    "agronavLocation"
+
+        if (farmData) {
+
+            farmData.style.display =
+                isFarm
+                    ? "block"
+                    : "none";
+
+        }
+
+
+        /* =========================
+           МЕТЕО ДАННИ
+           ========================= */
+
+        const temperature =
+            agroWeather.temperature_2m;
+
+
+        const humidity =
+            agroWeather.relative_humidity_2m;
+
+
+        const rain =
+            agroWeather.precipitation;
+
+
+        const wind =
+            agroWeather.wind_speed_10m;
+
+
+        const soilMoisture =
+            agroWeather.soil_moisture_0_to_1cm ??
+            null;
+
+
+        const daily =
+            agroForecast.daily;
+
+
+        let forecastRain =
+            0;
+
+
+        let forecastRainProbability =
+            0;
+
+
+        let et0 =
+            0;
+
+
+        if (daily) {
+
+            forecastRain =
+                (
+                    daily.precipitation_sum?.[0] ||
+                    0
+                ) +
+                (
+                    daily.precipitation_sum?.[1] ||
+                    0
                 );
 
 
-            const forecastList =
-                document.querySelector(
-                    "#forecast-list"
+            forecastRainProbability =
+                Math.max(
+                    daily.precipitation_probability_max?.[0] || 0,
+                    daily.precipitation_probability_max?.[1] || 0
                 );
 
 
-            if (!savedLocation) {
+            et0 =
+                daily.et0_fao_evapotranspiration?.[0] ||
+                0;
 
-                forecastList.innerHTML =
-                    "<p>Няма въведено местоположение.</p>";
+        }
 
-                return;
+
+        /* =========================
+           ПОКАЗВАНЕ НА ДАННИТЕ
+           ========================= */
+
+        document.querySelector(
+            "#agro-temperature"
+        ).textContent =
+            Math.round(
+                temperature
+            ) +
+            "°C";
+
+
+        document.querySelector(
+            "#agro-humidity"
+        ).textContent =
+            Math.round(
+                humidity
+            ) +
+            "%";
+
+
+        document.querySelector(
+            "#agro-rain"
+        ).textContent =
+            rain +
+            " mm";
+
+
+        document.querySelector(
+            "#agro-wind"
+        ).textContent =
+            Math.round(
+                wind
+            ) +
+            " km/h";
+
+
+        document.querySelector(
+            "#agro-forecast-rain"
+        ).textContent =
+            forecastRain.toFixed(
+                1
+            ) +
+            " mm";
+
+
+        document.querySelector(
+            "#agro-rain-probability"
+        ).textContent =
+            forecastRainProbability +
+            "%";
+
+
+        if (isFarm) {
+
+            document.querySelector(
+                "#agro-soil-moisture"
+            ).textContent =
+                soilMoisture !== null
+                    ? Math.round(
+                        soilMoisture * 100
+                    ) +
+                    "%"
+                    : "--";
+
+
+            document.querySelector(
+                "#agro-et0"
+            ).textContent =
+                et0.toFixed(
+                    1
+                ) +
+                " mm";
+
+        }
+
+
+        /* =========================
+           КУЛТУРА И ФАЗА
+           ========================= */
+
+        const cropKey =
+            cropName
+                .toLowerCase()
+                .trim();
+
+
+        const cropDate =
+            cropDates[
+                cropKey
+            ];
+
+
+        const stage =
+            getCropStage(
+                cropName,
+                cropDate
+            );
+
+
+        let status =
+            "🟢 Условията изглеждат подходящи";
+
+
+        let recommendation =
+            "Условията в момента са сравнително подходящи. Следи прогнозата и нуждите на културата.";
+
+
+        /* =========================
+           ФАЗА
+           ========================= */
+
+        if (stage) {
+
+            const cleanStageName =
+                stage.name.replace(
+                    /^.\s/,
+                    ""
+                );
+
+
+            recommendation =
+                "Културата е в ориентировъчна фаза „" +
+                cleanStageName +
+                "“. " +
+                stage.description;
+
+        }
+
+
+        /* =========================
+           ОБЩИ УСЛОВИЯ
+           ========================= */
+
+        const highHeat =
+            temperature >= 35;
+
+
+        const lowTemperature =
+            temperature <= 5;
+
+
+        const strongWind =
+            wind >= 25;
+
+
+        const highHumidity =
+            humidity >= 85;
+
+
+        const expectedRain =
+            forecastRain >= 5 &&
+            forecastRainProbability >= 60;
+
+
+        const dryConditions =
+            forecastRain < 2;
+
+
+        /* =================================================
+           ДОМАТИ
+           ================================================= */
+
+        if (
+            cropKey === "домати"
+        ) {
+
+            if (
+                highHeat
+            ) {
+
+                status =
+                    "🔴 Висок температурен риск";
+
+
+                recommendation +=
+                    " Температурата е около " +
+                    Math.round(
+                        temperature
+                    ) +
+                    "°C. Това създава висок риск от топлинен стрес при доматите.";
+
+
+                if (
+                    stage &&
+                    (
+                        stage.name.includes("Цъфтеж") ||
+                        stage.name.includes("Плододаване")
+                    )
+                ) {
+
+                    recommendation +=
+                        " Рискът е особено важен през цъфтежа и плододаването.";
+
+                }
 
             }
 
 
-            try {
+            else if (
+                temperature <= 10
+            ) {
 
-                const geocodingResponse =
-                    await fetch(
-                        "https://geocoding-api.open-meteo.com/v1/search?name=" +
-                        encodeURIComponent(
-                            savedLocation
+                status =
+                    "🔴 Неблагоприятна температура";
+
+
+                recommendation +=
+                    " Температурата е около " +
+                    Math.round(
+                        temperature
+                    ) +
+                    "°C. Доматите са топлолюбива култура и трябва да се следят за признаци на студов стрес.";
+
+            }
+
+
+            else if (
+                stage &&
+                stage.name.includes("Цъфтеж")
+            ) {
+
+                status =
+                    "🟡 Критична фаза: цъфтеж";
+
+
+                recommendation +=
+                    " Цъфтежът е важен период за формиране на добива. Поддържай равномерни условия и следи внимателно влагата и високите температури.";
+
+
+                if (
+                    isFarm &&
+                    soilMoisture !== null &&
+                    soilMoisture < 0.20 &&
+                    dryConditions
+                ) {
+
+                    recommendation +=
+                        " Моделната влажност в горния почвен слой е около " +
+                        Math.round(
+                            soilMoisture * 100
                         ) +
-                        "&count=1&language=bg&format=json"
-                    );
-
-
-                const geocodingData =
-                    await geocodingResponse.json();
-
-
-                if (
-                    !geocodingData.results ||
-                    geocodingData.results.length === 0
-                ) {
-
-                    throw new Error(
-                        "Местоположението не е намерено"
-                    );
-
-                }
-
-
-                const place =
-                    geocodingData.results[0];
-
-
-                const latitude =
-                    place.latitude;
-
-
-                const longitude =
-                    place.longitude;
-
-
-                const forecastResponse =
-                    await fetch(
-                        "https://api.open-meteo.com/v1/forecast" +
-                        "?latitude=" +
-                        latitude +
-                        "&longitude=" +
-                        longitude +
-                        "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,et0_fao_evapotranspiration" +
-                        "&temperature_unit=celsius" +
-                        "&precipitation_unit=mm" +
-                        "&timezone=auto" +
-                        "&forecast_days=7"
-                    );
-
-
-                if (
-                    !forecastResponse.ok
-                ) {
-
-                    throw new Error(
-                        "Грешка при прогнозата"
-                    );
-
-                }
-
-
-                const forecastData =
-                    await forecastResponse.json();
-
-
-                const daily =
-                    forecastData.daily;
-
-
-                agroForecast = {
-
-                    daily:
-                        daily
-
-                };
-
-
-                const currentCropName =
-                    document.querySelector(
-                        "#crop-details-name"
-                    )?.textContent;
-
-
-                if (
-                    currentCropName &&
-                    currentCropName !== "Култура" &&
-                    agroWeather
-                ) {
-
-                    generateAgroRecommendation(
-                        currentCropName
-                    );
-
-                }
-
-
-                forecastList.innerHTML =
-                    "";
-
-
-                for (
-                    let i = 0;
-                    i < 7;
-                    i++
-                ) {
-
-
-                    const date =
-                        new Date(
-                            daily.time[i]
-                        );
-
-
-                    const dayName =
-                        date.toLocaleDateString(
-                            "bg-BG",
-                            {
-                                weekday:
-                                    "long"
-                            }
-                        );
-
-
-                    const dayNumber =
-                        date.toLocaleDateString(
-                            "bg-BG",
-                            {
-                                day:
-                                    "2-digit",
-
-                                month:
-                                    "2-digit"
-                            }
-                        );
-
-
-                    const weather =
-                        getWeatherDescription(
-                            daily.weather_code[i]
-                        );
-
-
-                    const maxTemp =
-                        Math.round(
-                            daily.temperature_2m_max[i]
-                        );
-
-
-                    const minTemp =
-                        Math.round(
-                            daily.temperature_2m_min[i]
-                        );
-
-
-                    const rain =
-                        daily.precipitation_sum[i];
-
-
-                    const rainProbability =
-                        daily.precipitation_probability_max[i];
-
-
-                    const forecastDay =
-                        document.createElement(
-                            "div"
-                        );
-
-
-                    forecastDay.className =
-                        "forecast-day";
-
-
-                    forecastDay.innerHTML = `
-
-                        <div class="forecast-date">
-
-                            <strong>
-                                ${dayName}
-                            </strong>
-
-                            <span>
-                                ${dayNumber}
-                            </span>
-
-                        </div>
-
-
-                        <div class="forecast-weather">
-
-                            ${weather}
-
-                        </div>
-
-
-                        <div class="forecast-temperature">
-
-                            <strong>
-                                ${maxTemp}°C
-                            </strong>
-
-                            <span>
-                                ${minTemp}°C
-                            </span>
-
-                        </div>
-
-
-                        <div class="forecast-rain">
-
-                            🌧️ ${rain} mm
-
-                            <br>
-
-                            <small>
-                                ${rainProbability}% шанс
-                            </small>
-
-                        </div>
-
-                    `;
-
-
-                    forecastList.appendChild(
-                        forecastDay
-                    );
+                        "%. Провери реалната влажност на почвата.";
 
                 }
 
             }
 
 
-            catch (error) {
+            else if (
+                stage &&
+                stage.name.includes("Плододаване")
+            ) {
 
-                console.error(
-                    error
-                );
+                status =
+                    "🟡 Критична фаза: плододаване";
 
 
-                forecastList.innerHTML =
-                    "<p>Неуспешно зареждане на прогнозата.</p>";
+                recommendation +=
+                    " При плододаване следи особено внимателно водния режим и температурния стрес.";
+
+            }
+
+
+            else if (
+                expectedRain
+            ) {
+
+                status =
+                    "🟢 Очаквани валежи";
+
+
+                recommendation +=
+                    " През следващите 48 часа се очакват около " +
+                    forecastRain.toFixed(
+                        1
+                    ) +
+                    " mm валежи, с максимална вероятност " +
+                    forecastRainProbability +
+                    "%. Съобрази поливането с очакваните валежи.";
+
+            }
+
+
+            else if (
+                isFarm &&
+                soilMoisture !== null &&
+                soilMoisture < 0.20 &&
+                temperature >= 25 &&
+                dryConditions
+            ) {
+
+                status =
+                    "🟡 Ниска почвена влажност";
+
+
+                recommendation +=
+                    " Моделната влажност в горния почвен слой е около " +
+                    Math.round(
+                        soilMoisture * 100
+                    ) +
+                    "%. Температурата е " +
+                    Math.round(
+                        temperature
+                    ) +
+                    "°C, а през следващите 48 часа се очакват малко валежи. Провери реалната влажност на почвата преди поливане.";
+
+            }
+
+
+            else if (
+                isFarm &&
+                temperature >= 30 &&
+                et0 >= 4 &&
+                dryConditions
+            ) {
+
+                status =
+                    "🟡 Повишена нужда от вода";
+
+
+                recommendation +=
+                    " Очаква се повишено атмосферно потребление на вода. ET₀ за деня е около " +
+                    et0.toFixed(
+                        1
+                    ) +
+                    " mm. Следи внимателно почвената влажност.";
+
+            }
+
+
+            else if (
+                strongWind
+            ) {
+
+                status =
+                    "🟡 Силен вятър";
+
+
+                recommendation +=
+                    " Вятърът е около " +
+                    Math.round(
+                        wind
+                    ) +
+                    " km/h. Следи растенията и конструкциите за подпиране.";
+
+            }
+
+
+            else if (
+                highHumidity
+            ) {
+
+                status =
+                    "🟡 Висока влажност на въздуха";
+
+
+                recommendation +=
+                    " Влажността на въздуха е около " +
+                    Math.round(
+                        humidity
+                    ) +
+                    "%. При продължителна висока влажност следи растенията за признаци на гъбни заболявания.";
+
+            }
+
+
+            else if (
+                temperature >= 28 &&
+                humidity < 70 &&
+                dryConditions
+            ) {
+
+                status =
+                    "🟡 Провери влажността";
+
+
+                recommendation +=
+                    " Температурата е " +
+                    Math.round(
+                        temperature
+                    ) +
+                    "°C, влажността на въздуха е " +
+                    Math.round(
+                        humidity
+                    ) +
+                    "% и се очакват малко валежи. Провери почвата. Ако е суха, доматите може да имат нужда от поливане.";
+
+            }
+
+
+            else {
+
+                status =
+                    "🟢 Добри условия за домати";
+
+
+                recommendation +=
+                    " Метеорологичните условия са сравнително подходящи за доматите. Продължи да следиш прогнозата и нуждите на растенията.";
 
             }
 
         }
 
 
-        loadForecast();
+        /* =================================================
+           КРАСТАВИЦИ
+           ================================================= */
 
-    </script>
+        else if (
+            cropKey === "краставици"
+        ) {
 
+            if (
+                highHeat
+            ) {
+
+                status =
+                    "🔴 Висок температурен риск";
+
+
+                recommendation +=
+                    " Температурата е около " +
+                    Math.round(
+                        temperature
+                    ) +
+                    "°C. Следи растенията за топлинен стрес и недостиг на вода.";
+
+            }
+
+
+            else if (
+                stage &&
+                (
+                    stage.name.includes("Плододаване") ||
+                    stage.name.includes("Масово")
+                )
+            ) {
+
+                status =
+                    "🟡 Критична фаза: плододаване";
+
+
+                recommendation +=
+                    " Краставиците са в период на плододаване и имат висока чувствителност към недостиг на вода. Следи редовно влагата.";
+
+
+                if (
+                    isFarm &&
+                    soilMoisture !== null &&
+                    soilMoisture < 0.20
+                ) {
+
+                    recommendation +=
+                        " Моделната влажност на горния почвен слой е около " +
+                        Math.round(
+                            soilMoisture * 100
+                        ) +
+                        "%. Провери реалната влажност на почвата.";
+
+                }
+
+            }
+
+
+            else if (
+                stage &&
+                stage.name.includes("Цъфтеж")
+            ) {
+
+                status =
+                    "🟡 Критична фаза: цъфтеж";
+
+
+                recommendation +=
+                    " Следи влагата и температурите, тъй като растението преминава към образуване на завръзи.";
+
+            }
+
+
+            else if (
+                expectedRain
+            ) {
+
+                status =
+                    "🟢 Очаквани валежи";
+
+
+                recommendation +=
+                    " Очакваните валежи могат да намалят нуждата от допълнително поливане. Съобрази поливането с реалната влажност на почвата.";
+
+            }
+
+
+            else if (
+                highHumidity
+            ) {
+
+                status =
+                    "🟡 Висока влажност";
+
+
+                recommendation +=
+                    " Високата влажност увеличава риска от гъбни заболявания. Следи растенията и осигури добро проветряване.";
+
+            }
+
+
+            else if (
+                strongWind
+            ) {
+
+                status =
+                    "🟡 Силен вятър";
+
+
+                recommendation +=
+                    " Следи растенията за механични повреди и подсигури конструкциите при нужда.";
+
+            }
+
+
+            else {
+
+                status =
+                    "🟢 Подходящи условия за краставици";
+
+
+                recommendation +=
+                    " Продължи да следиш влагата и развитието на растенията.";
+
+            }
+
+        }
+
+
+        /* =================================================
+           ПИПЕР
+           ================================================= */
+
+        else if (
+            cropKey === "пипер"
+        ) {
+
+            if (
+                highHeat
+            ) {
+
+                status =
+                    "🔴 Висок температурен риск";
+
+
+                recommendation +=
+                    " Температурата е около " +
+                    Math.round(
+                        temperature
+                    ) +
+                    "°C. Следи пипера за топлинен стрес и недостиг на вода.";
+
+            }
+
+
+            else if (
+                stage &&
+                stage.name.includes("Цъфтеж")
+            ) {
+
+                status =
+                    "🟡 Критична фаза: цъфтеж";
+
+
+                recommendation +=
+                    " Пиперът е в цъфтеж. Поддържай равномерни условия и следи особено внимателно влагата и температурите.";
+
+            }
+
+
+            else if (
+                stage &&
+                stage.name.includes("Плододаване")
+            ) {
+
+                status =
+                    "🟡 Фаза на плододаване";
+
+
+                recommendation +=
+                    " Пиперът формира плодове. Следи водния режим и избягвай резки промени във влажността.";
+
+            }
+
+
+            else if (
+                expectedRain
+            ) {
+
+                status =
+                    "🟢 Очаквани валежи";
+
+
+                recommendation +=
+                    " Очакваните валежи трябва да се вземат предвид при планиране на поливането.";
+
+            }
+
+
+            else if (
+                lowTemperature
+            ) {
+
+                status =
+                    "🔴 Ниска температура";
+
+
+                recommendation +=
+                    " Температурата е около " +
+                    Math.round(
+                        temperature
+                    ) +
+                    "°C. Пиперът е топлолюбива култура и ниските температури могат да забавят развитието.";
+
+            }
+
+
+            else if (
+                highHumidity
+            ) {
+
+                status =
+                    "🟡 Висока влажност";
+
+
+                recommendation +=
+                    " Следи растенията за признаци на гъбни заболявания при продължително висока влажност.";
+
+            }
+
+
+            else {
+
+                status =
+                    "🟢 Подходящи условия за пипер";
+
+
+                recommendation +=
+                    " Условията са сравнително подходящи за текущата фаза на развитие.";
+
+            }
+
+        }
+
+
+        /* =================================================
+           ЦАРЕВИЦА
+           ================================================= */
+
+        else if (
+            cropKey === "царевица"
+        ) {
+
+            if (
+                highHeat &&
+                stage &&
+                (
+                    stage.name.includes("Цъфтеж") ||
+                    stage.name.includes("опрашване")
+                )
+            ) {
+
+                status =
+                    "🔴 Висок риск в критична фаза";
+
+
+                recommendation +=
+                    " Царевицата е в цъфтеж/опрашване при температура около " +
+                    Math.round(
+                        temperature
+                    ) +
+                    "°C. Това е важен период за формиране на добива. Следи внимателно водния режим.";
+
+            }
+
+
+            else if (
+                stage &&
+                (
+                    stage.name.includes("Цъфтеж") ||
+                    stage.name.includes("опрашване")
+                )
+            ) {
+
+                status =
+                    "🟡 Критична фаза: опрашване";
+
+
+                recommendation +=
+                    " Царевицата е в критичен период около цъфтежа и опрашването. Следи влагата и температурите.";
+
+            }
+
+
+            else if (
+                stage &&
+                stage.name.includes("Наливане")
+            ) {
+
+                status =
+                    "🟡 Критична фаза: наливане на зърното";
+
+
+                recommendation +=
+                    " Зърното се формира и налива. Недостигът на вода през този период може да повлияе на добива. Следи влагата на почвата.";
+
+            }
+
+
+            else if (
+                highHeat
+            ) {
+
+                status =
+                    "🔴 Висок температурен риск";
+
+
+                recommendation +=
+                    " Температурата е около " +
+                    Math.round(
+                        temperature
+                    ) +
+                    "°C. Следи царевицата за топлинен и воден стрес.";
+
+            }
+
+
+            else if (
+                expectedRain
+            ) {
+
+                status =
+                    "🟢 Очаквани валежи";
+
+
+                recommendation +=
+                    " Очакват се около " +
+                    forecastRain.toFixed(
+                        1
+                    ) +
+                    " mm валежи през следващите 48 часа. Съобрази водния режим с тях.";
+
+            }
+
+
+            else if (
+                isFarm &&
+                soilMoisture !== null &&
+                soilMoisture < 0.20 &&
+                temperature >= 25 &&
+                dryConditions
+            ) {
+
+                status =
+                    "🟡 Ниска почвена влажност";
+
+
+                recommendation +=
+                    " Моделната влажност на горния почвен слой е около " +
+                    Math.round(
+                        soilMoisture * 100
+                    ) +
+                    "%. Провери реалната влажност на полето.";
+
+            }
+
+
+            else {
+
+                status =
+                    "🟢 Условията изглеждат подходящи";
+
+
+                recommendation +=
+                    " Условията са сравнително подходящи за текущата фаза на царевицата.";
+
+            }
+
+        }
+
+
+        /* =================================================
+           ПШЕНИЦА
+           ================================================= */
+
+        else if (
+            cropKey === "пшеница"
+        ) {
+
+            if (
+                stage &&
+                (
+                    stage.name.includes("Цъфтеж") ||
+                    stage.name.includes("наливане")
+                )
+            ) {
+
+                status =
+                    "🟡 Критична фаза: формиране на добива";
+
+
+                recommendation +=
+                    " Пшеницата е в репродуктивна фаза, при която условията могат да имат значително значение за формирането и наливането на зърното. Следи влагата, температурата и болестите.";
+
+            }
+
+
+            else if (
+                highHeat
+            ) {
+
+                status =
+                    "🔴 Висок температурен риск";
+
+
+                recommendation +=
+                    " Температурата е около " +
+                    Math.round(
+                        temperature
+                    ) +
+                    "°C. Следи посева за топлинен и воден стрес.";
+
+            }
+
+
+            else if (
+                lowTemperature
+            ) {
+
+                status =
+                    "🔴 Ниска температура";
+
+
+                recommendation +=
+                    " Температурата е около " +
+                    Math.round(
+                        temperature
+                    ) +
+                    "°C. Следи посева според текущата фаза и метеорологичните условия.";
+
+            }
+
+
+            else if (
+                expectedRain
+            ) {
+
+                status =
+                    "🟢 Очаквани валежи";
+
+
+                recommendation +=
+                    " Очакват се около " +
+                    forecastRain.toFixed(
+                        1
+                    ) +
+                    " mm валежи през следващите 48 часа. Следи за прекомерна влажност и развитие на заболявания.";
+
+            }
+
+
+            else if (
+                highHumidity
+            ) {
+
+                status =
+                    "🟡 Висока влажност";
+
+
+                recommendation +=
+                    " Високата влажност може да благоприятства някои гъбни заболявания. Наблюдавай посева.";
+
+            }
+
+
+            else if (
+                strongWind
+            ) {
+
+                status =
+                    "🟡 Силен вятър";
+
+
+                recommendation +=
+                    " Силният вятър може да увеличи изсушаването и механичното натоварване на растенията. Следи посева.";
+
+            }
+
+
+            else {
+
+                status =
+                    "🟢 Условията изглеждат подходящи";
+
+
+                recommendation +=
+                    " Метеорологичните условия са сравнително подходящи за текущата фаза на пшеницата.";
+
+            }
+
+        }
+
+
+        /* =========================
+           ДОПЪЛНИТЕЛНИ ДАННИ
+           ЗА СТОПАНСТВО
+           ========================= */
+
+        if (
+            isFarm &&
+            soilMoisture !== null
+        ) {
+
+            if (
+                soilMoisture < 0.15
+            ) {
+
+                recommendation +=
+                    " Моделната влажност в горния почвен слой е много ниска (" +
+                    Math.round(
+                        soilMoisture * 100
+                    ) +
+                    "%). Провери реалната влажност на почвата.";
+
+            }
+
+            else if (
+                soilMoisture >= 0.15 &&
+                soilMoisture < 0.25
+            ) {
+
+                recommendation +=
+                    " Моделната влажност в горния почвен слой е около " +
+                    Math.round(
+                        soilMoisture * 100
+                    ) +
+                    "%. Добре е да се следи тенденцията.";
+
+            }
+
+        }
+
+
+        /* =========================
+           ET₀
+           ========================= */
+
+        if (
+            isFarm &&
+            et0 >= 4 &&
+            temperature >= 28
+        ) {
+
+            recommendation +=
+                " ET₀ е около " +
+                et0.toFixed(
+                    1
+                ) +
+                " mm за деня, което показва повишено атмосферно потребление на вода.";
+
+        }
+
+
+        /* =========================
+           ФИНАЛЕН РЕЗУЛТАТ
+           ========================= */
+
+        document.querySelector(
+            "#agro-status"
+        ).textContent =
+            status;
+
+
+        document.querySelector(
+            "#agro-recommendation-text"
+        ).textContent =
+            recommendation;
+
+    }
+
+</script>
+
+
+<script>
+
+    async function loadForecast() {
+
+        const savedLocation =
+            localStorage.getItem(
+                "agronavLocation"
+            );
+
+        const forecastList =
+            document.querySelector(
+                "#forecast-list"
+            );
+
+        if (!savedLocation) {
+
+            forecastList.innerHTML =
+                "<p>Няма въведено местоположение.</p>";
+
+            return;
+
+        }
+
+        try {
+
+            const geocodingResponse =
+                await fetch(
+                    "https://geocoding-api.open-meteo.com/v1/search?name=" +
+                    encodeURIComponent(
+                        savedLocation
+                    ) +
+                    "&count=1&language=bg&format=json"
+                );
+
+            if (!geocodingResponse.ok) {
+
+                throw new Error(
+                    "Грешка при намиране на местоположението"
+                );
+
+            }
+
+            const geocodingData =
+                await geocodingResponse.json();
+
+            if (
+                !geocodingData.results ||
+                geocodingData.results.length === 0
+            ) {
+
+                throw new Error(
+                    "Местоположението не е намерено"
+                );
+
+            }
+
+            const place =
+                geocodingData.results[0];
+
+            const latitude =
+                place.latitude;
+
+            const longitude =
+                place.longitude;
+
+            const forecastResponse =
+                await fetch(
+                    "https://api.open-meteo.com/v1/forecast" +
+                    "?latitude=" +
+                    latitude +
+                    "&longitude=" +
+                    longitude +
+                    "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,et0_fao_evapotranspiration" +
+                    "&temperature_unit=celsius" +
+                    "&precipitation_unit=mm" +
+                    "&timezone=auto" +
+                    "&forecast_days=7"
+                );
+
+            if (!forecastResponse.ok) {
+
+                throw new Error(
+                    "Грешка при прогнозата"
+                );
+
+            }
+
+            const forecastData =
+                await forecastResponse.json();
+
+            const daily =
+                forecastData.daily;
+
+            agroForecast = {
+
+                daily:
+                    daily
+
+            };
+
+            const currentCropName =
+                document.querySelector(
+                    "#crop-details-name"
+                )?.textContent;
+
+            if (
+                currentCropName &&
+                currentCropName !== "Култура" &&
+                agroWeather
+            ) {
+
+                generateAgroRecommendation(
+                    currentCropName
+                );
+
+            }
+
+            forecastList.innerHTML =
+                "";
+
+            for (
+                let i = 0;
+                i < 7;
+                i++
+            ) {
+
+                const date =
+                    new Date(
+                        daily.time[i]
+                    );
+
+                const dayName =
+                    date.toLocaleDateString(
+                        "bg-BG",
+                        {
+                            weekday:
+                                "long"
+                        }
+                    );
+
+                const dayNumber =
+                    date.toLocaleDateString(
+                        "bg-BG",
+                        {
+                            day:
+                                "2-digit",
+
+                            month:
+                                "2-digit"
+                        }
+                    );
+
+                const weather =
+                    getWeatherDescription(
+                        daily.weather_code[i]
+                    );
+
+                const maxTemp =
+                    Math.round(
+                        daily.temperature_2m_max[i]
+                    );
+
+                const minTemp =
+                    Math.round(
+                        daily.temperature_2m_min[i]
+                    );
+
+                const rain =
+                    daily.precipitation_sum[i];
+
+                const rainProbability =
+                    daily.precipitation_probability_max[i];
+
+                const forecastDay =
+                    document.createElement(
+                        "div"
+                    );
+
+                forecastDay.className =
+                    "forecast-day";
+
+                forecastDay.innerHTML = `
+
+                    <div class="forecast-date">
+
+                        <strong>
+                            ${dayName}
+                        </strong>
+
+                        <span>
+                            ${dayNumber}
+                        </span>
+
+                    </div>
+
+
+                    <div class="forecast-weather">
+
+                        ${weather}
+
+                    </div>
+
+
+                    <div class="forecast-temperature">
+
+                        <strong>
+                            ${maxTemp}°C
+                        </strong>
+
+                        <span>
+                            ${minTemp}°C
+                        </span>
+
+                    </div>
+
+
+                    <div class="forecast-rain">
+
+                        🌧️ ${rain} mm
+
+                        <br>
+
+                        <small>
+                            ${rainProbability}% шанс
+                        </small>
+
+                    </div>
+
+                `;
+
+                forecastList.appendChild(
+                    forecastDay
+                );
+
+            }
+
+        }
+
+        catch (error) {
+
+            console.error(
+                error
+            );
+
+            forecastList.innerHTML =
+                "<p>Неуспешно зареждане на прогнозата.</p>";
+
+        }
+
+    }
+
+
+    loadForecast();
+
+</script>
 
 </body>
 
