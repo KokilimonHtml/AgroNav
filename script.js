@@ -21,14 +21,14 @@ const backButton =
 
 
 /* =========================================
-   PROFILE → REGISTER
+   PROFILE → LOGIN
    ========================================= */
 
 if (registrationButton) {
 
     registrationButton.addEventListener("click", function () {
 
-        window.location.href = "pages/register.html";
+        window.location.href = "pages/login.html";
 
     });
 
@@ -36,14 +36,14 @@ if (registrationButton) {
 
 
 /* =========================================
-   МОЯТА ГРАДИНА → REGISTER
+   МОЯТА ГРАДИНА → LOGIN
    ========================================= */
 
 if (gardenButton) {
 
     gardenButton.addEventListener("click", function () {
 
-        window.location.href = "pages/register.html";
+        window.location.href = "pages/login.html";
 
     });
 
@@ -92,11 +92,11 @@ if (backButton) {
 
 
 /* =========================================
-   РЕГИСТРАЦИЯ
+   REGISTRATION
    ========================================= */
 
 const registerForm =
-    document.querySelector("form");
+    document.querySelector("#registerForm");
 
 
 if (registerForm) {
@@ -106,9 +106,6 @@ if (registerForm) {
         async function (event) {
 
             event.preventDefault();
-
-
-            /* Вземаме стойностите от формата */
 
             const name =
                 document.querySelector("#name").value.trim();
@@ -129,8 +126,6 @@ if (registerForm) {
                 document.querySelector("#crops").value.trim();
 
 
-            /* Проверка на задължителните полета */
-
             if (
                 !name ||
                 !email ||
@@ -148,8 +143,6 @@ if (registerForm) {
             }
 
 
-            /* Проверка дали Supabase е зареден */
-
             if (
                 typeof supabaseClient === "undefined"
             ) {
@@ -162,10 +155,6 @@ if (registerForm) {
 
             }
 
-
-            /* =========================================
-               СЪЗДАВАНЕ НА АКАУНТ
-               ========================================= */
 
             const {
                 data,
@@ -202,9 +191,21 @@ if (registerForm) {
             }
 
 
-            /* =========================================
-               СЪЗДАВАНЕ НА ПРОФИЛ
-               ========================================= */
+            /*
+               Ако Supabase изисква потвърждение
+               на имейла, няма активна сесия.
+            */
+
+            if (!data.session) {
+
+                alert(
+                    "Регистрацията е успешна. Провери имейла си, за да потвърдиш акаунта."
+                );
+
+                return;
+
+            }
+
 
             const {
                 error: profileError
@@ -236,10 +237,6 @@ if (registerForm) {
             }
 
 
-            /* =========================================
-               ЗАПАЗВАНЕ НА КУЛТУРИТЕ ВРЕМЕННО
-               ========================================= */
-
             if (crops) {
 
                 localStorage.setItem(
@@ -250,9 +247,98 @@ if (registerForm) {
             }
 
 
-            /* =========================================
-               DASHBOARD
-               ========================================= */
+            window.location.href =
+                "dashboard.html";
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   LOGIN
+   ========================================= */
+
+const loginForm =
+    document.querySelector("#loginForm");
+
+
+if (loginForm) {
+
+    loginForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+
+            const email =
+                document.querySelector("#email").value.trim();
+
+            const password =
+                document.querySelector("#password").value;
+
+
+            if (!email || !password) {
+
+                alert(
+                    "Моля, въведи имейл и парола."
+                );
+
+                return;
+
+            }
+
+
+            if (
+                typeof supabaseClient === "undefined"
+            ) {
+
+                alert(
+                    "Грешка: Supabase не е зареден."
+                );
+
+                return;
+
+            }
+
+
+            const {
+                data,
+                error
+            } =
+                await supabaseClient.auth.signInWithPassword({
+
+                    email: email,
+
+                    password: password
+
+                });
+
+
+            if (error) {
+
+                alert(
+                    "Грешка при вход: "
+                    + error.message
+                );
+
+                return;
+
+            }
+
+
+            if (!data.user) {
+
+                alert(
+                    "Входът не беше успешен."
+                );
+
+                return;
+
+            }
+
 
             window.location.href =
                 "dashboard.html";
