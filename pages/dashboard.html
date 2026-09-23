@@ -704,6 +704,17 @@
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../supabase.js"></script>
+
+<script>
+console.log("TEST 1: dashboard зареден");
+console.log("TEST 2: supabaseClient =", supabaseClient);
+
+supabaseClient.auth.getUser().then(result => {
+    console.log("TEST 3: getUser =", result);
+});
+</script>
 
 <script>
 
@@ -875,9 +886,9 @@ async function loadUserProfile() {
         currentProfile.location
     );
 
-    loadUserProfile();
-    
 }
+
+loadUserProfile();
 
 </script>
 
