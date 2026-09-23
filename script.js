@@ -220,42 +220,6 @@ if (registerForm) {
 
                 }
 
-
-                /*
-                   Записваме допълнителната информация
-                   в таблицата profiles.
-                */
-
-                const {
-                    error: profileError
-                } =
-                    await supabaseClient
-                        .from("profiles")
-                        .insert({
-
-                            id: data.user.id,
-
-                            name: name,
-
-                            profile_type: profile,
-
-                            location: location
-
-                        });
-
-
-                if (profileError) {
-
-                    alert(
-                        "Акаунтът е създаден, но профилът не можа да бъде записан: "
-                        + profileError.message
-                    );
-
-                    return;
-
-                }
-
-
                 window.location.href =
                     "dashboard.html";
 
