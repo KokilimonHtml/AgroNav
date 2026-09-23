@@ -711,9 +711,33 @@
 console.log("TEST 1: dashboard зареден");
 console.log("TEST 2: supabaseClient =", supabaseClient);
 
-supabaseClient.auth.getUser().then(result => {
-    console.log("TEST 3: getUser =", result);
-});
+(async function () {
+
+    const {
+        data: {
+            user
+        },
+        error: userError
+    } = await supabaseClient.auth.getUser();
+
+    console.log("USER:", user);
+    console.log("USER ERROR:", userError);
+
+    if (!user) return;
+
+    const {
+        data,
+        error
+    } = await supabaseClient
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+    console.log("PROFILE TEST:", data);
+    console.log("PROFILE ERROR:", error);
+
+})();
 </script>
 
 <script>
