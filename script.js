@@ -272,6 +272,8 @@ if (loginForm) {
 
             event.preventDefault();
 
+            const message =
+                document.querySelector("#loginMessage");
 
             const email =
                 document.querySelector("#email").value.trim();
@@ -280,11 +282,13 @@ if (loginForm) {
                 document.querySelector("#password").value;
 
 
+            message.textContent = "Проверяване...";
+
+
             if (!email || !password) {
 
-                alert(
-                    "Моля, въведи имейл и парола."
-                );
+                message.textContent =
+                    "Моля, въведи имейл и парола.";
 
                 return;
 
@@ -295,9 +299,8 @@ if (loginForm) {
                 typeof supabaseClient === "undefined"
             ) {
 
-                alert(
-                    "Грешка: Supabase не е зареден."
-                );
+                message.textContent =
+                    "Грешка: Supabase не е зареден.";
 
                 return;
 
@@ -319,10 +322,9 @@ if (loginForm) {
 
             if (error) {
 
-                alert(
+                message.textContent =
                     "Грешка при вход: "
-                    + error.message
-                );
+                    + error.message;
 
                 return;
 
@@ -331,13 +333,16 @@ if (loginForm) {
 
             if (!data.user) {
 
-                alert(
-                    "Входът не беше успешен."
-                );
+                message.textContent =
+                    "Входът не беше успешен.";
 
                 return;
 
             }
+
+
+            message.textContent =
+                "Входът е успешен. Зареждане...";
 
 
             window.location.href =
