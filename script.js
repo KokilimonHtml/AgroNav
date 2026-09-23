@@ -122,9 +122,6 @@ if (registerForm) {
             const location =
                 document.querySelector("#location").value.trim();
 
-            const crops =
-                document.querySelector("#crops").value.trim();
-
 
             if (
                 !name ||
@@ -156,99 +153,125 @@ if (registerForm) {
             }
 
 
-            const {
-                data,
-                error
-            } =
-                await supabaseClient.auth.signUp({
+            try {
 
-                    email: email,
-                    password: password
+                const {
+                    data,
+                    error
+                } =
+                    await supabaseClient.auth.signUp({
 
-                });
+                        email: email,
 
+                        password: password,
 
-            if (error) {
+                        options: {
 
-                alert(
-                    "Грешка при регистрацията: "
-                    + error.message
-                );
+                            data: {
 
-                return;
+                                name: name,
 
-            }
+                                profile_type: profile,
 
+                                location: location
 
-            if (!data.user) {
+                            }
 
-                alert(
-                    "Акаунтът не можа да бъде създаден."
-                );
-
-                return;
-
-            }
-
-
-            /*
-               Ако Supabase изисква потвърждение
-               на имейла, няма активна сесия.
-            */
-
-            if (!data.session) {
-
-                alert(
-                    "Регистрацията е успешна. Провери имейла си, за да потвърдиш акаунта."
-                );
-
-                return;
-
-            }
-
-
-            const {
-                error: profileError
-            } =
-                await supabaseClient
-                    .from("profiles")
-                    .insert({
-
-                        id: data.user.id,
-
-                        name: name,
-
-                        profile_type: profile,
-
-                        location: location
+                        }
 
                     });
 
 
-            if (profileError) {
+                if (error) {
+
+                    alert(
+                        "Грешка при регистрацията: "
+                        + error.message
+                    );
+
+                    return;
+
+                }
+
+
+                if (!data.user) {
+
+                    alert(
+                        "Акаунтът не можа да бъде създаден."
+                    );
+
+                    return;
+
+                }
+
+
+                /*
+                   Ако Supabase изисква потвърждение
+                   на имейла.
+                */
+
+                if (!data.session) {
+
+                    alert(
+                        "Регистрацията е успешна. Провери имейла си, за да потвърдиш акаунта."
+                    );
+
+                    return;
+
+                }
+
+
+                /*
+                   Записваме допълнителната информация
+                   в таблицата profiles.
+                */
+
+                const {
+                    error: profileError
+                } =
+                    await supabaseClient
+                        .from("profiles")
+                        .insert({
+
+                            id: data.user.id,
+
+                            name: name,
+
+                            profile_type: profile,
+
+                            location: location
+
+                        });
+
+
+                if (profileError) {
+
+                    alert(
+                        "Акаунтът е създаден, но профилът не можа да бъде записан: "
+                        + profileError.message
+                    );
+
+                    return;
+
+                }
+
+
+                window.location.href =
+                    "dashboard.html";
+
+            } catch (error) {
+
+                console.error(
+                    "Registration error:",
+                    error
+                );
 
                 alert(
-                    "Акаунтът е създаден, но профилът не можа да бъде записан: "
-                    + profileError.message
-                );
-
-                return;
-
-            }
-
-
-            if (crops) {
-
-                localStorage.setItem(
-                    "agronavCrops",
-                    crops
+                    "Възникна неочаквана грешка: "
+                    + error.message
                 );
 
             }
-
-
-            window.location.href =
-                "dashboard.html";
 
         }
     );
