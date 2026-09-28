@@ -2,340 +2,222 @@
    AGRO NAV - ОСНОВЕН JAVASCRIPT
    ========================================= */
 
-
 /* =========================================
-   НАЧАЛНА СТРАНИЦА
+   1. СЕЛЕКТИРАНЕ НА DOM ЕЛЕМЕНТИ
    ========================================= */
 
-const registrationButton =
-    document.querySelector("#RegistrationBut");
+// Бутони
+const registrationButton = document.querySelector("#RegistrationBut");
+const gardenButton = document.querySelector("#MyGarden");
+const newsButton = document.querySelector("#news-button");
+const backButton = document.querySelector("#back-btn");
 
-const gardenButton =
-    document.querySelector("#MyGarden");
+// Менюта / Секции
+const regMenu = document.querySelector(".RegistrationMenu");
+const myGardenMenu = document.querySelector(".MyGardenMenu");
+const newsMenu = document.querySelector(".NewsMenu");
 
-const newsButton =
-    document.querySelector("#news-button");
+// Начални елементи на страницата
+const hero = document.querySelector(".hero");
+const cardOne = document.querySelector(".card-one");
+const cardTwo = document.querySelector(".card-two");
 
-const backButton =
-    document.querySelector("#back-btn");
+// Форми
+const registerForm = document.querySelector("#registerForm");
+const loginForm = document.querySelector("#loginForm");
 
 
 /* =========================================
-   PROFILE → LOGIN
+   2. УПРАВЛЕНИЕ НА ИНТЕРФЕЙСА (UI МЕНЮТА)
    ========================================= */
 
+// Отваряне на Меню Регистрация / Вход
 if (registrationButton) {
-
     registrationButton.addEventListener("click", function () {
+        if (regMenu) regMenu.style.display = "flex";
+        if (cardOne) cardOne.style.display = "none";
+        if (cardTwo) cardTwo.style.display = "none";
+        if (hero) hero.style.display = "none";
+        if (myGardenMenu) myGardenMenu.style.display = "none";
+        if (newsMenu) newsMenu.style.display = "none";
 
-        window.location.href = "pages/login.html";
+        if (backButton) backButton.style.display = "block";
+        registrationButton.style.display = "none";
 
+        document.body.classList.add("menu-open");
     });
-
 }
 
-
-/* =========================================
-   МОЯТА ГРАДИНА → LOGIN
-   ========================================= */
-
+// Отваряне на Меню Моята Градина
 if (gardenButton) {
-
     gardenButton.addEventListener("click", function () {
+        if (myGardenMenu) myGardenMenu.style.display = "flex";
+        if (cardOne) cardOne.style.display = "none";
+        if (cardTwo) cardTwo.style.display = "none";
+        if (hero) hero.style.display = "none";
+        if (regMenu) regMenu.style.display = "none";
+        if (newsMenu) newsMenu.style.display = "none";
 
-        window.location.href = "pages/login.html";
+        if (backButton) backButton.style.display = "block";
+        if (registrationButton) registrationButton.style.display = "none";
 
+        document.body.classList.add("menu-open");
     });
-
 }
 
-
-/* =========================================
-   ПОВЕЧЕ НОВИНИ
-   ========================================= */
-
+// Отваряне на Меню Новини
 if (newsButton) {
-
     newsButton.addEventListener("click", function () {
+        if (newsMenu) newsMenu.style.display = "flex";
+        if (cardOne) cardOne.style.display = "none";
+        if (cardTwo) cardTwo.style.display = "none";
+        if (hero) hero.style.display = "none";
+        if (regMenu) regMenu.style.display = "none";
+        if (myGardenMenu) myGardenMenu.style.display = "none";
 
-        const newsMenu =
-            document.querySelector(".NewsMenu");
+        if (backButton) backButton.style.display = "block";
+        if (registrationButton) registrationButton.style.display = "none";
 
-        if (newsMenu) {
-
-            newsMenu.style.display = "block";
-
-            newsMenu.scrollIntoView({
-                behavior: "smooth"
-            });
-
-        }
-
+        document.body.classList.add("menu-open");
     });
-
 }
 
-
-/* =========================================
-   НАЗАД
-   ========================================= */
-
+// Затваряне на Менюта (Бутон "Назад")
 if (backButton) {
-
     backButton.addEventListener("click", function () {
+        const isGardenOpen = myGardenMenu && myGardenMenu.style.display === "flex";
+        const isNewsOpen = newsMenu && newsMenu.style.display === "flex";
 
-        window.history.back();
+        // Скриваме всички менюта
+        if (regMenu) regMenu.style.display = "none";
+        if (myGardenMenu) myGardenMenu.style.display = "none";
+        if (newsMenu) newsMenu.style.display = "none";
 
+        // Показваме отново началните картички и Hero
+        if (cardOne) cardOne.style.display = "flex";
+        if (cardTwo) cardTwo.style.display = "flex";
+        if (hero) hero.style.display = "flex";
+        if (registrationButton) registrationButton.style.display = "block";
+
+        backButton.style.display = "none";
+        document.body.classList.remove("menu-open");
+
+        // Фокусираме скрола върху съответната картичка
+        if (isGardenOpen && cardOne) {
+            cardOne.scrollIntoView({ behavior: "instant", block: "center" });
+        } else if (isNewsOpen && cardTwo) {
+            cardTwo.scrollIntoView({ behavior: "instant", block: "center" });
+        }
     });
-
 }
 
 
 /* =========================================
-   REGISTRATION
+   3. РЕГИСТРАЦИЯ (SUPABASE)
    ========================================= */
-
-const registerForm =
-    document.querySelector("#registerForm");
-
 
 if (registerForm) {
+    registerForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
 
-    registerForm.addEventListener(
-        "submit",
-        async function (event) {
+        const name = document.querySelector("#name") ? document.querySelector("#name").value.trim() : "";
+        const email = document.querySelector("#email") ? document.querySelector("#email").value.trim() : "";
+        const password = document.querySelector("#password") ? document.querySelector("#password").value : "";
+        const profile = document.querySelector("#profile") ? document.querySelector("#profile").value : "";
+        const location = document.querySelector("#location") ? document.querySelector("#location").value.trim() : "";
+        const crops = document.querySelector("#crops") ? document.querySelector("#crops").value.trim() : "";
 
-            event.preventDefault();
-
-            const name =
-                document.querySelector("#name").value.trim();
-
-            const email =
-                document.querySelector("#email").value.trim();
-
-            const password =
-                document.querySelector("#password").value;
-
-            const profile =
-                document.querySelector("#profile").value;
-
-            const location =
-                document.querySelector("#location").value.trim();
-
-
-            if (
-                !name ||
-                !email ||
-                !password ||
-                !profile ||
-                !location
-            ) {
-
-                alert(
-                    "Моля, попълни всички задължителни полета."
-                );
-
-                return;
-
-            }
-
-
-            if (
-                typeof supabaseClient === "undefined"
-            ) {
-
-                alert(
-                    "Грешка: Supabase не е зареден."
-                );
-
-                return;
-
-            }
-
-
-            try {
-
-                const {
-                    data,
-                    error
-                } =
-                    await supabaseClient.auth.signUp({
-
-                        email: email,
-
-                        password: password,
-
-                        options: {
-
-                            data: {
-
-                                name: name,
-
-                                profile_type: profile,
-
-                                location: location
-
-                            }
-
-                        }
-
-                    });
-
-
-                if (error) {
-
-                    alert(
-                        "Грешка при регистрацията: "
-                        + error.message
-                    );
-
-                    return;
-
-                }
-
-
-                if (!data.user) {
-
-                    alert(
-                        "Акаунтът не можа да бъде създаден."
-                    );
-
-                    return;
-
-                }
-
-
-                /*
-                   Ако Supabase изисква потвърждение
-                   на имейла.
-                */
-
-                if (!data.session) {
-
-                    alert(
-                        "Регистрацията е успешна. Провери имейла си, за да потвърдиш акаунта."
-                    );
-
-                    return;
-
-                }
-
-                window.location.href =
-                    "dashboard.html";
-
-            } catch (error) {
-
-                console.error(
-                    "Registration error:",
-                    error
-                );
-
-                alert(
-                    "Възникна неочаквана грешка: "
-                    + error.message
-                );
-
-            }
-
+        if (!name || !email || !password || !profile || !location) {
+            alert("Моля, попълни всички задължителни полета.");
+            return;
         }
-    );
 
+        if (typeof supabaseClient === "undefined") {
+            alert("Грешка: Supabase не е зареден.");
+            return;
+        }
+
+        // Регистрация в Supabase Auth
+        const { data, error } = await supabaseClient.auth.signUp({
+            email: email,
+            password: password
+        });
+
+        if (error) {
+            alert("Грешка при регистрацията: " + error.message);
+            return;
+        }
+
+        if (!data.user) {
+            alert("Акаунтът не можа да бъде създаден.");
+            return;
+        }
+
+        if (!data.session) {
+            alert("Регистрацията е успешна. Провери имейла си, за да потвърдиш акаунта.");
+            return;
+        }
+
+        // Запис на допълнителните данни в таблица "profiles"
+        const { error: profileError } = await supabaseClient
+            .from("profiles")
+            .insert({
+                id: data.user.id,
+                name: name,
+                profile_type: profile,
+                location: location
+            });
+
+        if (profileError) {
+            alert("Акаунтът е създаден, но профилът не можа да бъде записан: " + profileError.message);
+            return;
+        }
+
+        if (crops) {
+            localStorage.setItem("agronavCrops", crops);
+        }
+
+        window.location.href = "dashboard.html";
+    });
 }
 
 
 /* =========================================
-   LOGIN
+   4. ВХОД / LOGIN (SUPABASE)
    ========================================= */
 
-const loginForm =
-    document.querySelector("#loginForm");
-
-
 if (loginForm) {
+    loginForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
 
-    loginForm.addEventListener(
-        "submit",
-        async function (event) {
+        const email = document.querySelector("#email") ? document.querySelector("#email").value.trim() : "";
+        const password = document.querySelector("#password") ? document.querySelector("#password").value : "";
 
-            event.preventDefault();
-
-            const message =
-                document.querySelector("#loginMessage");
-
-            const email =
-                document.querySelector("#email").value.trim();
-
-            const password =
-                document.querySelector("#password").value;
-
-
-            message.textContent = "Проверяване...";
-
-
-            if (!email || !password) {
-
-                message.textContent =
-                    "Моля, въведи имейл и парола.";
-
-                return;
-
-            }
-
-
-            if (
-                typeof supabaseClient === "undefined"
-            ) {
-
-                message.textContent =
-                    "Грешка: Supabase не е зареден.";
-
-                return;
-
-            }
-
-
-            const {
-                data,
-                error
-            } =
-                await supabaseClient.auth.signInWithPassword({
-
-                    email: email,
-
-                    password: password
-
-                });
-
-
-            if (error) {
-
-                message.textContent =
-                    "Грешка при вход: "
-                    + error.message;
-
-                return;
-
-            }
-
-
-            if (!data.user) {
-
-                message.textContent =
-                    "Входът не беше успешен.";
-
-                return;
-
-            }
-
-
-            message.textContent =
-                "Входът е успешен. Зареждане...";
-
-
-            window.location.href =
-                "dashboard.html";
-
+        if (!email || !password) {
+            alert("Моля, въведи имейл и парола.");
+            return;
         }
-    );
 
+        if (typeof supabaseClient === "undefined") {
+            alert("Грешка: Supabase не е зареден.");
+            return;
+        }
+
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
+
+        if (error) {
+            alert("Грешка при вход: " + error.message);
+            return;
+        }
+
+        if (!data.user) {
+            alert("Входът не беше успешен.");
+            return;
+        }
+
+        window.location.href = "dashboard.html";
+    });
 }
