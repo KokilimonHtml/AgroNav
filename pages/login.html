@@ -10,43 +10,51 @@
     <link rel="stylesheet" href="../style.css">
 </head>
 
-<body>
+<body class="auth-page">
 
-    <h1>Вход</h1>
+    <div class="auth-card">
+        <h1>Вход</h1>
+        <p class="auth-subtitle">Добре дошли отново в AgroNav</p>
 
-    <form id="loginForm">
+        <form id="loginForm" novalidate>
 
-        <label for="email">Имейл</label>
+            <div class="form-group">
+                <label for="email">Имейл</label>
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Въведи имейла си"
+                    required
+                >
+                <span class="error-text">Това поле е задължително</span>
+            </div>
 
-        <input
-            type="email"
-            id="email"
-            placeholder="Въведи имейла си"
-            required
-        >
+            <div class="form-group">
+                <label for="password">Парола</label>
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Въведи паролата си"
+                    required
+                >
+                <span class="error-text">Това поле е задължително</span>
+            </div>
 
-        <label for="password">Парола</label>
+            <button type="submit" class="btn-primary">
+                Влез
+            </button>
 
-        <input
-            type="password"
-            id="password"
-            placeholder="Въведи паролата си"
-            required
-        >
+        </form>
 
-        <button type="submit">
-            Log In
-        </button>
+        <p id="loginMessage"></p>
 
-    </form>
-
-    <p id="loginMessage"></p>
-
-    <p>
-        Нямаш профил?
-        <a href="register.html">Регистрирай се</a>
-    </p>
-
+        <div class="auth-footer">
+            <p>
+                Нямаш профил?
+                <a href="register.html">Регистрирай се</a>
+            </p>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../supabase.js"></script>

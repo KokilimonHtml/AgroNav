@@ -250,6 +250,8 @@ if (registerForm) {
 const loginForm =
     document.querySelector("#loginForm");
 
+    
+
 
 if (loginForm) {
 
@@ -339,3 +341,4 @@ if (loginForm) {
     );
 
 }
+

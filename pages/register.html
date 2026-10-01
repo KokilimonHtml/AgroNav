@@ -3,45 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>AgroNav - Регистрация</title>
-
     <link rel="stylesheet" href="../style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-
 <body>
 
-    <h1>Създай профил</h1>
+    <div class="auth-card">
+        <h1>Създай профил</h1>
+        <p class="auth-subtitle">Добре дошли в AgroNav! Попълнете данните си за достъп.</p>
 
-    <form id="registerForm">
+        <form id="registerForm" novalidate>
+            <div class="form-group">
+                <label for="name">Име</label>
+                <input type="text" id="name" placeholder="Въведи името си" required>
+                <span class="error-text">Това поле е задължително</span>
+            </div>
 
-        <label for="name">Име</label>
-        <input type="text" id="name" placeholder="Въведи името си">
+            <div class="form-group">
+                <label for="email">Имейл</label>
+                <input type="email" id="email" placeholder="Въведи имейла си" required>
+                <span class="error-text">Това поле е задължително</span>
+            </div>
 
-        <label for="email">Имейл</label>
-        <input type="email" id="email" placeholder="Въведи имейла си">
+            <div class="form-group">
+                <label for="password">Парола</label>
+                <input type="password" id="password" placeholder="Въведи парола" required>
+                <span class="error-text">Това поле е задължително</span>
+            </div>
 
-        <label for="password">Парола</label>
-        <input type="password" id="password" placeholder="Въведи парола">
+            <div class="form-group">
+                <label for="profile">Тип профил</label>
+                <select id="profile" required>
+                    <option value="" disabled selected>Избери профил</option>
+                    <option value="home">Домашна градина</option>
+                    <option value="farm">Земеделски производител</option>
+                </select>
+                <span class="error-text">Това поле е задължително</span>
+            </div>
 
-        <label for="profile">Тип профил</label>
+            <div class="form-group">
+                <label for="location">Местоположение</label>
+                <input type="text" id="location" placeholder="Например: Велико Търново" required>
+                <span class="error-text">Това поле е задължително</span>
+            </div>
 
-        <select id="profile">
-            <option value="">Избери профил</option>
-            <option value="home">Домашна градина</option>
-            <option value="farm">Земеделски производител</option>
-        </select>
+            <button type="submit" class="btn-primary">Създай профил</button>
+        </form>
 
-        <label for="location">Местоположение</label>
-        <input type="text" id="location" placeholder="Например: Велико Търново">
-
-        <button type="submit">Създай профил</button>
-
-    </form>
+        <div class="auth-footer">
+            <p>Вече имаш профил? <a href="login.html">Влез оттук</a></p>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../supabase.js"></script>
     <script src="../script.js"></script>
-
 </body>
 </html>
