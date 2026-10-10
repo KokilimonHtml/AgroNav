@@ -19,6 +19,12 @@ const newsButton =
 const backButton =
     document.querySelector("#back-btn");
 
+    const MyGardenMenu= document.querySelector("#MyGardenMenu");
+    const NewsMenu= document.querySelector("#NewsMenu");
+    
+
+
+
 
 /* =========================================
    PROFILE → LOGIN
@@ -34,46 +40,45 @@ if (registrationButton) {
 
 }
 
+function loginAndNavigate(targetPage) {
+    sessionStorage.setItem("redirectAfterLogin", targetPage);
+    window.location.href = "pages/login.html";
+}
 
-/* =========================================
-   МОЯТА ГРАДИНА → LOGIN
-   ========================================= */
+
+function handlePostAuthRedirect() {
+    const redirectTo = sessionStorage.getItem("redirectAfterLogin");
+    sessionStorage.removeItem("redirectAfterLogin");
+
+    if (redirectTo) {
+        window.location.href = redirectTo;
+    } else {
+        window.location.href = "dashboard.html";
+    }
+}
+
+if (registrationButton) {
+    registrationButton.addEventListener("click", function () {
+        sessionStorage.removeItem("redirectAfterLogin");
+        window.location.href = "pages/login.html";
+    });
+}
+
 
 if (gardenButton) {
-
-    gardenButton.addEventListener("click", function () {
-
-        window.location.href = "pages/login.html";
-
-    });
-
+    gardenButton.addEventListener("click", () => loginAndNavigate("dashboard.html"));
 }
-
-
-/* =========================================
-   ПОВЕЧЕ НОВИНИ
-   ========================================= */
+if (MyGardenMenu) {
+    MyGardenMenu.addEventListener("click", () => loginAndNavigate("dashboard.html"));
+}
 
 if (newsButton) {
-
-    newsButton.addEventListener("click", function () {
-
-        const newsMenu =
-            document.querySelector(".NewsMenu");
-
-        if (newsMenu) {
-
-            newsMenu.style.display = "block";
-
-            newsMenu.scrollIntoView({
-                behavior: "smooth"
-            });
-
-        }
-
-    });
-
+    newsButton.addEventListener("click", () => loginAndNavigate("news.html"));
 }
+if (NewsMenu) {
+    NewsMenu.addEventListener("click", () => loginAndNavigate("news.html"));
+}
+
 
 
 /* =========================================
@@ -220,8 +225,8 @@ if (registerForm) {
 
                 }
 
-                window.location.href =
-                    "dashboard.html";
+              handlePostAuthRedirect();
+              
 
             } catch (error) {
 
@@ -334,8 +339,7 @@ if (loginForm) {
                 "Входът е успешен. Зареждане...";
 
 
-            window.location.href =
-                "dashboard.html";
+            handlePostAuthRedirect();
 
         }
     );
