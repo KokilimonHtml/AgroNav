@@ -174,10 +174,10 @@ body {
     background: linear-gradient(135deg, var(--sage) 0%, var(--moss) 100%);
     color: var(--cream);
     border: none;
-    padding: 10px 100px;
+    padding: 10px 20px;
     border-radius: 25px;
     margin-left: auto;
-    font-size: 12px;
+    font-size: 16px;
     transition: all 0.4s ease;
     cursor: pointer;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
