@@ -238,7 +238,11 @@ body {
 #back-btn {
     background-color: var(--sage);
     color: var(--cream-deep);
-    display: none;
+    display: block;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
     padding: 10px 10px;
     border: none;
     border-radius: 6px;
