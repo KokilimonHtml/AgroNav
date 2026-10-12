@@ -26,11 +26,10 @@ function loginAndNavigate(targetPage) {
 function handlePostAuthRedirect() {
     const redirectTo = sessionStorage.getItem("redirectAfterLogin");
     sessionStorage.removeItem("redirectAfterLogin");
-
     if (redirectTo) {
         window.location.href = redirectTo;
     } else {
-        window.location.href = "dashboard.html";
+        window.location.href = "../index.html";
     }
 }
 
@@ -51,14 +50,14 @@ async function checkAuthAndNavigate(targetAction, targetPage) {
 if (RegBut) {
     RegBut.addEventListener("click", async function () {
         await checkAuthAndNavigate(function () {
-        RegMenu.style.display = "flex";
-        CardOne.style.display = "none";
-        CardTwo.style.display = "none";
-        BackBtn.style.display = "block";
-        RegBut.style.display = "none";
-        Hero.style.display = "none";
-        document.body.classList.add("menu-open");
-        }, "RegistrationMenu");
+            if (RegMenu) RegMenu.style.display = "flex";
+            if (CardOne) CardOne.style.display = "none";
+            if (CardTwo) CardTwo.style.display = "none";
+            if (BackBtn) BackBtn.style.display = "block";
+            if (RegBut) RegBut.style.display = "none";
+            if (Hero) Hero.style.display = "none";
+            document.body.classList.add("menu-open");
+        }, "dashboard.html");
     });
 }
 
@@ -66,18 +65,17 @@ if (RegBut) {
 if (MyGarden) {
     MyGarden.addEventListener("click", async function () {
         await checkAuthAndNavigate(function () {
-        if (RegMenu) RegMenu.style.display = "none";
-        if (CardOne) CardOne.style.display = "none";
-        if (CardTwo) CardTwo.style.display = "none";
-        if (BackBtn) BackBtn.style.display = "block";
-        if (RegBut) RegBut.style.display = "none";
-        if (Hero) Hero.style.display = "none";
-        MyGardenMenu.style.display = "flex";
-        document.body.classList.add("menu-open");
-        }, "MyGardenMenu");
+            if (RegMenu) RegMenu.style.display = "none";
+            if (CardOne) CardOne.style.display = "none";
+            if (CardTwo) CardTwo.style.display = "none";
+            if (BackBtn) BackBtn.style.display = "block";
+            if (RegBut) RegBut.style.display = "none";
+            if (Hero) Hero.style.display = "none";
+            if (MyGardenMenu) MyGardenMenu.style.display = "flex";
+            document.body.classList.add("menu-open");
+        }, "dashboard.html");
     });
 }
-
 
 if (NewsBut) {
     NewsBut.addEventListener("click", async function () {
@@ -90,10 +88,9 @@ if (NewsBut) {
             if (Hero) Hero.style.display = "none";
             if (NewsMenu) NewsMenu.style.display = "flex";
             document.body.classList.add("menu-open");
-        }, "NewsMenu");
+        }, "dashboard.html");
     });
 }
-
 
 if (BackBtn) {
     BackBtn.addEventListener("click", function () {
