@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="bg">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AgroNav - Log In</title>
+    <button id="back-btn">←</button>
+
+
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body class="auth-page">
+
+    <div class="auth-card">
+        <h1>Вход</h1>
+        <p class="auth-subtitle">Добре дошли отново в AgroNav</p>
+
+        <form id="loginForm" novalidate>
+
+            <div class="form-group">
+                <label for="email">Имейл</label>
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Въведи имейла си"
+                    required
+                >
+                <span class="error-text">Това поле е задължително</span>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Парола</label>
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Въведи паролата си"
+                    required
+                >
+                <span class="error-text">Това поле е задължително</span>
+            </div>
+
+            <button type="submit" class="btn-primary">
+                Влез
+            </button>
+
+        </form>
+
+        <p id="loginMessage"></p>
+
+        <div class="auth-footer">
+            <p>
+                Нямаш профил?
+                <a href="register.html">Регистрирай се</a>
+            </p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../supabase.js"></script>
+    <script src="../script.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="bg">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AgroNav - Редактирай профила</title>
+
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+
+    <div class="edit-profile-page">
+
+        <div class="edit-profile-header">
+            <a href="../welcome.html" class="dashboard-back-btn">
+                <span>←</span> Назад
+            </a>
+        </div>
+
+
+        <div class="edit-profile-card">
+
+            <h1>Редактирай профила</h1>
+
+            <!-- НОВА СЕКЦИЯ ЗА СНИМКА -->
+            <div class="avatar-upload-section">
+                <div class="avatar-preview-container" id="avatar-preview-container">
+                    <!-- SVG по подразбиране -->
+                    <svg id="avatar-default-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    <!-- Тук ще се показва снимката -->
+                    <img id="avatar-preview-img" src="" alt="Preview" style="display: none;">
+                </div>
+                
+                <label for="avatar-file" class="btn-change-avatar">Смени снимката</label>
+                <input type="file" id="avatar-file" accept="image/*" style="display: none;">
+                <span id="avatar-upload-msg"></span>
+            </div>
+
+
+            <form id="editProfileForm">
+
+                <label for="edit-name">Име</label>
+                <input type="text" id="edit-name" placeholder="Въведи името си" required>
+
+                <label for="edit-email">Имейл (не може да се променя)</label>
+                <input type="email" id="edit-email" disabled>
+
+                <label for="edit-location">Местоположение</label>
+                <input type="text" id="edit-location" placeholder="Например: Велико Търново" required>
+
+                <label for="edit-profile-type">Тип профил</label>
+                <select id="edit-profile-type">
+                    <option value="home">Домашна градина</option>
+                    <option value="farm">Земеделски производител</option>
+                </select>
+
+                <div class="edit-profile-actions">
+                    <button type="submit" class="btn-primary">Запази</button>
+                    <a href="../welcome.html" class="btn-secondary">Отказ</a>
+                </div>
+
+                <p id="edit-message" class="profile-message"></p>
+
+            </form>
+
+
+            <!-- СЕКЦИЯ ЗА ИЗТРИВАНЕ НА ПРОФИЛ -->
+            <div class="delete-account-section">
+                <button type="button" id="show-delete-btn" class="btn-danger">
+                    🗑️ Изтрий профила
+                </button>
+
+                <div id="delete-confirm-box" class="delete-confirm-box" style="display: none;">
+                    <p>За да изтриете профила си завинаги, моля напишете <strong>изтрий</strong> в полето по-долу:</p>
+                    <input type="text" id="delete-confirm-input" placeholder="изтрий" autocomplete="off">
+                    
+                    <div class="delete-actions">
+                        <button type="button" id="cancel-delete-btn" class="btn-secondary">Отказ</button>
+                        <button type="button" id="confirm-delete-btn" class="btn-danger-confirm" disabled>Потвърди изтриване</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../supabase.js"></script>
+
+    <script>
+    let currentUser = null;
+    let currentAvatarUrl = null;
+
+    async function loadProfileForEdit() {
+        if (typeof supabaseClient === "undefined") {
+            window.location.href = "login.html";
+            return;
+        }
+
+        const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+        if (userError || !user) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        currentUser = user;
+
+        const { data: profileData, error: profileError } = await supabaseClient
+            .from("profiles")
+            .select("name, profile_type, location, avatar_url")
+            .eq("id", user.id)
+            .maybeSingle();
+
+        if (profileError) console.error("Грешка при зареждане:", profileError);
+
+        const profile = profileData || {
+            name: user.email ? user.email.split("@")[0] : "",
+            profile_type: "home",
+            location: "",
+            avatar_url: null
+        };
+
+        document.querySelector("#edit-name").value = profile.name || "";
+        document.querySelector("#edit-email").value = user.email || "";
+        document.querySelector("#edit-location").value = profile.location || "";
+        document.querySelector("#edit-profile-type").value = profile.profile_type || "home";
+
+        // Зареждане на аватара
+        if (profile.avatar_url) {
+            currentAvatarUrl = profile.avatar_url;
+            document.querySelector("#avatar-default-svg").style.display = "none";
+            const img = document.querySelector("#avatar-preview-img");
+            img.src = currentAvatarUrl;
+            img.style.display = "block";
+        }
+    }
+
+    loadProfileForEdit();
+
+
+    /* =========================================
+       КАЧВАНЕ НА ПРОФИЛНА СНИМКА
+       ========================================= */
+    const avatarFileInput = document.querySelector("#avatar-file");
+    const avatarMsg = document.querySelector("#avatar-upload-msg");
+
+    if (avatarFileInput) {
+        avatarFileInput.addEventListener("change", async function (event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Проверка за размер (макс 2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                avatarMsg.textContent = "Грешка: Файлът е твърде голям (макс 2MB).";
+                avatarMsg.style.color = "#d32f2f";
+                return;
+            }
+
+            avatarMsg.textContent = "Качване...";
+            avatarMsg.style.color = "var(--forest)";
+
+            const fileExt = file.name.split('.').pop();
+            // Генерираме уникално име за файла
+            const fileName = `${Date.now()}.${fileExt}`;
+            const filePath = `${currentUser.id}/${fileName}`; // Създава папка с ID-то на потребителя
+
+            try {
+                // 1. Качваме файла в Supabase Storage (bucket: avatars)
+                const { error: uploadError } = await supabaseClient.storage
+                    .from('avatars')
+                    .upload(filePath, file, { upsert: true });
+
+                if (uploadError) throw uploadError;
+
+                // 2. Взимаме публичния линк
+                const { data: { publicUrl } } = supabaseClient.storage
+                    .from('avatars')
+                    .getPublicUrl(filePath);
+
+                // 3. Записваме линка в базата данни
+                const { error: dbError } = await supabaseClient
+                    .from("profiles")
+                    .update({ avatar_url: publicUrl })
+                    .eq("id", currentUser.id);
+
+                if (dbError) throw dbError;
+
+                // 4. Обновяваме визуално
+                currentAvatarUrl = publicUrl;
+                document.querySelector("#avatar-default-svg").style.display = "none";
+                const img = document.querySelector("#avatar-preview-img");
+                img.src = publicUrl;
+                img.style.display = "block";
+
+                avatarMsg.textContent = "✅ Снимката е обновена!";
+                avatarMsg.style.color = "var(--forest)";
+
+            } catch (error) {
+                console.error("Грешка при качване:", error);
+                avatarMsg.textContent = "Грешка: " + error.message;
+                avatarMsg.style.color = "#d32f2f";
+            }
+        });
+    }
+
+
+    /* =========================================
+       ЗАПАЗВАНЕ НА ТЕКСТОВИТЕ ДАННИ
+       ========================================= */
+    const editForm = document.querySelector("#editProfileForm");
+
+    if (editForm) {
+        editForm.addEventListener("submit", async function (event) {
+            event.preventDefault();
+            const message = document.querySelector("#edit-message");
+
+            if (!currentUser) {
+                message.textContent = "Грешка: Няма активна сесия.";
+                return;
+            }
+
+            const newName = document.querySelector("#edit-name").value.trim();
+            const newLocation = document.querySelector("#edit-location").value.trim();
+            const newProfileType = document.querySelector("#edit-profile-type").value;
+
+            if (!newName || !newLocation || !newProfileType) {
+                message.textContent = "Моля, попълни всички полета.";
+                return;
+            }
+
+            message.textContent = "Запазване...";
+            message.style.color = "var(--forest)";
+
+            try {
+                const { error } = await supabaseClient
+                    .from("profiles")
+                    .upsert({
+                        id: currentUser.id,
+                        name: newName,
+                        location: newLocation,
+                        profile_type: newProfileType,
+                        avatar_url: currentAvatarUrl // Запазваме и снимката ако има
+                    }, { onConflict: "id" });
+
+                if (error) {
+                    message.textContent = "Грешка: " + error.message;
+                    message.style.color = "#d32f2f";
+                    return;
+                }
+
+                localStorage.setItem("agronavName", newName);
+                localStorage.setItem("agronavProfile", newProfileType);
+                localStorage.setItem("agronavLocation", newLocation);
+
+                message.textContent = "✅ Профилът е обновен успешно.";
+                message.style.color = "var(--forest)";
+
+                setTimeout(function () {
+                    window.location.href = "../welcome.html";
+                }, 1000);
+
+            } catch (e) {
+                console.error(e);
+                message.textContent = "Неочаквана грешка: " + e.message;
+                message.style.color = "#d32f2f";
+            }
+        });
+    }
+
+
+    /* =========================================
+       ЛОГИКА ЗА ИЗТРИВАНЕ НА ПРОФИЛА
+       ========================================= */
+    const showDeleteBtn = document.querySelector("#show-delete-btn");
+    const deleteConfirmBox = document.querySelector("#delete-confirm-box");
+    const cancelDeleteBtn = document.querySelector("#cancel-delete-btn");
+    const confirmDeleteInput = document.querySelector("#delete-confirm-input");
+    const confirmDeleteBtn = document.querySelector("#confirm-delete-btn");
+    const editMessage = document.querySelector("#edit-message");
+
+    if (showDeleteBtn) {
+        showDeleteBtn.addEventListener("click", function () {
+            deleteConfirmBox.style.display = "block";
+            showDeleteBtn.style.display = "none";
+        });
+    }
+
+    if (cancelDeleteBtn) {
+        cancelDeleteBtn.addEventListener("click", function () {
+            deleteConfirmBox.style.display = "none";
+            showDeleteBtn.style.display = "block";
+            confirmDeleteInput.value = "";
+            confirmDeleteBtn.disabled = true;
+            editMessage.textContent = "";
+        });
+    }
+
+    if (confirmDeleteInput) {
+        confirmDeleteInput.addEventListener("input", function (e) {
+            if (e.target.value.trim().toLowerCase() === "изтрий") {
+                confirmDeleteBtn.disabled = false;
+            } else {
+                confirmDeleteBtn.disabled = true;
+            }
+        });
+    }
+
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener("click", async function () {
+            if (!currentUser) return;
+
+            confirmDeleteBtn.textContent = "Изтриване...";
+            confirmDeleteBtn.disabled = true;
+
+            try {
+                const { error } = await supabaseClient.rpc("delete_user");
+
+                if (error) {
+                    editMessage.textContent = "Грешка при изтриване: " + error.message;
+                    editMessage.style.color = "#d32f2f";
+                    confirmDeleteBtn.textContent = "Потвърди изтриване";
+                    confirmDeleteBtn.disabled = false;
+                    return;
+                }
+
+                await supabaseClient.auth.signOut();
+                window.location.href = "../index.html";
+
+            } catch (e) {
+                console.error(e);
+                editMessage.textContent = "Възникна неочаквана грешка.";
+                editMessage.style.color = "#d32f2f";
+                confirmDeleteBtn.textContent = "Потвърди изтриване";
+                confirmDeleteBtn.disabled = false;
+            }
+        });
+    }
+    </script>
+</body>
+</html>
