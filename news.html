@@ -11,7 +11,7 @@
     <div class="dashboard-header">
         <div class="dashboard-header-left">
             <a href="welcome.html" class="dashboard-back-btn">
-                <span>←</span> Назад
+                <span>←</span> Назад към началната страница
             </a>
         </div>
         <div class="dashboard-header-right">
@@ -54,15 +54,27 @@
     setInterval(updateDateTime, 1000);
 
     function timeAgo(date) {
-        const seconds = Math.floor((new Date() - date) / 1000);
-        let interval = seconds / 31536000; if (interval > 1) return Math.floor(interval) + " г.";
-        interval = seconds / 2592000; if (interval > 1) return Math.floor(interval) + " м.";
-        interval = seconds / 86400; if (interval > 1) return Math.floor(interval) + " дни";
-        interval = seconds / 3600; if (interval > 1) return Math.floor(interval) + " ч.";
-        interval = seconds / 60; if (interval > 1) return Math.floor(interval) + " мин.";
-        return Math.floor(seconds) + " сек.";
+    const seconds = Math.floor((new Date() - date) / 1000);
+    let interval = seconds / 31536000; 
+    if (interval >= 1) return Math.floor(interval) + " г.";
+    
+    interval = seconds / 2592000; 
+    if (interval >= 1) return Math.floor(interval) + " м.";
+    
+    interval = seconds / 86400; 
+    if (interval >= 1) {
+        const days = Math.floor(interval);
+        return days === 1 ? "1 ден" : days + " дни";
     }
-
+    
+    interval = seconds / 3600; 
+    if (interval >= 1) return Math.floor(interval) + " ч.";
+    
+    interval = seconds / 60; 
+    if (interval >= 1) return Math.floor(interval) + " мин.";
+    
+    return Math.max(0, Math.floor(seconds)) + " сек.";
+}
     async function loadNews() {
         const grid = document.getElementById("news-grid");
         grid.innerHTML = '<p style="text-align: center; grid-column: 1 / -1;">Зареждане на новини...</p>';
