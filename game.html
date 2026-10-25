@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AgroNav - Мини Игра</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { 
+            background: var(--bg-main); 
+            overflow: hidden; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            margin: 0; 
+        }
+        .game-wrapper { 
+            position: relative; 
+            width: 100%; 
+            max-width: 800px; 
+            padding: 20px; 
+        }
+        .game-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 20px; 
+            background: var(--bg-card); 
+            padding: 15px 30px; 
+            border-radius: 20px; 
+            border: 1px solid var(--border-glass); 
+            backdrop-filter: blur(10px); 
+        }
+        .score-board { 
+            font-size: 24px; 
+            font-weight: 800; 
+            color: var(--accent-green); 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+        }
+        .score-board span#coin-count { 
+            color: #fbbf24; 
+        }
+        .coin-text { display: inline; } 
+        .coin-icon { display: none; font-size: 26px; }
+        
+        .btn-back-game, .btn-reset { 
+            background: var(--bg-input); 
+            color: var(--text-main); 
+            padding: 10px 20px; 
+            border-radius: 12px; 
+            text-decoration: none; 
+            font-weight: 600; 
+            transition: 0.3s; 
+            border: 1px solid var(--border-glass); 
+            cursor: pointer; 
+            font-family: inherit; 
+        }
+        .btn-back-game:hover { border-color: var(--accent-green); }
+        .btn-reset { color: #ef4444; border-color: rgba(239, 68, 68, 0.2); }
+        .btn-reset:hover { background: rgba(239, 68, 68, 0.1); }
+        
+        canvas { 
+            background: #1f2937; 
+            border-radius: 30px; 
+            border: 4px solid var(--accent-green); 
+            box-shadow: 0 0 40px rgba(16, 185, 129, 0.2); 
+            display: block; 
+            margin: 0 auto; 
+            width: 100%; 
+            max-width: 700px; 
+            touch-action: none; 
+        }
+        body.light-theme canvas { 
+            background: #86efac; 
+            border-color: #059669; 
+            box-shadow: 0 0 40px rgba(5, 150, 105, 0.2); 
+        }
+        
+        .mobile-controls { 
+            display: none; 
+            margin-top: 20px; 
+            gap: 15px; 
+        }
+        .mobile-controls button { 
+            width: 65px; 
+            height: 65px; 
+            font-size: 28px; 
+            border-radius: 50%; 
+            background: var(--bg-card); 
+            color: var(--text-main); 
+            border: 2px solid var(--border-glass); 
+            font-weight: bold; 
+            cursor: pointer; 
+            user-select: none; 
+            transition: 0.1s; 
+        }
+        .mobile-controls button:active { 
+            background: var(--accent-green); 
+            color: #000; 
+            transform: scale(0.9); 
+        }
+        
+        @media (max-width: 768px) {
+            .coin-text { display: none; } 
+            .coin-icon { display: inline; }
+            .mobile-controls { display: grid; grid-template-columns: repeat(3, 1fr); justify-items: center; }
+            .mobile-controls .empty { visibility: hidden; }
+            .game-header { flex-direction: column; gap: 15px; }
+            .btn-back-game, .btn-reset { width: 100%; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-wrapper">
+        <div class="game-header">
+            <a href="welcome.html" class="btn-back-game">← Назад</a>
+            <div class="score-board">
+                <span class="coin-text">Монети:</span><span class="coin-icon">🪙</span><span id="coin-count">0</span>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <button class="theme-toggle-btn" title="Смени тема">🌙</button>
+                <button id="reset-game" class="btn-reset">🔄 Отначало</button>
+            </div>
+        </div>
+        <canvas id="gameCanvas" width="700" height="500"></canvas>
+        <div class="mobile-controls">
+            <div class="empty"></div>
+            <button onpointerdown="setMobileDir('up')" onpointerup="setMobileDir(null)">↑</button>
+            <div class="empty"></div>
+            <button onpointerdown="setMobileDir('left')" onpointerup="setMobileDir(null)">←</button>
+            <button onpointerdown="setMobileDir('down')" onpointerup="setMobileDir(null)">↓</button>
+            <button onpointerdown="setMobileDir('right')" onpointerup="setMobileDir(null)">→</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
+    <script src="theme.js"></script>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas"); 
+        const ctx = canvas.getContext("2d"); 
+        const scoreEl = document.getElementById("coin-count");
+        
+        const AudioContext = window.AudioContext || window.webkitAudioContext; 
+        const audioCtx = new AudioContext();
+        
+        function playChaChing() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc1 = audioCtx.createOscillator(); const osc2 = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc1.type = 'sine'; osc2.type = 'triangle'; 
+            osc1.frequency.setValueAtTime(987.77, audioCtx.currentTime); osc2.frequency.setValueAtTime(987.77, audioCtx.currentTime);
+            osc1.frequency.setValueAtTime(1318.51, audioCtx.currentTime + 0.1); osc2.frequency.setValueAtTime(1318.51, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+            osc1.connect(gain); osc2.connect(gain); gain.connect(audioCtx.destination); 
+            osc1.start(); osc2.start(); osc1.stop(audioCtx.currentTime + 0.4); osc2.stop(audioCtx.currentTime + 0.4);
+        }
+        
+        let coins = parseInt(localStorage.getItem("agronavCoins") || "0"); 
+        scoreEl.textContent = coins;
+        
+        const tractor = { x: canvas.width / 2, y: canvas.height / 2, speed: 2.6, angle: 0, targetAngle: 0 };
+        let crops = [], particles = [], floatingTexts = []; 
+        const keys = {}; let mobileDir = null;
+        const emojis = ["🌾", "🍅", "🥕", "🌽", "🍎"]; 
+        const fieldRows = [];
+        
+        for (let i = 0; i < canvas.width; i += 60) fieldRows.push(i);
+        
+        window.addEventListener("keydown", e => { 
+            keys[e.code] = true; 
+            if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Space"].includes(e.code)) e.preventDefault(); 
+        });
+        window.addEventListener("keyup", e => keys[e.code] = false);
+        function setMobileDir(dir) { mobileDir = dir; }
+        
+        function spawnCrops() { 
+            crops = []; 
+            for (let i = 0; i < 6; i++) crops.push({ 
+                x: Math.random() * (canvas.width - 80) + 40, 
+                y: Math.random() * (canvas.height - 80) + 40, 
+                emoji: emojis[Math.floor(Math.random() * emojis.length)], 
+                collected: false, 
+                timeOffset: Math.random() * Math.PI * 2 
+            }); 
+        }
+        spawnCrops();
+        
+        function createParticles(x, y, type) { 
+            const count = type === "dust" ? 2 : 8; 
+            for (let i = 0; i < count; i++) particles.push({ 
+                x: x, y: y, 
+                vx: (Math.random() - 0.5) * (type === "dust" ? 3 : 6), 
+                vy: (Math.random() - 0.5) * (type === "dust" ? 3 : 6), 
+                life: 1, 
+                maxLife: type === "dust" ? 0.5 : 0.8, 
+                color: type === "dust" ? "rgba(150, 120, 90, 0.6)" : "rgba(255, 215, 0, 0.9)", 
+                size: type === "dust" ? Math.random() * 5 + 2 : Math.random() * 4 + 1 
+            }); 
+        }
+        
+        document.getElementById("reset-game").addEventListener("click", async () => { 
+            if(await showConfirm("Сигурни ли сте, че искате да започнете отначало? Всички монети ще бъдат изтрити.", "Нова игра")) { 
+                coins = 0; 
+                scoreEl.textContent = 0; 
+                localStorage.setItem("agronavCoins", 0); 
+                tractor.x = canvas.width / 2; 
+                tractor.y = canvas.height / 2; 
+                tractor.angle = 0; 
+                tractor.targetAngle = 0; 
+                spawnCrops(); 
+                particles = []; 
+                floatingTexts = []; 
+            } 
+        });
+
+        function update(dt) {
+            let dx = 0, dy = 0, moving = false;
+            if (keys["ArrowUp"] || keys["KeyW"] || mobileDir === "up") { dy -= 1; tractor.targetAngle = -Math.PI / 2; moving = true; }
+            if (keys["ArrowDown"] || keys["KeyS"] || mobileDir === "down") { dy += 1; tractor.targetAngle = Math.PI / 2; moving = true; }
+            if (keys["ArrowLeft"] || keys["KeyA"] || mobileDir === "left") { dx -= 1; tractor.targetAngle = Math.PI; moving = true; }
+            if (keys["ArrowRight"] || keys["KeyD"] || mobileDir === "right") { dx += 1; tractor.targetAngle = 0; moving = true; }
+            
+            if (dx !== 0 && dy !== 0) { 
+                dx *= 0.7071; dy *= 0.7071; 
+                if (dx > 0) tractor.targetAngle = dy > 0 ? Math.PI / 4 : -Math.PI / 4; 
+                else if (dx < 0) tractor.targetAngle = dy > 0 ? Math.PI * 0.75 : -Math.PI * 0.75; 
+            }
+            
+            let angleDiff = tractor.targetAngle - tractor.angle; 
+            while (angleDiff > Math.PI) angleDiff -= Math.PI * 2; 
+            while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+            
+            tractor.angle += angleDiff * 0.15; 
+            tractor.x += dx * tractor.speed; 
+            tractor.y += dy * tractor.speed;
+            
+            if (tractor.x < 30) tractor.x = 30; 
+            if (tractor.x > canvas.width - 30) tractor.x = canvas.width - 30; 
+            if (tractor.y < 30) tractor.y = 30; 
+            if (tractor.y > canvas.height - 30) tractor.y = canvas.height - 30;
+            
+            if (moving && Math.random() < 0.3) createParticles(tractor.x - Math.cos(tractor.angle) * 25, tractor.y - Math.sin(tractor.angle) * 25, "dust");
+            
+            crops.forEach(crop => { 
+                if (!crop.collected && Math.hypot(tractor.x - crop.x, tractor.y - crop.y) < 40) { 
+                    crop.collected = true; 
+                    coins++; 
+                    scoreEl.textContent = coins; 
+                    localStorage.setItem("agronavCoins", coins); 
+                    playChaChing(); 
+                    createParticles(crop.x, crop.y, "spark"); 
+                    floatingTexts.push({ x: crop.x, y: crop.y - 20, text: "+1", life: 1 }); 
+                } 
+            });
+            
+            if (crops.every(c => c.collected)) spawnCrops();
+            
+            particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.life -= dt / p.maxLife; }); 
+            particles = particles.filter(p => p.life > 0);
+            
+            floatingTexts.forEach(t => { t.y -= 1.5; t.life -= dt * 1.2; }); 
+            floatingTexts = floatingTexts.filter(t => t.life > 0);
+        }
+
+        function drawEmoji(emoji, x, y, size) { 
+            ctx.font = `${size}px Arial`; 
+            ctx.textAlign = "center"; 
+            ctx.textBaseline = "middle"; 
+            ctx.fillText(emoji, x, y); 
+        }
+        
+        CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) { 
+            if (w < 2 * r) r = w / 2; 
+            if (h < 2 * r) r = h / 2; 
+            this.beginPath(); 
+            this.moveTo(x + r, y); 
+            this.arcTo(x + w, y, x + w, y + h, r); 
+            this.arcTo(x + w, y + h, x, y + h, r); 
+            this.arcTo(x, y + h, x, y, r); 
+            this.arcTo(x, y, x + w, y, r); 
+            this.closePath(); 
+            return this; 
+        }
+        
+        function drawTractor() { 
+            ctx.save(); 
+            ctx.translate(tractor.x, tractor.y); 
+            ctx.rotate(tractor.angle); 
+            ctx.fillStyle = "rgba(0,0,0,0.4)"; 
+            ctx.beginPath(); 
+            ctx.ellipse(0, 8, 25, 20, 0, 0, Math.PI * 2); 
+            ctx.fill(); 
+            ctx.fillStyle = "#222"; 
+            ctx.fillRect(-22, -22, 20, 12); 
+            ctx.fillRect(-22, 10, 20, 12); 
+            ctx.fillRect(14, -16, 12, 8); 
+            ctx.fillRect(14, 8, 12, 8); 
+            ctx.fillStyle = "#10b981"; 
+            ctx.beginPath(); 
+            ctx.roundRect(-16, -16, 34, 32, 6); 
+            ctx.fill(); 
+            ctx.fillStyle = "#059669"; 
+            ctx.beginPath(); 
+            ctx.roundRect(2, -12, 16, 24, 4); 
+            ctx.fill(); 
+            ctx.fillStyle = "#60a5fa"; 
+            ctx.beginPath(); 
+            ctx.roundRect(-12, -10, 14, 20, 4); 
+            ctx.fill(); 
+            ctx.strokeStyle = "#333"; 
+            ctx.lineWidth = 1.5; 
+            ctx.stroke(); 
+            ctx.fillStyle = "#fbbf24"; 
+            ctx.beginPath(); 
+            ctx.arc(18, -8, 4, 0, Math.PI * 2); 
+            ctx.arc(18, 8, 4, 0, Math.PI * 2); 
+            ctx.fill(); 
+            ctx.restore(); 
+        }
+        
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const isLight = document.body.classList.contains('light-theme');
+            ctx.fillStyle = isLight ? "#86efac" : "#1f2937"; 
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.strokeStyle = isLight ? "rgba(0,0,0,0.05)" : "rgba(255,255,255,0.02)"; 
+            ctx.lineWidth = 20;
+            fieldRows.forEach(x => { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke(); });
+            
+            crops.forEach(crop => { 
+                if (!crop.collected) drawEmoji(crop.emoji, crop.x, crop.y + Math.sin(Date.now() / 300 + crop.timeOffset) * 3, 35); 
+            });
+            
+            particles.forEach(p => { 
+                ctx.globalAlpha = p.life; 
+                ctx.fillStyle = p.color; 
+                ctx.beginPath(); 
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); 
+                ctx.fill(); 
+            }); 
+            ctx.globalAlpha = 1;
+            
+            drawTractor();
+            
+            floatingTexts.forEach(t => { 
+                ctx.globalAlpha = t.life; 
+                ctx.fillStyle = "#fbbf24"; 
+                ctx.font = "bold 26px 'Outfit', sans-serif"; 
+                ctx.textAlign = "center"; 
+                ctx.shadowColor = "rgba(0,0,0,0.8)"; 
+                ctx.shadowBlur = 8; 
+                ctx.fillText(t.text, t.x, t.y); 
+                ctx.shadowBlur = 0; 
+            }); 
+            ctx.globalAlpha = 1;
+        }
+        
+        let lastTime = performance.now();
+        function gameLoop(time) { 
+            const dt = (time - lastTime) / 1000; 
+            lastTime = time; 
+            update(dt); 
+            draw(); 
+            requestAnimationFrame(gameLoop); 
+        }
+        requestAnimationFrame(gameLoop);
+    </script>
+</body>
+</html>

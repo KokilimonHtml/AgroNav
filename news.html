@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroNav - Новини</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .news-header { text-align: center; margin-top: 120px; margin-bottom: 40px; }
+        .news-header h1 { font-size: 48px; color: var(--text-main); margin-bottom: 10px; }
+        .news-header p { color: var(--text-muted); font-size: 18px; }
+        .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px; max-width: 1200px; margin: 0 auto; padding: 0 20px 60px; }
+        .news-card { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 20px; padding: 30px; display: flex; flex-direction: column; transition: 0.3s; backdrop-filter: blur(10px); box-shadow: var(--shadow-glass); }
+        .news-card:hover { transform: translateY(-5px); border-color: var(--accent-blue); }
+        .news-card h3 { font-size: 20px; color: var(--text-main); margin-bottom: 15px; font-family: 'Outfit', sans-serif; }
+        .news-meta { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+        .btn-read-more { display: block; margin-top: auto; background: var(--bg-input); color: var(--text-main); text-align: center; padding: 12px; border-radius: 10px; text-decoration: none; font-weight: 600; transition: 0.3s; border: 1px solid var(--border-glass); }
+        .btn-read-more:hover { background: var(--accent-blue); color: #fff; border-color: var(--accent-blue); }
+        .btn-reload-news { display: block; margin: 0 auto 60px; background: var(--accent-green); color: #000; padding: 16px 40px; border: none; border-radius: 30px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.3s; box-shadow: var(--shadow-btn); }
+        .btn-reload-news:hover { transform: translateY(-3px); box-shadow: var(--shadow-btn-hover); }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-header">
+        <div class="header-left">
+            <a href="welcome.html" class="btn-back-game">← Назад</a>
+        </div>
+        <div class="header-right">
+            <button class="theme-toggle-btn" title="Смени тема">🌙</button>
+            <div style="text-align: right; margin-left: 10px;">
+                <div id="date" style="font-size: 12px; color: var(--text-muted);"></div>
+                <div id="clock" style="font-size: 16px; font-weight: 700; color: var(--accent-green);"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="news-header">
+        <h1>Новини от аграрния свят</h1>
+        <p>Актуална информация, събрана специално за теб.</p>
+    </div>
+
+    <div id="news-grid" class="news-grid">
+        <p style="text-align: center; grid-column: 1 / -1; color: var(--text-muted);">Зареждане...</p>
+    </div>
+
+    <button id="reload-news-btn" class="btn-reload-news">🔄 Обнови новините</button>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
+    <script src="theme.js"></script>
+    <script>
+    function updateDateTime() {
+        const now = new Date();
+        document.querySelector("#date").textContent = now.toLocaleDateString("bg-BG", { day: "2-digit", month: "long", year: "numeric" });
+        document.querySelector("#clock").textContent = now.toLocaleTimeString("bg-BG", { hour: "2-digit", minute: "2-digit" });
+    }
+    updateDateTime(); setInterval(updateDateTime, 60000);
+
+    function timeAgo(date) {
+        const s = Math.floor((new Date() - date) / 1000);
+        let i = s / 86400; if (i > 1) return Math.floor(i) + " дни";
+        i = s / 3600; if (i > 1) return Math.floor(i) + " ч.";
+        i = s / 60; if (i > 1) return Math.floor(i) + " мин.";
+        return Math.floor(s) + " сек.";
+    }
+
+    async function loadNews() {
+        const grid = document.getElementById("news-grid");
+        grid.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; color: var(--text-muted);">Зареждане...</p>';
+
+        try {
+            const { data, error } = await supabaseClient.functions.invoke('get-news');
+            if (error) throw error;
+            let articles = data || [];
+            if (articles.length === 0) { grid.innerHTML = '<p>Няма новини.</p>'; return; }
+
+            grid.innerHTML = "";
+            articles.slice(0, 15).forEach(article => {
+                const card = document.createElement('div');
+                card.className = 'news-card';
+                card.innerHTML = `
+                    <h3>${article.title}</h3>
+                    <div class="news-meta">
+                        <span>🕘 ${timeAgo(new Date(article.pubDate))}</span>
+                        <span>🌐 ${article.source || "Agro News"}</span>
+                    </div>
+                    <a href="${article.link}" target="_blank" class="btn-read-more">Прочети повече →</a>
+                `;
+                grid.appendChild(card);
+            });
+        } catch (error) {
+            grid.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; color: #ef4444;">Грешка при зареждане.</p>';
+        }
+    }
+
+    loadNews();
+    document.getElementById("reload-news-btn").addEventListener("click", loadNews);
+    </script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroNav - Бъдещето на земеделието</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="main-page">
+
+    <div id="heading">
+        <div class="header-left">
+            <h1 id="h1">Agro</h1><h1 id="h1-2">Nav</h1>
+        </div>
+        <div class="header-right">
+            <button class="theme-toggle-btn" title="Смени тема">🌙</button>
+            <a href="game.html" class="mini-game-icon-btn">🎮 Мини игра</a>
+            <button id="RegistrationBut">Вход / Регистрация</button>
+        </div>
+    </div>
+
+    <button id="back-btn" style="display:none;">←</button>
+    <div class="RegistrationMenu" style="display:none;"></div>
+    <div class="MyGardenMenu" style="display:none;"></div>
+    <div class="NewsMenu" style="display:none;"></div>
+
+    <div class="hero">
+        <h1 id="hero-title">Твоят дигитален компас</h1>
+        <h1 id="hero-title-2">в земеделието.</h1>
+        <p id="hero-description">Умният начин да планираш, следиш и управляваш твоята реколта. Създадено за модерния фермер.</p>
+    </div>
+
+    <div class="container">
+        <div class="bento-card card-one reveal">
+            <h2 style="color: var(--accent-green);">Управлявай насажденията си</h2>
+            <p>Добави детайлна информация за всяка култура, следи кога е засадена, кога е последното поливане и планирай следващото наторяване с няколко клика.</p>
+            <button id="MyGarden" class="modern-btn">🌱 Отвори моята градина</button>
+        </div>
+
+        <div class="bento-card card-two reveal">
+            <h2 style="color: var(--accent-blue);">Актуални новини</h2>
+            <p>Бъди в крак с всичко, което се случва в аграрния сектор в България и по света.</p>
+            <div class="news-scroller" id="latest-news-container">
+                <p style="color: var(--text-muted);">Зареждане...</p>
+            </div>
+            <button id="news-button" class="modern-btn accent-blue" style="margin-top: 15px;">📰 Виж всички новини</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
+    <script src="theme.js"></script>
+    <script src="script.js"></script>
+
+    <script>
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    function timeAgo(date) {
+        const s = Math.floor((new Date() - date) / 1000);
+        let i = s / 31536000; if (i > 1) return Math.floor(i) + " г.";
+        i = s / 2592000; if (i > 1) return Math.floor(i) + " м.";
+        i = s / 86400; if (i > 1) return Math.floor(i) + " дни";
+        i = s / 3600; if (i > 1) return Math.floor(i) + " ч.";
+        i = s / 60; if (i > 1) return Math.floor(i) + " мин.";
+        return Math.floor(s) + " сек.";
+    }
+
+    async function loadTopNews() {
+        const container = document.getElementById("latest-news-container");
+        try {
+            const { data, error } = await supabaseClient.functions.invoke('get-news');
+            if (error) throw error;
+            let articles = data || [];
+            if (articles.length === 0) { container.innerHTML = "<p>Няма новини.</p>"; return; }
+            
+            container.innerHTML = "";
+            articles.slice(0, 3).forEach(article => {
+                container.innerHTML += `
+                    <div class="news-item">
+                        <h4><a href="${article.link}" target="_blank">${article.title}</a></h4>
+                        <div class="news-meta"><span>🕘 ${timeAgo(new Date(article.pubDate))}</span></div>
+                    </div>
+                `;
+            });
+        } catch (e) { container.innerHTML = "<p>Грешка при зареждане.</p>"; }
+    }
+    loadTopNews();
+
+    (async function () {
+        if (typeof supabaseClient === "undefined") return;
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (session) window.location.replace("welcome.html");
+    })();
+    </script>
+</body>
+</html>

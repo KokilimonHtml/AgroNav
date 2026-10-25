@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,200..1000&display=swap" rel="stylesheet">
+    <title>AgroNav - Добре дошъл</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Тук определяме съотношението на блоковете */
+        .card-one { grid-column: span 4; } /* Моята градина - по-малък */
+        .card-two { grid-column: span 8; } /* Новини - по-голям */
+        
+        @media (max-width: 1024px) {
+            .card-one, .card-two { grid-column: span 12; }
+        }
+    </style>
+</head>
+<body class="welcome-page">
+
+    <div id="heading">
+        <div class="header-left">
+            <h1 id="h1">Agro</h1><h1 id="h1-2">Nav</h1>
+        </div>
+        <div class="header-center">
+            <span class="welcome-greeting" id="welcome-greeting">Здравей...</span>
+        </div>
+        <div class="header-right">
+            <div style="text-align: right; margin-right: 10px;">
+                <div id="welcome-date" style="font-size: 12px; color: var(--text-muted);"></div>
+                <div id="welcome-clock" style="font-size: 16px; font-weight: 700; color: var(--accent-green);"></div>
+            </div>
+            <button class="theme-toggle-btn" title="Смени тема">🌙</button>
+            <a href="game.html" class="mini-game-icon-btn">🎮 Игра</a>
+            <div class="profile-menu-wrapper">
+                <button id="profile-avatar" class="profile-avatar" type="button">
+                    <svg id="avatar-default-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </button>
+                <div id="profile-dropdown" class="profile-dropdown">
+                    <a href="pages/edit-profile.html">✏️ Редактирай профила</a>
+                    <button id="logout-btn">🚪 Излез</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="hero" style="min-height: 50vh; padding-top: 150px;">
+        <h1 id="hero-title" style="font-size: 54px;">Твоят дигитален компас</h1>
+        <h1 id="hero-title-2" style="font-size: 36px;">в земеделието.</h1>
+    </div>
+
+    <div class="container">
+        <!-- Блок 1: Моята градина (по-малък) -->
+        <div class="bento-card card-one reveal">
+            <h2 style="color: var(--accent-green);">Моята градина</h2>
+            <p>Управлявай леглата и насажденията си, следи фазите на развитие и получавай AI анализ за твоите култури.</p>
+            <button id="MyGarden" class="modern-btn">🌱 Влез в градината</button>
+        </div>
+
+        <!-- Блок 2: Новини (по-голям) -->
+        <div class="bento-card card-two reveal">
+            <h2 style="color: var(--accent-purple);">Новини</h2>
+            <p>Най-важното от аграрния свят, събрано на едно място.</p>
+            <div class="news-scroller" id="latest-news-container">
+                <p style="color: var(--text-muted);">Зареждане...</p>
+            </div>
+            <button id="news-button" class="modern-btn accent-purple" style="margin-top: 15px;">📰 Повече новини</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
+    <script src="theme.js"></script>
+
+    <script>
+    // Reveal анимация
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    /* ПРОФИЛ ЛОГИКА */
+    let currentUser = null;
+    let currentProfile = null;
+
+    function updateClock() {
+        const now = new Date();
+        document.querySelector("#welcome-date").textContent = now.toLocaleDateString("bg-BG", { day: "2-digit", month: "short", year: "numeric" });
+        document.querySelector("#welcome-clock").textContent = now.toLocaleTimeString("bg-BG", { hour: "2-digit", minute: "2-digit" });
+    }
+    updateClock(); setInterval(updateClock, 60000);
+
+    async function loadProfile() {
+        if (typeof supabaseClient === "undefined") return;
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        if (!user) { window.location.href = "pages/login.html"; return; }
+        currentUser = user;
+
+        const { data: profileData } = await supabaseClient.from("profiles").select("name, avatar_url").eq("id", user.id).maybeSingle();
+        currentProfile = profileData || { name: user.email.split("@")[0], avatar_url: null };
+        
+        document.querySelector("#welcome-greeting").textContent = `Здравей, ${currentProfile.name}!`;
+
+        if (currentProfile.avatar_url) {
+            document.querySelector("#avatar-default-svg").style.display = "none";
+            const img = document.createElement("img");
+            img.src = currentProfile.avatar_url;
+            document.querySelector("#profile-avatar").appendChild(img);
+        }
+    }
+    loadProfile();
+
+    /* МЕНЮ */
+    document.querySelector("#profile-avatar").addEventListener("click", (e) => {
+        e.stopPropagation();
+        document.querySelector("#profile-dropdown").classList.toggle("open");
+    });
+    document.addEventListener("click", () => document.querySelector("#profile-dropdown").classList.remove("open"));
+    document.querySelector("#logout-btn").addEventListener("click", async () => {
+        await supabaseClient.auth.signOut();
+        window.location.href = "index.html";
+    });
+
+    /* НАВИГАЦИЯ */
+    document.querySelector("#MyGarden").addEventListener("click", () => window.location.href = "pages/dashboard.html");
+    document.querySelector("#news-button").addEventListener("click", () => window.location.href = "news.html");
+
+    /* НОВИНИ */
+    function timeAgo(date) {
+        const s = Math.floor((new Date() - date) / 1000);
+        let i = s / 86400; if (i > 1) return Math.floor(i) + " дни";
+        i = s / 3600; if (i > 1) return Math.floor(i) + " ч.";
+        i = s / 60; if (i > 1) return Math.floor(i) + " мин.";
+        return Math.floor(s) + " сек.";
+    }
+
+    async function loadTopNews() {
+        const container = document.getElementById("latest-news-container");
+        try {
+            const { data, error } = await supabaseClient.functions.invoke('get-news');
+            if (error) throw error;
+            let articles = data || [];
+            if (articles.length === 0) { container.innerHTML = "<p>Няма новини.</p>"; return; }
+            
+            container.innerHTML = "";
+            articles.slice(0, 3).forEach(article => {
+                container.innerHTML += `
+                    <div class="news-item">
+                        <h4><a href="${article.link}" target="_blank">${article.title}</a></h4>
+                        <div class="news-meta"><span>🕘 Преди ${timeAgo(new Date(article.pubDate))}</span></div>
+                    </div>
+                `;
+            });
+        } catch (e) { container.innerHTML = "<p>Грешка.</p>"; }
+    }
+    loadTopNews();
+    </script>
+</body>
+</html>
