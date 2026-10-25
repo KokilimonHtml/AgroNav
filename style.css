@@ -242,6 +242,12 @@ body.light-theme .mini-game-icon-btn:hover { background: rgba(0,0,0,0.1); }
 
 .card-one { grid-column: span 7; }
 .card-two { grid-column: span 5; }
+.welcome-page .garden-description {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
+}
 
 /* Бутони в Bento */
 .modern-btn {
