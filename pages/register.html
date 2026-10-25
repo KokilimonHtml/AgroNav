@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroNav - Регистрация</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        body.auth-page {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+            padding-top: 80px; /* Място за логото */
+            padding-bottom: 40px;
+        }
+        
+        .auth-logo {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            z-index: 10;
+        }
+        .auth-logo h1 { font-size: 28px; margin: 0; font-family: 'Lora', serif; }
+        .auth-logo #h1 { color: var(--text-main); }
+        .auth-logo #h1-2 {
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-left: 4px;
+        }
+
+        /* Компактна карта, точно като при Login */
+        .auth-card {
+            background: var(--bg-card);
+            backdrop-filter: var(--blur-glass);
+            -webkit-backdrop-filter: var(--blur-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 35px 30px;
+            width: 100%;
+            max-width: 380px; 
+            box-shadow: var(--shadow-glass);
+            margin: 0;
+        }
+
+        .auth-card h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            text-align: center;
+            color: var(--text-main);
+        }
+
+        .auth-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        /* Модерни полета с икони */
+        .input-group {
+            position: relative;
+            margin-bottom: 14px; /* Малко по-малко, за да се съберат 5 полета */
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 12px 15px 12px 40px; /* Място за иконата */
+            background: var(--bg-input);
+            border: 1px solid var(--border-glass);
+            border-radius: 10px;
+            color: var(--text-main);
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        /* Стил за падащото меню */
+        .input-group select {
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            padding-right: 40px; /* Място за стрелкичката */
+        }
+
+        .select-arrow {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            stroke: var(--text-muted);
+            pointer-events: none;
+            transition: stroke 0.3s ease;
+        }
+
+        .input-group select:focus ~ .select-arrow {
+            stroke: var(--accent-green);
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            border-color: var(--accent-green);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+            outline: none;
+        }
+
+        /* Икони в полетата */
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            stroke: var(--text-muted);
+            pointer-events: none;
+            transition: stroke 0.3s ease;
+        }
+
+        .input-group input:focus ~ .input-icon,
+        .input-group select:focus ~ .input-icon {
+            stroke: var(--accent-green);
+        }
+
+        /* Оченце за парола */
+        .toggle-password {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            transition: color 0.2s;
+        }
+
+        .toggle-password:hover {
+            color: var(--accent-green);
+        }
+
+        .toggle-password svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+        }
+
+        /* Бутон */
+        .auth-card .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-green-hover));
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-family: inherit;
+        }
+
+        .auth-card .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-btn-hover);
+        }
+
+        /* Текстове за грешки */
+        .error-text {
+            display: none;
+            color: #ef4444;
+            font-size: 12px;
+            margin-top: 5px;
+            font-weight: 500;
+            padding-left: 2px;
+        }
+
+        .auth-card form.submitted input:invalid,
+        .auth-card form.submitted select:invalid {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .auth-card form.submitted .input-group:has(input:invalid) .error-text,
+        .auth-card form.submitted .input-group:has(select:invalid) .error-text {
+            display: block;
+        }
+    </style>
+</head>
+<body class="auth-page">
+
+    <!-- Бутон Назад -->
+    <a href="../index.html" class="btn-back-game" style="position: absolute; top: 20px; left: 20px; z-index: 10; text-decoration: none;">← Назад</a>
+
+    <!-- Лого -->
+    <a href="../index.html" class="auth-logo">
+        <h1 id="h1">Agro</h1><h1 id="h1-2">Nav</h1>
+    </a>
+
+    <!-- Тема -->
+    <button class="theme-toggle-btn" style="position:absolute; top:20px; right:20px; z-index: 10;" title="Смени тема">🌙</button>
+
+    <div class="auth-card">
+        <h1>Създай профил</h1>
+        <p class="auth-subtitle">Добре дошли в AgroNav!</p>
+
+        <form id="registerForm" novalidate>
+            
+            <!-- Name -->
+            <div class="input-group">
+                <input type="text" id="name" placeholder="Име" required>
+                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <span class="error-text">Задължително поле</span>
+            </div>
+            
+            <!-- Email -->
+            <div class="input-group">
+                <input type="email" id="email" placeholder="Имейл адрес" required>
+                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                <span class="error-text">Задължително поле</span>
+            </div>
+            
+            <!-- Password -->
+            <div class="input-group">
+                <input type="password" id="password" placeholder="Парола" required>
+                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                <button type="button" class="toggle-password" onclick="togglePasswordVisibility('password', this)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </button>
+                <span class="error-text">Задължително поле</span>
+            </div>
+            
+            <!-- Profile Type -->
+            <div class="input-group">
+                <select id="profile" required style="color: var(--text-muted);">
+                    <option value="" disabled selected>Тип профил</option>
+                    <option value="home" style="color: var(--text-main);">Домашна градина</option>
+                    <option value="farm" style="color: var(--text-main);">Земеделски производител</option>
+                    <option value="flowers" style="color: var(--text-main);">Цветя</option>
+                </select>
+                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+                
+                <!-- Стрелкичка на селекта -->
+                <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                
+                <span class="error-text">Задължително поле</span>
+            </div>
+            
+            <!-- Location -->
+            <div class="input-group">
+                <input type="text" id="location" placeholder="Населено място" required>
+                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                <span class="error-text">Задължително поле</span>
+            </div>
+            
+            <button type="submit" class="btn-primary">Създай профил</button>
+        </form>
+
+        <div class="auth-footer" style="margin-top: 20px; text-align: center; font-size: 14px;">
+            <p style="color: var(--text-muted);">Вече имаш профил? <a href="login.html" style="color: var(--accent-green); text-decoration: none; font-weight: 600;">Влез оттук</a></p>
+        </div>
+    </div>
+
+    <script>
+        function togglePasswordVisibility(inputId, btn) {
+            const input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text";
+                btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+            } else {
+                input.type = "password";
+                btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+            }
+        }
+
+        // Промяна на цвета на текста в select при избор
+        document.getElementById('profile').addEventListener('change', function() {
+            this.style.color = 'var(--text-main)';
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../supabase.js"></script>
+    <script src="../theme.js"></script>
+    <script src="../script.js"></script>
+</body>
+</html>

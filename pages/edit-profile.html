@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroNav - Редактирай профила</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .edit-profile-page { min-height: 100vh; width: 100%; padding: 30px 20px 60px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; }
+        .edit-profile-header { width: 100%; max-width: 900px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .edit-profile-card { width: 100%; max-width: 520px; margin: 0 auto; padding: 40px; background: var(--bg-card); backdrop-filter: var(--blur-glass); border: 1px solid var(--border-glass); border-radius: var(--radius-xl); box-shadow: var(--shadow-glass); box-sizing: border-box; }
+        .edit-profile-card h1 { color: var(--text-main); font-family: "Lora", serif; text-align: center; margin-top: 0; margin-bottom: 30px; font-size: 28px; }
+        .edit-profile-card label { display: block; margin-bottom: 8px; color: var(--text-muted); font-weight: 600; font-size: 14px; }
+        .edit-profile-card input, .edit-profile-card select { width: 100%; padding: 14px 16px; margin-bottom: 18px; border: 1px solid var(--border-glass); border-radius: var(--radius-sm); background: var(--bg-input); font-size: 15px; box-sizing: border-box; font-family: inherit; color: var(--text-main); transition: border-color 0.2s ease; }
+        .edit-profile-card input:focus, .edit-profile-card select:focus { outline: none; border-color: var(--accent-green); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2); }
+        .edit-profile-card input:disabled { opacity: 0.5; cursor: not-allowed; }
+        .avatar-upload-section { display: flex; flex-direction: column; align-items: center; margin-bottom: 25px; }
+        .avatar-preview-container { position: relative; width: 110px; height: 110px; border-radius: 50%; margin-bottom: 15px; box-shadow: var(--shadow-glass); background: var(--accent-green); overflow: hidden; display: flex; justify-content: center; align-items: center; border: 2px solid var(--border-glass); }
+        .avatar-preview-container img { width: 100%; height: 100%; object-fit: cover; display: none; }
+        .avatar-preview-container svg { width: 50px; height: 50px; color: var(--bg-main); }
+        .btn-change-avatar { background: var(--bg-input); color: var(--text-main); border: 1px solid var(--border-glass); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .btn-change-avatar:hover { background: var(--accent-green); color: #000; }
+        #avatar-upload-msg { display: block; margin-top: 8px; font-size: 12px; font-weight: 600; color: var(--accent-green); }
+        .edit-profile-actions { display: flex; gap: 12px; margin-top: 10px; margin-bottom: 5px; }
+        .edit-profile-actions button, .edit-profile-actions a { flex: 1; padding: 14px 20px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 700; cursor: pointer; text-align: center; text-decoration: none; box-sizing: border-box; transition: 0.3s; font-family: inherit; }
+        .btn-primary { background: linear-gradient(135deg, var(--accent-green), var(--accent-green-hover)); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: var(--shadow-btn-hover); }
+        .btn-secondary { background: var(--bg-input); color: var(--text-main); border: 1px solid var(--border-glass); }
+        .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+        .profile-message { text-align: center; margin: 12px 0 0; font-weight: 600; color: var(--accent-green); font-size: 14px; min-height: 18px; }
+        .delete-account-section { margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border-glass); }
+        .delete-confirm-box { margin-top: 15px; padding: 15px; background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: var(--radius-sm); text-align: left; }
+        .delete-confirm-box p { margin: 0 0 10px 0; font-size: 13px; color: #ef4444; }
+        .delete-confirm-box input { width: 100%; padding: 10px; border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 8px; font-size: 14px; box-sizing: border-box; margin-bottom: 12px; background: var(--bg-input); color: var(--text-main); }
+        .delete-actions { display: flex; gap: 12px; }
+        .delete-actions button { flex: 1; padding: 13px 20px; font-size: 15px; font-weight: 700; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; transition: 0.3s; }
+        .btn-danger { display: block; width: 100%; padding: 12px 20px; margin-top: 20px; border: none; border-radius: var(--radius-sm); background: rgba(239, 68, 68, 0.1); color: #ef4444; font-size: 15px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .btn-danger:hover { background: rgba(239, 68, 68, 0.2); }
+        .btn-danger-confirm { background: #ef4444; color: white; }
+        .btn-danger-confirm:disabled { opacity: 0.4; cursor: not-allowed; }
+        @media (max-width: 768px) { .edit-profile-card { padding: 30px 20px; } .edit-profile-actions, .delete-actions { flex-direction: column; } }
+    </style>
+</head>
+<body>
+
+    <div class="edit-profile-page">
+        <div class="edit-profile-header">
+            <a href="../welcome.html" class="btn-back-game" style="text-decoration:none;">← Назад</a>
+            <button class="theme-toggle-btn" title="Смени тема">🌙</button>
+        </div>
+
+        <div class="edit-profile-card">
+            <h1>Редактирай профила</h1>
+
+            <div class="avatar-upload-section">
+                <div class="avatar-preview-container">
+                    <svg id="avatar-default-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    <img id="avatar-preview-img" src="" alt="Preview" style="display: none;">
+                </div>
+                <label for="avatar-file" class="btn-change-avatar">Смени снимката</label>
+                <input type="file" id="avatar-file" accept="image/*" style="display: none;">
+                <span id="avatar-upload-msg"></span>
+            </div>
+
+            <form id="editProfileForm">
+                <label for="edit-name">Име</label>
+                <input type="text" id="edit-name" placeholder="Въведи името си" required>
+
+                <label for="edit-email">Имейл (не може да се променя)</label>
+                <input type="email" id="edit-email" disabled>
+
+                <label for="edit-location">Местоположение</label>
+                <input type="text" id="edit-location" placeholder="Например: Велико Търново" required>
+
+                <label for="edit-profile-type">Тип профил</label>
+                <select id="edit-profile-type">
+                    <option value="home">Домашна градина</option>
+                    <option value="farm">Земеделски производител</option>
+                </select>
+
+                <div class="edit-profile-actions">
+                    <button type="submit" class="btn-primary">Запази</button>
+                    <a href="../welcome.html" class="btn-secondary">Отказ</a>
+                </div>
+
+                <p id="edit-message" class="profile-message"></p>
+            </form>
+
+            <div class="delete-account-section">
+                <button type="button" id="show-delete-btn" class="btn-danger">🗑️ Изтрий профила</button>
+                <div id="delete-confirm-box" class="delete-confirm-box" style="display: none;">
+                    <p>За да изтриете профила си завинаги, напишете <strong>изтрий</strong> по-долу:</p>
+                    <input type="text" id="delete-confirm-input" placeholder="изтрий" autocomplete="off">
+                    <div class="delete-actions">
+                        <button type="button" id="cancel-delete-btn" class="btn-secondary">Отказ</button>
+                        <button type="button" id="confirm-delete-btn" class="btn-danger-confirm" disabled>Потвърди</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../supabase.js"></script>
+    <script src="../theme.js"></script>
+
+    <script>
+    let currentUser = null; let currentAvatarUrl = null;
+    let originalProfileType = "home"; // За проверка при смяна
+
+    async function loadProfileForEdit() {
+        if (typeof supabaseClient === "undefined") return;
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (!session) { window.location.href = "login.html"; return; }
+        currentUser = session.user;
+
+        const { data: profileData } = await supabaseClient.from("profiles").select("name, profile_type, location, avatar_url").eq("id", currentUser.id).maybeSingle();
+        const profile = profileData || { name: currentUser.email ? currentUser.email.split("@")[0] : "", profile_type: "home", location: "", avatar_url: null };
+
+        document.querySelector("#edit-name").value = profile.name || "";
+        document.querySelector("#edit-email").value = currentUser.email || "";
+        document.querySelector("#edit-location").value = profile.location || "";
+        document.querySelector("#edit-profile-type").value = profile.profile_type || "home";
+        
+        originalProfileType = profile.profile_type; // Запазваме оригиналния тип
+
+        if (profile.avatar_url) {
+            currentAvatarUrl = profile.avatar_url;
+            document.querySelector("#avatar-default-svg").style.display = "none";
+            const img = document.querySelector("#avatar-preview-img");
+            img.src = currentAvatarUrl; img.style.display = "block";
+        }
+    }
+    loadProfileForEdit();
+
+    // Проверка за смяна на типа профил
+    document.querySelector("#edit-profile-type").addEventListener("change", async function(e) {
+        const newType = e.target.value;
+        if (newType !== originalProfileType) {
+            const isConfirmed = await showConfirm(
+                "Сигурни ли сте, че искате да смените типа на профила си? Това ще промени начина, по който изглежда Dashboard-а и какви култури можете да добавяте.",
+                "Смяна на типа профил"
+            );
+            
+            if (!isConfirmed) {
+                e.target.value = originalProfileType; // Връщаме старата стойност
+            }
+        }
+    });
+
+    document.querySelector("#avatar-file").addEventListener("change", async function (event) {
+        const file = event.target.files[0]; if (!file) return;
+        const avatarMsg = document.querySelector("#avatar-upload-msg");
+
+        if (file.size > 2 * 1024 * 1024) { 
+            avatarMsg.textContent = "Грешка: Файлът е твърде голям (макс 2MB)."; 
+            avatarMsg.style.color = "#ef4444"; 
+            return; 
+        }
+
+        avatarMsg.textContent = "Качване..."; avatarMsg.style.color = "var(--accent-green)";
+        const fileExt = file.name.split('.').pop(); const fileName = `${Date.now()}.${fileExt}`; const filePath = `${currentUser.id}/${fileName}`;
+
+        try {
+            const { error: uploadError } = await supabaseClient.storage.from('avatars').upload(filePath, file, { upsert: true });
+            if (uploadError) throw uploadError;
+            const { data: { publicUrl } } = supabaseClient.storage.from('avatars').getPublicUrl(filePath);
+            const { error: dbError } = await supabaseClient.from("profiles").update({ avatar_url: publicUrl }).eq("id", currentUser.id);
+            if (dbError) throw dbError;
+
+            currentAvatarUrl = publicUrl; document.querySelector("#avatar-default-svg").style.display = "none";
+            const img = document.querySelector("#avatar-preview-img"); img.src = publicUrl; img.style.display = "block";
+            avatarMsg.textContent = "✅ Снимката е обновена!"; avatarMsg.style.color = "var(--accent-green)";
+        } catch (error) { avatarMsg.textContent = "Грешка: " + error.message; avatarMsg.style.color = "#ef4444"; }
+    });
+
+    document.querySelector("#editProfileForm").addEventListener("submit", async function (event) {
+        event.preventDefault();
+        const message = document.querySelector("#edit-message");
+        if (!currentUser) { message.textContent = "Грешка: Няма сесия."; return; }
+
+        const newName = document.querySelector("#edit-name").value.trim();
+        const newLocation = document.querySelector("#edit-location").value.trim();
+        const newProfileType = document.querySelector("#edit-profile-type").value;
+
+        if (!newName || !newLocation || !newProfileType) { message.textContent = "Моля, попълни всички полета."; return; }
+
+        message.textContent = "Запазване..."; message.style.color = "var(--accent-green)";
+
+        try {
+            const { error } = await supabaseClient.from("profiles").upsert({
+                id: currentUser.id, name: newName, location: newLocation, profile_type: newProfileType, avatar_url: currentAvatarUrl
+            }, { onConflict: "id" });
+
+            if (error) throw error;
+            message.textContent = "✅ Профилът е обновен успешно.";
+            setTimeout(() => { window.location.href = "../welcome.html"; }, 1000);
+        } catch (e) { 
+            message.textContent = "Неочаквана грешка: " + e.message; 
+            message.style.color = "#ef4444"; 
+        }
+    });
+
+    document.querySelector("#show-delete-btn").addEventListener("click", () => { document.querySelector("#delete-confirm-box").style.display = "block"; document.querySelector("#show-delete-btn").style.display = "none"; });
+    document.querySelector("#cancel-delete-btn").addEventListener("click", () => { document.querySelector("#delete-confirm-box").style.display = "none"; document.querySelector("#show-delete-btn").style.display = "block"; document.querySelector("#delete-confirm-input").value = ""; document.querySelector("#confirm-delete-btn").disabled = true; });
+    document.querySelector("#delete-confirm-input").addEventListener("input", (e) => { document.querySelector("#confirm-delete-btn").disabled = e.target.value.trim().toLowerCase() !== "изтрий"; });
+    
+    document.querySelector("#confirm-delete-btn").addEventListener("click", async () => {
+        const btn = document.querySelector("#confirm-delete-btn"); 
+        btn.textContent = "Изтриване..."; 
+        btn.disabled = true;
+        
+        const { error } = await supabaseClient.rpc("delete_user");
+        if (error) { 
+            await showAlert("Грешка при изтриване: " + error.message, "Грешка");
+            btn.textContent = "Потвърди"; 
+            btn.disabled = false; 
+            return; 
+        }
+        await supabaseClient.auth.signOut(); 
+        window.location.href = "../index.html";
+    });
+    </script>
+</body>
+</html>
