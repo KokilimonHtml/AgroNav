@@ -145,7 +145,7 @@
             if (articles.length === 0) { container.innerHTML = "<p>Няма новини.</p>"; return; }
             
             container.innerHTML = "";
-            articles.slice(0, 3).forEach(article => {
+            articles.slice(0, 2).forEach(article => {
                 container.innerHTML += `
                     <div class="news-item">
                         <h4><a href="${article.link}" target="_blank">${article.title}</a></h4>

@@ -286,20 +286,12 @@ body.light-theme .mini-game-icon-btn:hover { background: rgba(0,0,0,0.1); }
    ========================================= */
 .news-scroller {
     display: flex;
-    gap: 20px;
-    overflow-x: auto;
-    padding-bottom: 15px;
-    scroll-snap-type: x mandatory;
+    flex-direction: column;
+    gap: 12px;
 }
 
-.news-scroller::-webkit-scrollbar { height: 6px; }
-.news-scroller::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
-.news-scroller::-webkit-scrollbar-thumb { background: var(--accent-green); border-radius: 10px; }
-body.light-theme .news-scroller::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); }
-
 .news-item {
-    min-width: 300px;
-    scroll-snap-align: start;
+    min-width: 0;
     background: var(--bg-input);
     border: 1px solid var(--border-glass);
     border-radius: var(--radius-lg);
@@ -506,7 +498,6 @@ body.light-theme .crop-stage-progress { background: rgba(0,0,0,0.1); }
     #hero-title { font-size: 42px; }
     #hero-title-2 { font-size: 32px; }
     .bento-card { padding: 25px; }
-    .news-item { min-width: 260px; }
     .container { gap: 16px; }
     .add-crop-form { grid-template-columns: 1fr; }
     .crop-info-grid { grid-template-columns: 1fr; }
