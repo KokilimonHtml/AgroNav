@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroNav - Моята градина</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .left-col { position: relative; z-index: 10; }
+        .right-col { position: relative; z-index: 5; }
+        
+        /* Задаваме z-index на самите панели, за да може падащото меню да излиза надолу */
+        .left-col .dash-panel:nth-child(1) { position: relative; z-index: 50; }
+        .left-col .dash-panel:nth-child(2) { position: relative; z-index: 40; }
+        .left-col .dash-panel:nth-child(3) { position: relative; z-index: 30; }
+
+        /* Custom Dropdown */
+        .custom-select-wrapper { position: relative; width: 100%; user-select: none; font-family: inherit; }
+        .custom-select-trigger {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 14px 16px; background: var(--bg-input); border: 1px solid var(--border-glass);
+            border-radius: var(--radius-sm); color: var(--text-main); cursor: pointer; font-size: 15px; transition: 0.3s;
+        }
+        .custom-select-trigger:hover { border-color: var(--accent-green); }
+
+        /* ПО-ШИРОКО ПАДАЩО МЕНЮ */
+        .custom-options {
+            position: absolute; top: 100%; left: 0;
+            width: 540px; max-width: 92vw;
+            margin-top: 5px;
+            background: var(--bg-main); border: 1px solid var(--border-glass); border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-glass); z-index: 1000; display: none; flex-direction: column;
+            max-height: 420px; overflow-y: auto; padding: 12px;
+        }
+        .custom-options.open { display: flex; }
+        .custom-search { width: 100%; padding: 10px; margin-bottom: 12px; border-radius: 8px; border: 1px solid var(--border-glass); background: var(--bg-card); color: var(--text-main); box-sizing: border-box; }
+        
+        /* ФИЛТРИ - 2 КОЛОНИ */
+        .category-filters { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr;
+            gap: 6px; 
+            margin-bottom: 12px; 
+            padding-bottom: 12px; 
+            border-bottom: 1px solid var(--border-glass); 
+        }
+        .cat-filter-label {
+            display: inline-flex; 
+            align-items: center; 
+            gap: 6px;
+            font-size: 13px; 
+            color: var(--text-main); 
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.05); 
+            padding: 6px 12px;
+            border-radius: 999px; 
+            border: 1px solid transparent; 
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        body.light-theme .cat-filter-label { background: rgba(0, 0, 0, 0.05); }
+        
+        /* Фиксираме размера на чекбокса, за да не се разтяга */
+        .cat-filter-label input[type="checkbox"] {
+            width: 14px !important; 
+            height: 14px !important; 
+            margin: 0 !important; 
+            cursor: pointer; 
+            accent-color: var(--accent-green);
+        }
+        
+        /* Оцветяване на избрания филтър */
+        .cat-filter-label:has(input:checked) {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+            font-weight: 700;
+        }
+
+        /* КУЛТУРИ - 2 НА РЕД */
+        #crop-options-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+
+        .custom-option {
+            padding: 10px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px;
+            transition: 0.2s; font-size: 14px;
+            min-width: 0;
+            overflow: hidden;
+        }
+        .custom-option span:first-child { flex-shrink: 0; }
+        .custom-option span:last-child {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            min-width: 0;
+        }
+        .custom-option:hover { background: var(--bg-card); color: var(--accent-green); }
+        .custom-option.disabled { opacity: 0.3; pointer-events: none; }
+
+        /* AI Анализ на дата */
+        .ai-date-analysis { margin-top: 10px; padding: 12px; border-radius: 8px; font-size: 14px; display: none; }
+        .ai-date-analysis.success { display: block; background: rgba(16, 185, 129, 0.1); border: 1px solid var(--accent-green); color: var(--accent-green); }
+        .ai-date-analysis.error { display: block; background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #ef4444; }
+
+        /* Агрономически план */
+        .farm-plan-section { 
+            margin-top: 20px; padding: 15px; 
+            background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); 
+            border-radius: 16px; text-align: left; 
+        }
+        .farm-plan-section h4 { color: var(--accent-blue); margin-top: 0; margin-bottom: 12px; font-size: 18px; }
+        .farm-plan-item { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 10px; background: var(--bg-input); border-radius: 8px; margin-bottom: 8px; 
+        }
+        .farm-plan-item:last-child { margin-bottom: 0; }
+        .farm-plan-item span { font-size: 14px; }
+        .farm-plan-item strong { color: var(--text-main); }
+        .farm-plan-item .edit-btn { background: none; border: none; cursor: pointer; font-size: 16px; color: var(--text-muted); }
+        .farm-plan-item .edit-btn:hover { color: var(--accent-blue); }
+
+        .garden-dropdown-popup { z-index: 99999 !important; width: max-content; min-width: 280px; max-width: 400px; }
+        .garden-dropdown-item { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+        .garden-item-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; }
+        .garden-actions-btns { display: flex; gap: 5px; flex-shrink: 0; }
+        .garden-edit-btn, .garden-delete-btn { background: transparent; border: none; cursor: pointer; font-size: 14px; opacity: 0.6; padding: 4px; border-radius: 4px; transition: 0.2s; }
+        .garden-edit-btn:hover { opacity: 1; background-color: rgba(59, 130, 246, 0.15); }
+        .garden-delete-btn:hover { opacity: 1; background-color: rgba(239, 68, 68, 0.15); }
+        .btn-switch-garden .arrow { display: inline-block; transition: transform 0.3s ease; }
+        .btn-switch-garden.open .arrow { transform: rotate(180deg); }
+
+        /* AGRO NAV АНАЛИЗ */
+        .agro-recommendation {
+            background: linear-gradient(145deg, rgba(16, 185, 129, 0.08) 0%, rgba(9, 9, 11, 0.5) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: var(--radius-xl); padding: 20px; text-align: left;
+            box-shadow: inset 0 0 20px rgba(16, 185, 129, 0.05); margin-top: 20px;
+        }
+        .agro-recommendation h3 { margin-top: 0; margin-bottom: 15px; font-size: 20px; display: flex; align-items: center; gap: 10px; color: var(--text-main); }
+        .agro-status {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(16, 185, 129, 0.15); color: var(--accent-green); border: 1px solid var(--accent-green);
+            padding: 6px 14px; border-radius: 30px; font-weight: 700; font-size: 14px; margin-bottom: 15px;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+        }
+        .agro-data { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
+        .agro-data div {
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 12px 16px; border-radius: 12px; display: flex; flex-direction: column; transition: 0.3s;
+        }
+        .agro-data div:hover { background: rgba(255, 255, 255, 0.06); border-color: rgba(16, 185, 129, 0.3); }
+        .agro-data strong { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .agro-data span { font-size: 20px; font-weight: 800; color: var(--text-main); }
+        #agro-temperature, #agro-humidity, #agro-rain, #agro-wind { color: var(--accent-green); }
+        #agro-recommendation-text { background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; border-left: 4px solid var(--accent-green); color: var(--text-main); line-height: 1.5; font-size: 15px; margin: 0; }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-header">
+        <div class="header-left">
+            <a href="../welcome.html" class="btn-back-game">← Назад</a>
+        </div>
+        <div class="header-right">
+            <div style="text-align: right; margin-right: 10px;">
+                <div id="date" style="font-size: 12px; color: var(--text-muted);"></div>
+                <div id="clock" style="font-size: 16px; font-weight: 700; color: var(--accent-green);"></div>
+            </div>
+            <button class="theme-toggle-btn" title="Смени тема">🌙</button>
+        </div>
+    </div>
+
+    <div class="dashboard-layout">
+        <div class="left-col">
+            <div class="dash-panel">
+                <div class="garden-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                    <div>
+                        <h2 id="active-garden-title" style="margin:0;">Моята градина</h2>
+                        <p id="active-garden-subtitle" style="color: var(--text-muted); margin: 5px 0 0 0; font-size: 14px;">Зареждане...</p>
+                    </div>
+                    <div class="garden-actions" style="position: relative; display:flex; gap:10px;">
+                        <button id="toggle-garden-menu-btn" class="btn-switch-garden">Смени <span class="arrow">▾</span></button>
+                        <div id="garden-dropdown-menu" class="garden-dropdown-popup"></div>
+                        <button id="open-add-garden-modal-btn" class="btn-add-garden">+ Нова</button>
+                    </div>
+                </div>
+                <div id="crops-list" class="crops-list"></div>
+            </div>
+
+            <div class="dash-panel">
+                <h3>➕ Добави нова култура</h3>
+                <form id="add-crop-form" class="add-crop-form">
+                    <div class="add-crop-field" style="position: relative;">
+                        <label>Култура</label>
+                        <div class="custom-select-wrapper" id="crop-select-wrapper">
+                            <div class="custom-select-trigger" id="crop-select-trigger">
+                                <span id="crop-selected-text" style="color: var(--text-muted);">Избери култура...</span>
+                                <span>▾</span>
+                            </div>
+                            <div class="custom-options" id="crop-options-container">
+                                <input type="text" class="custom-search" id="crop-search" placeholder="Търси култура...">
+                                <div class="category-filters" id="category-filters"></div>
+                                <div id="crop-options-list"></div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="new-crop" required>
+                    </div>
+                    
+                    <div class="add-crop-field">
+                        <label>Дата на засаждане</label>
+                        <input type="date" id="new-crop-date" required>
+                        <div id="ai-date-feedback" class="ai-date-analysis"></div>
+                    </div>
+                    
+                    <button type="submit" class="add-crop-button">Добави</button>
+                </form>
+            </div>
+
+            <div id="crop-details" class="crop-details">
+                <button id="close-crop-details" class="close-crop-details">✕</button>
+                <div style="font-size: 50px; margin-bottom: 10px;" id="crop-details-icon">🌱</div>
+                <h2 id="crop-details-name" style="color: var(--accent-green);">Култура</h2>
+                <p id="crop-details-description" style="color: var(--text-muted);"></p>
+
+                <div class="crop-info-grid">
+                    <div class="crop-info-box"><strong>Засаждане</strong><span id="crop-planting">-</span></div>
+                    <div class="crop-info-box"><strong>Поливане</strong><span id="crop-watering">-</span></div>
+                    <div class="crop-info-box"><strong>Температура</strong><span id="crop-temperature">-</span></div>
+                    <div class="crop-info-box"><strong>Торене</strong><span id="crop-fertilizing">-</span></div>
+                    <div class="crop-info-box"><strong>Болести</strong><span id="crop-diseases">-</span></div>
+                    <div class="crop-info-box"><strong>Грижи</strong><span id="crop-care">-</span></div>
+                    
+                    <div class="crop-stage-box">
+                        <div style="display: flex; justify-content: space-between;">
+                            <strong style="color: var(--accent-green); font-size: 16px;" id="crop-stage-name">-</strong>
+                            <span style="color: var(--text-muted); font-size: 14px;" id="crop-age">-</span>
+                        </div>
+                        <p style="color: var(--text-main); font-size: 14px; margin: 10px 0;" id="crop-stage-description">-</p>
+                        <div class="crop-stage-progress"><div id="crop-stage-progress-bar" class="crop-stage-progress-bar"></div></div>
+                        <span style="color: var(--text-muted); font-size: 12px; margin-top: 8px; display: block;" id="crop-stage-days">-</span>
+                    </div>
+
+                    <div class="crop-info-box" style="grid-column: span 2;">
+                        <strong>Промени датата</strong>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <input type="date" id="crop-details-date" style="flex: 1;">
+                            <button type="button" id="save-crop-details-date" style="background: var(--accent-green); color: #000; border: none; padding: 0 20px; border-radius: 8px; font-weight: 700; cursor: pointer;">Запази</button>
+                        </div>
+                        <span id="crop-date-message" style="display:block; margin-top: 8px; font-size: 13px; color: var(--accent-green);"></span>
+                    </div>
+                </div>
+
+                <div class="farm-plan-section" id="farm-plan-section" style="display: none;">
+                    <h4>🚜 Агрономически план</h4>
+                    <div class="farm-plan-item">
+                        <div>
+                            <strong>Следващо торене:</strong> 
+                            <span id="plan-fert-date">...</span>
+                            <br>
+                            <small style="color: var(--text-muted);" id="plan-fert-desc">...</small>
+                        </div>
+                        <button class="edit-btn" onclick="editPlanDate('fert')">✏️</button>
+                    </div>
+                    <div class="farm-plan-item">
+                        <div>
+                            <strong>Поливане:</strong> 
+                            <span id="plan-water-date">...</span>
+                        </div>
+                        <button class="edit-btn" onclick="editPlanDate('water')">✏️</button>
+                    </div>
+                </div>
+
+                <div class="agro-recommendation" id="agro-analysis-panel" style="display: none;">
+                    <h3>🤖 AgroNav AI Анализ</h3>
+                    <div id="agro-status" class="agro-status">...</div>
+                    <div class="agro-data">
+                        <div><strong>🌡️ Температура</strong><span id="agro-temperature">--°C</span></div>
+                        <div><strong>💧 Влажност</strong><span id="agro-humidity">--%</span></div>
+                        <div><strong>🌧️ Валежи</strong><span id="agro-rain">-- mm</span></div>
+                        <div><strong>💨 Вятър</strong><span id="agro-wind">-- km/h</span></div>
+                    </div>
+                    <p id="agro-recommendation-text">...</p>
+                </div>
+                
+                <button id="delete-crop-btn" class="delete-crop-btn">🗑️ Изтрий културата</button>
+            </div>
+        </div>
+
+        <div class="right-col">
+            <div class="dash-panel" style="text-align: center;">
+                <h3>🌤️ Времето</h3>
+                <p id="weather-location" style="color: var(--text-muted); font-size: 14px; margin-bottom: 15px;">Местоположение: зареждане...</p>
+                <div class="weather-main">
+                    <div class="weather-temperature">--°C</div>
+                    <div class="weather-condition">Зареждане...</div>
+                </div>
+                <div class="weather-details">
+                    <div><b>--%</b><span>Влажност</span></div>
+                    <div><b>-- mm</b><span>Валежи</span></div>
+                    <div><b>-- km/h</b><span>Вятър</span></div>
+                    <div><b>-- mm</b><span>Валежи 48ч</span></div>
+                </div>
+            </div>
+
+            <div class="dash-panel">
+                <h3>📅 7-дневна прогноза</h3>
+                <div class="forecast-list" id="forecast-list">
+                    <p style="color: var(--text-muted);">Зареждане...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="garden-modal" class="garden-modal-overlay" style="display: none;">
+        <div class="garden-modal-card">
+            <button id="close-garden-modal" class="close-modal">&times;</button>
+            <h3>Нова градина</h3>
+            <div class="modal-field">
+                <label>Име на градината (макс. 25 символа)</label>
+                <input type="text" id="new-garden-name" maxlength="25">
+            </div>
+            <div class="modal-field">
+                <label>Населено място</label>
+                <input type="text" id="new-garden-city" required>
+            </div>
+            <div class="modal-buttons">
+                <button id="save-garden-btn" class="btn-modal-save">Запази</button>
+                <button id="cancel-garden-btn" class="btn-modal-cancel">Отказ</button>
+            </div>
+        </div>
+    </div>
+
+    <button id="scroll-to-top" class="scroll-to-top-btn" style="position:fixed; bottom:30px; right:30px; width:50px; height:50px; border-radius:50%; background:var(--accent-green); color:#fff; border:none; font-size:22px; cursor:pointer; display:none; z-index:1000;">↑</button>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../supabase.js"></script>
+    <script src="../theme.js"></script>
+    <script src="../crops-data.js"></script>
+
+    <script>
+    let currentUser = null; let currentProfile = null; let isFarm = false;
+    let profileReadyResolve; const profileReady = new Promise(function (resolve) { profileReadyResolve = resolve; });
+
+    async function loadUserProfile() {
+        if (typeof supabaseClient === "undefined") { profileReadyResolve(); return; }
+        try {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session) { window.location.href = "login.html"; return; }
+            currentUser = session.user;
+
+            const { data: profileData } = await supabaseClient.from("profiles").select("name, profile_type, location").eq("id", currentUser.id).maybeSingle();
+            currentProfile = profileData || { name: currentUser.email ? currentUser.email.split("@")[0] : "потребител", profile_type: "home", location: "" };
+            isFarm = currentProfile.profile_type === "farm";
+            
+            if (isFarm) {
+                document.getElementById("farm-plan-section").style.display = "block";
+            }
+            
+            populateCustomDropdown();
+        } catch (e) {
+            console.error("Грешка при профила:", e);
+        } finally {
+            profileReadyResolve();
+        }
+    }
+    loadUserProfile();
+
+    /* --- CUSTOM DROPDOWN --- */
+    let activeCategory = null;
+    let searchQuery = "";
+
+    function populateCustomDropdown() {
+        const optionsList = document.getElementById("crop-options-list");
+        const filterContainer = document.getElementById("category-filters");
+        if (!optionsList || typeof allCropsData === "undefined") return;
+
+        const categories = [...new Set(allCropsData.map(c => c.category))];
+
+        filterContainer.innerHTML = "";
+        categories.forEach(cat => {
+            if (cat === "Зърнени и технически" && !isFarm) return;
+
+            const label = document.createElement("label");
+            label.className = "cat-filter-label";
+            label.innerHTML = `<input type="checkbox" value="${cat}"> ${cat}`;
+            filterContainer.appendChild(label);
+        });
+
+        filterContainer.addEventListener("change", (e) => {
+            if (e.target.type === "checkbox") {
+                filterContainer.querySelectorAll("input[type='checkbox']").forEach(cb => {
+                    if (cb !== e.target) cb.checked = false;
+                });
+                activeCategory = e.target.checked ? e.target.value : null;
+                renderOptions();
+            }
+        });
+
+        renderOptions();
+    }
+
+    function renderOptions() {
+        const optionsList = document.getElementById("crop-options-list");
+        if (!optionsList) return;
+
+        let filtered = allCropsData.filter(crop => {
+            if (crop.category === "Зърнени и технически" && !isFarm) return false;
+            if (activeCategory && crop.category !== activeCategory) return false;
+            if (searchQuery && !crop.label.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+            return true;
+        });
+
+        optionsList.innerHTML = "";
+        if (filtered.length === 0) {
+            optionsList.innerHTML = "<div style='padding:10px; color:var(--text-muted); font-size:14px; grid-column: 1 / -1;'>Няма намерени култури.</div>";
+            return;
+        }
+
+        filtered.sort((a,b) => a.label.localeCompare(b.label)).forEach(crop => {
+            const div = document.createElement("div");
+            div.className = "custom-option";
+            div.innerHTML = `<span>${crop.icon}</span> <span>${crop.label}</span>`;
+            div.onclick = () => {
+                document.getElementById("new-crop").value = crop.name;
+                document.getElementById("crop-selected-text").textContent = `${crop.icon} ${crop.label}`;
+                document.getElementById("crop-selected-text").style.color = "var(--text-main)";
+                document.getElementById("crop-options-container").classList.remove("open");
+                checkDateSuitability();
+            };
+            optionsList.appendChild(div);
+        });
+    }
+
+    document.getElementById("crop-select-trigger").addEventListener("click", () => {
+        document.getElementById("crop-options-container").classList.toggle("open");
+    });
+
+    document.getElementById("crop-search").addEventListener("input", (e) => {
+        searchQuery = e.target.value;
+        renderOptions();
+    });
+
+    document.addEventListener("click", (e) => {
+        const wrapper = document.getElementById("crop-select-wrapper");
+        if (wrapper && !wrapper.contains(e.target)) {
+            document.getElementById("crop-options-container").classList.remove("open");
+        }
+    });
+
+    /* --- AI АНАЛИЗ НА ДАТАТА --- */
+    document.getElementById("new-crop-date").addEventListener("change", checkDateSuitability);
+
+    function checkDateSuitability() {
+        const cropName = document.getElementById("new-crop").value;
+        const dateVal = document.getElementById("new-crop-date").value;
+        const feedbackEl = document.getElementById("ai-date-feedback");
+        
+        if (!cropName || !dateVal) {
+            feedbackEl.className = "ai-date-analysis";
+            return;
+        }
+
+        const selectedDate = new Date(dateVal);
+        const today = new Date();
+        today.setHours(0,0,0,0);
+
+        if (selectedDate < today) {
+            feedbackEl.className = "ai-date-analysis error";
+            feedbackEl.textContent = "Датата е в миналото. Моля, изберете бъдеща дата.";
+            return;
+        }
+
+        if (agroForecast && agroForecast.daily) {
+            const forecastDays = agroForecast.daily.time;
+            const dateIndex = forecastDays.findIndex(d => new Date(d).toDateString() === selectedDate.toDateString());
+            
+            if (dateIndex !== -1) {
+                const maxT = agroForecast.daily.temperature_2m_max[dateIndex];
+                const minT = agroForecast.daily.temperature_2m_min[dateIndex];
+                
+                if (maxT > 35) {
+                    let betterDay = null;
+                    for(let i=0; i<forecastDays.length; i++) {
+                        if (agroForecast.daily.temperature_2m_max[i] <= 30) {
+                            betterDay = new Date(forecastDays[i]).toLocaleDateString("bg-BG");
+                            break;
+                        }
+                    }
+                    
+                    feedbackEl.className = "ai-date-analysis error";
+                    if (betterDay) {
+                        feedbackEl.innerHTML = `❌ Не, на <b>${selectedDate.toLocaleDateString("bg-BG")}</b> НЕ Е подходящо да се засее. Очаква се екстремна топлина (${Math.round(maxT)}°C).<br>По-добра дата: <b>${betterDay}</b>.`;
+                    } else {
+                        feedbackEl.innerHTML = `❌ Не, на <b>${selectedDate.toLocaleDateString("bg-BG")}</b> НЕ Е подходящо. Очаква се екстремна топлина.`;
+                    }
+                    return;
+                }
+                
+                if (minT < 5) {
+                    feedbackEl.className = "ai-date-analysis error";
+                    feedbackEl.innerHTML = `❌ Не, на <b>${selectedDate.toLocaleDateString("bg-BG")}</b> НЕ Е подходящо. Очакват се слани (${Math.round(minT)}°C).`;
+                    return;
+                }
+            }
+        }
+
+        feedbackEl.className = "ai-date-analysis success";
+        feedbackEl.innerHTML = `✅ Да, на <b>${selectedDate.toLocaleDateString("bg-BG")}</b> е подходящо да се засее избраната култура.`;
+    }
+
+    /* --- ГРАДИНИ И КУЛТУРИ --- */
+    let currentGardenId = null; let userGardens = [];
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const titleEl = document.querySelector("#active-garden-title");
+        const subtitleEl = document.querySelector("#active-garden-subtitle");
+        const toggleMenuBtn = document.querySelector("#toggle-garden-menu-btn");
+        const dropdownMenu = document.querySelector("#garden-dropdown-menu");
+        const openModalBtn = document.querySelector("#open-add-garden-modal-btn");
+        const gardenModal = document.querySelector("#garden-modal");
+        const closeModalBtn = document.querySelector("#close-garden-modal");
+        const cancelModalBtn = document.querySelector("#cancel-garden-btn");
+        const saveGardenBtn = document.querySelector("#save-garden-btn");
+        const gardenNameInput = document.querySelector("#new-garden-name");
+        const cityInput = document.querySelector("#new-garden-city");
+
+        async function initGardens() {
+            await profileReady;
+            if (typeof supabaseClient === "undefined") return;
+            
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (!session) return;
+
+                const { data: gardens } = await supabaseClient.from('gardens').select('id, name, city').eq('user_id', session.user.id).order('created_at', { ascending: true });
+                userGardens = gardens || [];
+
+                if (userGardens.length === 0 && currentProfile.location) {
+                    const { data: newGarden } = await supabaseClient.from('gardens').insert([{ name: 'Моята градина', city: currentProfile.location, user_id: session.user.id }]).select().single();
+                    if (newGarden) userGardens.push(newGarden);
+                }
+
+                const savedId = localStorage.getItem("selectedGardenId");
+                if (savedId && userGardens.some(g => g.id == savedId)) currentGardenId = savedId;
+                else if (userGardens.length > 0) currentGardenId = userGardens[0].id;
+
+                if (currentGardenId) await supabaseClient.from('crops').update({ garden_id: currentGardenId }).eq('user_id', session.user.id).is('garden_id', null);
+
+                renderGardenHeader();
+                if (currentGardenId) renderCrops();
+                else if (gardenModal) gardenModal.style.display = "flex";
+            } catch (err) {
+                console.error("Грешка при инициализация:", err);
+            }
+        }
+
+        function renderGardenHeader() {
+            const activeGarden = userGardens.find(g => g.id == currentGardenId) || userGardens[0];
+            if (!activeGarden) return;
+
+            titleEl.textContent = activeGarden.name;
+            subtitleEl.textContent = `Населено място: ${activeGarden.city || 'не е въведено'}`;
+            
+            if (typeof loadWeatherForCity === "function") {
+                loadWeatherForCity(activeGarden.city || currentProfile.location);
+            }
+
+            if (dropdownMenu) {
+                dropdownMenu.innerHTML = "";
+                userGardens.forEach(garden => {
+                    const itemWrapper = document.createElement("div");
+                    itemWrapper.className = `garden-dropdown-item ${garden.id == currentGardenId ? 'active' : ''}`;
+                    
+                    const nameSpan = document.createElement("span");
+                    nameSpan.className = "garden-item-name";
+                    nameSpan.textContent = garden.name;
+                    nameSpan.addEventListener("click", () => {
+                        currentGardenId = garden.id;
+                        localStorage.setItem("selectedGardenId", currentGardenId);
+                        dropdownMenu.style.display = "none";
+                        toggleMenuBtn.classList.remove("open");
+                        renderGardenHeader();
+                        loadCropsForGarden(currentGardenId);
+                    });
+
+                    const actionsDiv = document.createElement("div");
+                    actionsDiv.className = "garden-actions-btns";
+
+                    const editBtn = document.createElement("button");
+                    editBtn.className = "garden-edit-btn"; editBtn.innerHTML = "✏️"; editBtn.title = "Преименувай";
+                    editBtn.addEventListener("click", async (e) => {
+                        e.stopPropagation();
+                        dropdownMenu.style.display = "none"; 
+                        toggleMenuBtn.classList.remove("open");
+                        
+                        const newName = await showPrompt("Въведи ново име за градината (макс. 25 символа):", garden.name, "Преименуване");
+                        
+                        if (newName && newName.trim() !== "" && newName.trim() !== garden.name) {
+                            const trimmedName = newName.trim().substring(0, 25);
+                            await supabaseClient.from('gardens').update({ name: trimmedName }).eq('id', garden.id);
+                            garden.name = trimmedName;
+                            renderGardenHeader();
+                        }
+                    });
+
+                    const deleteBtn = document.createElement("button");
+                    deleteBtn.className = "garden-delete-btn"; deleteBtn.innerHTML = "🗑️"; deleteBtn.title = "Изтрий";
+                    deleteBtn.addEventListener("click", async (e) => {
+                        e.stopPropagation();
+                        if (userGardens.length <= 1) { await showAlert("Не можете да изтриете единствената си градина!", "Внимание"); return; }
+                        if(!await showConfirm(`Сигурни ли сте, че искате да изтриете "${garden.name}"?`, "Изтриване")) return;
+                        
+                        await supabaseClient.from('gardens').delete().eq('id', garden.id);
+                        userGardens = userGardens.filter(g => g.id != garden.id);
+                        if (currentGardenId == garden.id) currentGardenId = userGardens[0].id;
+                        renderGardenHeader(); 
+                        loadCropsForGarden(currentGardenId);
+                    });
+
+                    actionsDiv.appendChild(editBtn);
+                    actionsDiv.appendChild(deleteBtn);
+                    
+                    itemWrapper.appendChild(nameSpan); 
+                    itemWrapper.appendChild(actionsDiv); 
+                    dropdownMenu.appendChild(itemWrapper);
+                });
+            }
+        }
+
+        async function loadCropsForGarden(gardenId) {
+            if (!gardenId || typeof supabaseClient === "undefined") return;
+            const details = document.querySelector("#crop-details");
+            const agroPanel = document.querySelector("#agro-analysis-panel");
+            
+            if (details) details.style.display = "none";
+            if (agroPanel) agroPanel.style.display = "none";
+            
+            await renderCrops();
+        }
+
+        toggleMenuBtn.addEventListener("click", (e) => { 
+            e.stopPropagation(); 
+            const isOpen = dropdownMenu.style.display === "flex";
+            dropdownMenu.style.display = isOpen ? "none" : "flex"; 
+            toggleMenuBtn.classList.toggle("open", !isOpen);
+        });
+        
+        window.addEventListener("click", () => { 
+            if (dropdownMenu) dropdownMenu.style.display = "none"; 
+            if (toggleMenuBtn) toggleMenuBtn.classList.remove("open");
+        });
+        
+        openModalBtn.addEventListener("click", () => { gardenModal.style.display = "flex"; });
+        function closeGardenModal() { gardenModal.style.display = "none"; gardenNameInput.value = ""; cityInput.value = ""; }
+        closeModalBtn.addEventListener("click", closeGardenModal);
+        cancelModalBtn.addEventListener("click", closeGardenModal);
+
+        saveGardenBtn.addEventListener("click", async () => {
+            const name = gardenNameInput.value.trim(); const city = cityInput.value.trim();
+            if (!name || !city) { await showAlert("Моля, въведете име и населено място.", "Грешка"); return; }
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            const { data } = await supabaseClient.from('gardens').insert([{ name: name.substring(0, 25), city: city, user_id: session.user.id }]).select().single();
+            closeGardenModal(); userGardens.push(data); currentGardenId = data.id;
+            localStorage.setItem("selectedGardenId", currentGardenId);
+            renderGardenHeader(); 
+            loadCropsForGarden(currentGardenId);
+        });
+
+        initGardens();
+    });
+
+    const baseCropData = {
+        "домати": { name: "Домати", icon: "🍅", description: "Топлолюбива зеленчукова култура.", watering: "Редовно.", temperature: "20–30°C.", fertilizing: "Балансирано.", diseases: "Мана, въшки.", care: "Следене на влагата." },
+        "краставици": { name: "Краставици", icon: "🥒", description: "Топлолюбива култура.", watering: "Редовно.", temperature: "20–30°C.", fertilizing: "Редовно.", diseases: "Мана, акари.", care: "Проветряване." },
+        "пипер": { name: "Пипер", icon: "🌶️", description: "Топлолюбива култура.", watering: "Редовно.", temperature: "20–30°C.", fertilizing: "Балансирано.", diseases: "Въшки, гъби.", care: "Плевене." },
+        "царевица": { name: "Царевица", icon: "🌽", description: "Полска култура.", watering: "Критични фази.", temperature: "Топло време.", fertilizing: "Азотно.", diseases: "Червеи, гъби.", care: "Плевели." },
+        "пшеница": { name: "Пшеница", icon: "🌾", description: "Житна култура.", watering: "От валежите.", temperature: "Според фазата.", fertilizing: "Азотно.", diseases: "Ръжди.", care: "Наблюдение." }
+    };
+
+    const baseCropStages = {
+        "домати": [ { max: 14, name: "🌱 Начален растеж", description: "Установяване." }, { max: 35, name: "🌿 Вегетативен", description: "Растеж." }, { max: 55, name: "🌼 Цъфтеж", description: "Цъфтеж." }, { max: 85, name: "🍅 Плододаване", description: "Плодове." }, { max: Infinity, name: "🔴 Узряване", description: "Узряване." } ],
+        "краставици": [ { max: 10, name: "🌱 Поникване", description: "Начало." }, { max: 30, name: "🌿 Вегетативен", description: "Растеж." }, { max: 45, name: "🌼 Цъфтеж", description: "Цъфтеж." }, { max: 70, name: "🥒 Плододаване", description: "Плодове." }, { max: Infinity, name: "🥒 Масово", description: "Масово." } ],
+        "пипер": [ { max: 20, name: "🌱 Начален", description: "Начало." }, { max: 50, name: "🌿 Вегетативен", description: "Растеж." }, { max: 70, name: "🌼 Цъфтеж", description: "Цъфтеж." }, { max: 100, name: "🌶️ Плододаване", description: "Плодове." }, { max: Infinity, name: "🔴 Узряване", description: "Узряване." } ],
+        "царевица": [ { max: 10, name: "🌱 Поникване", description: "Начало." }, { max: 35, name: "🌿 Вегетативен", description: "Растеж." }, { max: 55, name: "🌼 Цъфтеж", description: "Цъфтеж." }, { max: 90, name: "🌽 Наливане", description: "Наливане." }, { max: Infinity, name: "🌾 Узряване", description: "Узряване." } ],
+        "пшеница": [ { max: 20, name: "🌱 Поникване", description: "Начало." }, { max: 60, name: "🌿 Начален", description: "Растеж." }, { max: 150, name: "🌿 Братене", description: "Братене." }, { max: 210, name: "🌾 Изкласяване", description: "Изкласяване." }, { max: 250, name: "🌼 Цъфтеж", description: "Цъфтеж." }, { max: Infinity, name: "🌾 Узряване", description: "Узряване." } ]
+    };
+
+    const DEFAULT_STAGES = [
+        { max: 20, name: "🌱 Начален растеж", description: "Установяване и поникване." },
+        { max: 60, name: "🌿 Вегетативен растеж", description: "Развитие на листна маса." },
+        { max: 100, name: "🌼 Цъфтеж", description: "Цъфтеж и опрашване." },
+        { max: 150, name: "🍎 Плододаване", description: "Формиране и наливане на плод." },
+        { max: Infinity, name: "🔴 Узряване", description: "Узряване и прибиране на реколтата." }
+    ];
+
+    let cropDates = {}; let userCrops = [];
+
+    function getTodayISO() { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+    function formatCropDate(dateString) { if (!dateString) return "-"; const date = new Date(dateString + "T00:00:00"); return isNaN(date.getTime()) ? "-" : date.toLocaleDateString("bg-BG", { day: "2-digit", month: "long", year: "numeric" }); }
+    function capitalizeFirst(str) { return str ? str.charAt(0).toUpperCase() + str.slice(1) : ""; }
+
+    function getCropAge(dateString) {
+        if (!dateString) return null;
+        const plantingDate = new Date(dateString + "T00:00:00");
+        if (isNaN(plantingDate.getTime())) return null;
+        const today = new Date(); today.setHours(0, 0, 0, 0);
+        return Math.floor((today.getTime() - plantingDate.getTime()) / (1000 * 60 * 60 * 24));
+    }
+
+    function getCropAgeText(dateString) {
+        const days = getCropAge(dateString);
+        if (days === null) return "Няма дата"; if (days === 0) return "Днес"; if (days === 1) return "Преди 1 ден"; if (days > 1) return "Преди " + days + " дни"; return "Невалидна";
+    }
+
+    function getCropStage(cropName, dateString) {
+        const key = cropName.toLowerCase().trim(); 
+        const stages = baseCropStages[key] || DEFAULT_STAGES; 
+        if (!stages) return null;
+        const age = getCropAge(dateString);
+        if (age === null || age < 0) return null;
+        for (let i = 0; i < stages.length; i++) { if (age <= stages[i].max) return { name: stages[i].name, description: stages[i].description, max: stages[i].max, age: age, index: i }; }
+        return null;
+    }
+
+    function renderCropStage(cropName, dateString) {
+        const nameEl = document.querySelector("#crop-stage-name"); const descEl = document.querySelector("#crop-stage-description");
+        const barEl  = document.querySelector("#crop-stage-progress-bar"); const daysEl = document.querySelector("#crop-stage-days");
+        if (!nameEl || !descEl) return;
+
+        const key = cropName.toLowerCase().trim();
+        const stages = baseCropStages[key] || DEFAULT_STAGES;
+        const age = getCropAge(dateString);
+        if (!stages || age === null || age < 0) {
+            nameEl.textContent = "Няма данни"; descEl.textContent = "Въведи дата.";
+            if (barEl) barEl.style.width = "0%"; if (daysEl) daysEl.textContent = "-"; return;
+        }
+
+        let currentStage = null; let prevMax = 0;
+        for (let i = 0; i < stages.length; i++) { if (age <= stages[i].max) { currentStage = stages[i]; prevMax = i === 0 ? 0 : stages[i - 1].max; break; } }
+        if (!currentStage) { currentStage = stages[stages.length - 1]; prevMax = stages.length > 1 ? stages[stages.length - 2].max : 0; }
+
+        nameEl.textContent = currentStage.name; descEl.textContent = currentStage.description;
+        let percent = 100;
+        if (currentStage.max !== Infinity) percent = Math.min(100, Math.max(0, ((age - prevMax) / (currentStage.max - prevMax)) * 100));
+        if (barEl) barEl.style.width = percent + "%";
+        if (daysEl) daysEl.textContent = "Ден " + age;
+    }
+
+    async function renderCrops() {
+        const cropsList = document.querySelector("#crops-list");
+        if (!cropsList || typeof supabaseClient === "undefined") return;
+        cropsList.innerHTML = "";
+        if (!currentGardenId) { cropsList.innerHTML = "<p style='text-align:center; grid-column:1/-1;'>Няма избрана градина.</p>"; return; }
+
+        const { data: crops } = await supabaseClient.from("crops").select("id, crop_name, planting_date").eq("garden_id", currentGardenId).order("created_at", { ascending: true });
+        userCrops = crops || []; cropDates = {};
+        userCrops.forEach(c => { cropDates[c.crop_name.toLowerCase().trim()] = c.planting_date; });
+
+        if (userCrops.length === 0) { cropsList.innerHTML = "<p style='text-align:center; grid-column:1/-1; color:var(--text-muted);'>Няма добавени култури.</p>"; return; }
+
+        userCrops.forEach(cropRow => {
+            const cropKey = cropRow.crop_name.toLowerCase().trim();
+            
+            let cropIcon = "🌱";
+            if (baseCropData[cropKey]) cropIcon = baseCropData[cropKey].icon;
+            else if (typeof allCropsData !== "undefined") {
+                const found = allCropsData.find(c => c.name === cropKey);
+                if (found) cropIcon = found.icon;
+            }
+
+            const displayName = baseCropData[cropKey] ? baseCropData[cropKey].name : capitalizeFirst(cropRow.crop_name);
+            const savedDate = cropRow.planting_date;
+            const cropCard = document.createElement("div");
+            cropCard.className = "crop-card";
+            
+            let statusText = "Детайли";
+            if (savedDate) { const age = getCropAge(savedDate); if (age === 0) statusText = "Днес"; else if (age === 1) statusText = "Преди 1 ден"; else if (age > 1) statusText = "Преди " + age + " дни"; }
+
+            cropCard.innerHTML = `
+                <div class="crop-icon">${cropIcon}</div>
+                <div class="crop-name">${displayName}</div>
+                <div class="crop-status">${statusText}</div>
+            `;
+            cropCard.addEventListener("click", () => openCropDetails(cropRow.id, cropRow.crop_name));
+            cropsList.appendChild(cropCard);
+        });
+    }
+
+    document.querySelector("#add-crop-form").addEventListener("submit", async function (event) {
+        event.preventDefault();
+        const cropName = document.querySelector("#new-crop").value; const plantingDate = document.querySelector("#new-crop-date").value;
+        if (!currentGardenId || !cropName || !plantingDate) { await showAlert("Моля, изберете култура и дата.", "Внимание"); return; }
+
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        const { data: existing } = await supabaseClient.from("crops").select("id").eq("garden_id", currentGardenId).eq("crop_name", cropName).maybeSingle();
+        if (existing) { await showAlert("Тази култура вече е добавена в тази градина.", "Внимание"); return; }
+
+        await supabaseClient.from("crops").insert({ user_id: user.id, garden_id: currentGardenId, crop_name: cropName, planting_date: plantingDate });
+        
+        document.querySelector("#new-crop").value = ""; 
+        document.querySelector("#new-crop-date").value = "";
+        document.getElementById("crop-selected-text").textContent = "Избери култура...";
+        document.getElementById("crop-selected-text").style.color = "var(--text-muted)";
+        document.getElementById("ai-date-feedback").className = "ai-date-analysis";
+        
+        await renderCrops();
+    });
+
+    function openCropDetails(cropId, cropNameFromDB) {
+        const cropKey = cropNameFromDB.toLowerCase().trim();
+        
+        let crop = baseCropData[cropKey];
+        if (!crop) {
+            let icon = "🌱";
+            if (typeof allCropsData !== "undefined") {
+                const found = allCropsData.find(c => c.name === cropKey);
+                if (found) icon = found.icon;
+            }
+            crop = { name: capitalizeFirst(cropKey), icon: icon, description: "Растение за отглеждане в градината.", watering: "Според нуждите на растението.", temperature: "Според сезона и вида.", fertilizing: "Според нуждите през вегетацията.", diseases: "Редовно наблюдение.", care: "Плевене, поливане и грижи според вида." };
+        }
+
+        const details = document.querySelector("#crop-details");
+        if (!details) return;
+
+        details.dataset.cropId = cropId; details.dataset.cropKey = cropKey;
+        const cropDate = cropDates[cropKey];
+        
+        document.querySelector("#crop-details-date").max = getTodayISO(); document.querySelector("#crop-details-date").value = cropDate || "";
+        
+        document.querySelector("#crop-details-icon").textContent = crop.icon || "🌱";
+        document.querySelector("#crop-details-name").textContent = crop.name || capitalizeFirst(cropKey);
+        document.querySelector("#crop-details-description").textContent = crop.description || "";
+        document.querySelector("#crop-watering").textContent = crop.watering || "";
+        document.querySelector("#crop-temperature").textContent = crop.temperature || "";
+        document.querySelector("#crop-fertilizing").textContent = crop.fertilizing || "";
+        document.querySelector("#crop-diseases").textContent = crop.diseases || "";
+        document.querySelector("#crop-care").textContent = crop.care || "";
+        
+        document.querySelector("#crop-planting").textContent = cropDate ? formatCropDate(cropDate) : "-";
+        document.querySelector("#crop-age").textContent = getCropAgeText(cropDate);
+        renderCropStage(cropKey, cropDate);
+        document.querySelector("#crop-date-message").textContent = "";
+
+        if (isFarm) {
+            generateFarmPlan(cropKey, cropDate);
+        }
+        
+        details.style.display = "block"; details.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (typeof generateAgroRecommendation === "function") generateAgroRecommendation(cropKey);
+        document.querySelector("#agro-analysis-panel").style.display = "block";
+    }
+
+    function generateFarmPlan(cropKey, cropDate) {
+        if (!cropDate) {
+            document.querySelector("#plan-fert-date").textContent = "Няма дата на засаждане";
+            document.querySelector("#plan-water-date").textContent = "Няма дата";
+            return;
+        }
+        
+        const plantDate = new Date(cropDate);
+        const fertDate = new Date(plantDate);
+        fertDate.setDate(fertDate.getDate() + 20);
+        
+        const waterDate = new Date(); 
+        waterDate.setDate(waterDate.getDate() + 2);
+
+        document.querySelector("#plan-fert-date").textContent = fertDate.toLocaleDateString("bg-BG");
+        document.querySelector("#plan-fert-desc").textContent = "Азотно торене (NPK 20-20-20) - 200 г/дка";
+        document.querySelector("#plan-water-date").textContent = waterDate.toLocaleDateString("bg-BG");
+    }
+
+    async function editPlanDate(type) {
+        const newDate = await showPrompt(`Въведи нова дата за ${type === 'fert' ? 'торене' : 'поливане'} (ГГГГ-ММ-ДД):`, "", "Промяна на дата");
+        if (newDate) {
+            const dateObj = new Date(newDate);
+            if (!isNaN(dateObj.getTime())) {
+                const formatted = dateObj.toLocaleDateString("bg-BG");
+                if (type === 'fert') document.querySelector("#plan-fert-date").textContent = formatted;
+                if (type === 'water') document.querySelector("#plan-water-date").textContent = formatted;
+            } else {
+                await showAlert("Невалиден формат на датата.", "Грешка");
+            }
+        }
+    }
+
+    document.querySelector("#save-crop-details-date").addEventListener("click", async function () {
+        const detailsEl = document.querySelector("#crop-details"); const cropId = detailsEl.dataset.cropId; const cropKey = detailsEl.dataset.cropKey;
+        const newDate = document.querySelector("#crop-details-date").value;
+        if (!cropId || !newDate) { await showAlert("Моля, въведи дата.", "Грешка"); return; }
+        await supabaseClient.from("crops").update({ planting_date: newDate }).eq("id", cropId);
+        cropDates[cropKey] = newDate;
+        document.querySelector("#crop-planting").textContent = formatCropDate(newDate);
+        document.querySelector("#crop-age").textContent = getCropAgeText(newDate);
+        renderCropStage(cropKey, newDate); await renderCrops();
+        document.querySelector("#crop-date-message").textContent = "✅ Датата е запазена.";
+        
+        if (isFarm) generateFarmPlan(cropKey, newDate);
+        
+        generateAgroRecommendation(cropKey);
+    });
+
+    document.querySelector("#close-crop-details").addEventListener("click", () => { 
+        document.querySelector("#crop-details").style.display = "none"; 
+        document.querySelector("#agro-analysis-panel").style.display = "none"; 
+        window.scrollTo({ top: 0, behavior: 'smooth' }); 
+    });
+    
+    document.querySelector("#delete-crop-btn").addEventListener("click", async function () {
+        const detailsEl = document.querySelector("#crop-details"); const cropId = detailsEl.dataset.cropId;
+        if (!cropId) return;
+        if (!await showConfirm("Сигурни ли сте, че искате да изтриете тази култура?", "Изтриване")) return;
+        
+        await supabaseClient.from("crops").delete().eq("id", cropId);
+        detailsEl.style.display = "none"; 
+        document.querySelector("#agro-analysis-panel").style.display = "none"; 
+        window.scrollTo({ top: 0, behavior: 'smooth' }); 
+        await renderCrops();
+    });
+
+    function updateDateTime() {
+        const now = new Date();
+        document.querySelector("#date").textContent = now.toLocaleDateString("bg-BG", { day: "2-digit", month: "long", year: "numeric" });
+        document.querySelector("#clock").textContent = now.toLocaleTimeString("bg-BG", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    }
+    updateDateTime(); setInterval(updateDateTime, 1000);
+
+    // AI Анализ
+    function generateAgroRecommendation(cropName) {
+        if (!agroWeather || !agroForecast) return;
+        const cropKey = cropName.toLowerCase().trim(); const stage = getCropStage(cropKey, cropDates[cropKey]);
+        let status = "🟢 Условията изглеждат подходящи";
+        let recommendation = stage ? "Културата е в фаза " + stage.name.replace(/^.\s/, "") + ". " : "";
+
+        document.querySelector("#agro-temperature").textContent = Math.round(agroWeather.temperature_2m) + "°C";
+        document.querySelector("#agro-humidity").textContent = Math.round(agroWeather.relative_humidity_2m) + "%";
+        document.querySelector("#agro-rain").textContent = agroWeather.precipitation + " mm";
+        document.querySelector("#agro-wind").textContent = Math.round(agroWeather.wind_speed_10m) + " km/h";
+        
+        const fRain = (agroForecast.daily.precipitation_sum?.[0] || 0) + (agroForecast.daily.precipitation_sum?.[1] || 0);
+        
+        if (agroWeather.temperature_2m >= 35) { status = "🔴 Висок температурен риск"; recommendation += " Внимавай с топлинния стрес."; }
+        else if (fRain >= 5) { status = "🟢 Очаквани валежи"; recommendation += " Съобрази поливането. Очакват се " + fRain.toFixed(1) + " mm."; }
+        else { recommendation += " Продължи да следиш прогнозата."; }
+
+        document.querySelector("#agro-status").textContent = status;
+        document.querySelector("#agro-recommendation-text").textContent = recommendation;
+    }
+
+    // Време API
+    let agroWeather = null; let agroForecast = null;
+    async function loadWeatherForCity(city) {
+        if (!city) return;
+        try {
+            const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=bg&format=json`);
+            const geoData = await geoRes.json(); 
+            if (!geoData.results || geoData.results.length === 0) {
+                document.querySelector(".weather-condition").textContent = "Локацията не е намерена";
+                return;
+            }
+            const place = geoData.results[0];
+
+            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${place.latitude}&longitude=${place.longitude}&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max&temperature_unit=celsius&wind_speed_unit=kmh&precipitation_unit=mm&timezone=auto&forecast_days=7`);
+            
+            if (!res.ok) throw new Error("API Грешка");
+            
+            const data = await res.json(); 
+            if (!data.current || !data.daily) throw new Error("Липсват данни");
+
+            agroWeather = data.current; 
+            agroForecast = { daily: data.daily };
+
+            document.querySelector("#weather-location").textContent = "Местоположение: " + place.name;
+            document.querySelector(".weather-temperature").textContent = Math.round(data.current.temperature_2m) + "°C";
+            document.querySelector(".weather-condition").textContent = "Актуално";
+            document.querySelector(".weather-details div:nth-child(1) b").textContent = Math.round(data.current.relative_humidity_2m) + "%";
+            document.querySelector(".weather-details div:nth-child(2) b").textContent = data.current.precipitation + " mm";
+            document.querySelector(".weather-details div:nth-child(3) b").textContent = Math.round(data.current.wind_speed_10m) + " km/h";
+            
+            const forecastRain48 = (data.daily.precipitation_sum[0] || 0) + (data.daily.precipitation_sum[1] || 0);
+            document.querySelector(".weather-details div:nth-child(4) b").textContent = forecastRain48.toFixed(1) + " mm";
+
+            const list = document.querySelector("#forecast-list"); list.innerHTML = "";
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(data.daily.time[i]);
+                list.innerHTML += `
+                    <div class="forecast-day">
+                        <div class="forecast-date"><strong>${date.toLocaleDateString("bg-BG", {weekday: "long"})}</strong><span>${date.toLocaleDateString("bg-BG", {day: "2-digit", month: "2-digit"})}</span></div>
+                        <div class="forecast-weather">🌤️</div>
+                        <div class="forecast-temperature"><strong>${Math.round(data.daily.temperature_2m_max[i])}°C</strong> <span>${Math.round(data.daily.temperature_2m_min[i])}°C</span></div>
+                        <div class="forecast-rain">🌧️ ${data.daily.precipitation_sum[i]} mm</div>
+                    </div>
+                `;
+            }
+            const detailsEl = document.querySelector("#crop-details");
+            if (detailsEl && detailsEl.style.display !== "none") generateAgroRecommendation(detailsEl.dataset.cropKey);
+        } catch (e) { 
+            console.error("Грешка при времето:", e); 
+            document.querySelector(".weather-condition").textContent = "Грешка при зареждане";
+        }
+    }
+
+    const scrollBtn = document.querySelector("#scroll-to-top");
+    window.addEventListener("scroll", () => { if (window.scrollY > 300) scrollBtn.style.display = "block"; else scrollBtn.style.display = "none"; });
+    scrollBtn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+    </script>
+</body>
+</html>
