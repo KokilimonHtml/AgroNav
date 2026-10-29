@@ -6,7 +6,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,200..1000&display=swap" rel="stylesheet">
-    <title>AgroNav - Добре дошъл</title>
+    <title>AgroNav - Начало</title>
     <link rel="stylesheet" href="style.css">
     <style>
         /* Тук определяме съотношението на блоковете */
@@ -25,7 +25,7 @@
             <h1 id="h1">Agro</h1><h1 id="h1-2">Nav</h1>
         </div>
         <div class="header-center">
-            <span class="welcome-greeting" id="welcome-greeting">Здравей...</span>
+            <span class="welcome-greeting" id="welcome-greeting">Добре дошъл в AgroNav!</span>
         </div>
         <div class="header-right">
             <div style="text-align: right; margin-right: 10px;">
@@ -34,7 +34,8 @@
             </div>
             <button class="theme-toggle-btn" title="Смени тема">🌙</button>
             <a href="game.html" class="mini-game-icon-btn">🎮 Игра</a>
-            <div class="profile-menu-wrapper">
+            <a href="pages/login.html" id="RegistrationBut">Вход / Регистрация</a>
+            <div class="profile-menu-wrapper" id="profile-menu-wrapper" style="display: none;">
                 <button id="profile-avatar" class="profile-avatar" type="button">
                     <svg id="avatar-default-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 </button>
@@ -93,13 +94,25 @@
     updateClock(); setInterval(updateClock, 60000);
 
     async function loadProfile() {
-        if (typeof supabaseClient === "undefined") return;
-        const { data: { user } } = await supabaseClient.auth.getUser();
-        if (!user) { window.location.href = "pages/login.html"; return; }
-        currentUser = user;
+        if (typeof supabaseClient === "undefined") {
+            console.error("Supabase is not available; showing the public homepage.");
+            return;
+        }
 
-        const { data: profileData } = await supabaseClient.from("profiles").select("name, avatar_url").eq("id", user.id).maybeSingle();
-        currentProfile = profileData || { name: user.email.split("@")[0], avatar_url: null };
+        const { data: { user }, error } = await supabaseClient.auth.getUser();
+        if (error) {
+            console.error("Could not load the current user:", error);
+            return;
+        }
+        if (!user) return;
+
+        currentUser = user;
+        document.querySelector("#RegistrationBut").style.display = "none";
+        document.querySelector("#profile-menu-wrapper").style.display = "block";
+
+        const { data: profileData, error: profileError } = await supabaseClient.from("profiles").select("name, avatar_url").eq("id", user.id).maybeSingle();
+        if (profileError) console.error("Could not load the user profile:", profileError);
+        currentProfile = profileData || { name: user.email?.split("@")[0] || "фермер", avatar_url: null };
         
         document.querySelector("#welcome-greeting").textContent = `Здравей, ${currentProfile.name}!`;
 
@@ -110,7 +123,7 @@
             document.querySelector("#profile-avatar").appendChild(img);
         }
     }
-    loadProfile();
+    loadProfile().catch(error => console.error("Could not load the user profile:", error));
 
     /* МЕНЮ */
     document.querySelector("#profile-avatar").addEventListener("click", (e) => {
@@ -124,8 +137,17 @@
     });
 
     /* НАВИГАЦИЯ */
-    document.querySelector("#MyGarden").addEventListener("click", () => window.location.href = "pages/dashboard.html");
-    document.querySelector("#news-button").addEventListener("click", () => window.location.href = "news.html");
+    async function navigateToProtectedPage(path) {
+        const { data: { session }, error } = await supabaseClient.auth.getSession();
+        if (error) {
+            console.error("Could not check authentication status:", error);
+            return;
+        }
+        window.location.href = session ? path : "pages/login.html";
+    }
+
+    document.querySelector("#MyGarden").addEventListener("click", () => navigateToProtectedPage("pages/dashboard.html").catch(error => console.error("Could not navigate to the garden:", error)));
+    document.querySelector("#news-button").addEventListener("click", () => navigateToProtectedPage("news.html").catch(error => console.error("Could not navigate to the news:", error)));
 
     /* НОВИНИ */
     function timeAgo(date) {

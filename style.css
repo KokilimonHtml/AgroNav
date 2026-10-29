@@ -139,7 +139,7 @@ body.light-theme .theme-toggle-btn:hover { background: rgba(0,0,0,0.1); }
     align-items: center;
     gap: 8px;
 }
-body.light-theme .mini-game-icon-btn, body.light-theme #RegistrationBut, body.light-theme .btn-back-game { background: rgba(0,0,0,0.05); }
+body.light-theme .mini-game-icon-btn, body.light-theme .btn-back-game { background: rgba(0,0,0,0.05); }
 
 .mini-game-icon-btn:hover, .btn-back-game:hover {
     background: rgba(255, 255, 255, 0.1);

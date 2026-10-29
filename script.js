@@ -14,7 +14,8 @@ const NewsMenu = document.querySelector(".NewsMenu");
 const BackBtn = document.querySelector("#back-btn");
 
 function handlePostAuthRedirect() {
-    window.location.href = "../welcome.html";
+    const destination = new URLSearchParams(window.location.search).get("redirect");
+    window.location.href = destination === "game.html" ? "../game.html" : "../welcome.html";
 }
 
 async function checkAuthAndNavigate(targetAction) {
@@ -152,6 +153,11 @@ if (registerForm) {
    SUPABASE ФОРМА ЗА ВХОД (LOGIN)
    ========================================= */
 const loginForm = document.querySelector("#loginForm");
+const registerLink = document.querySelector(".auth-footer a");
+if (registerLink && new URLSearchParams(window.location.search).get("redirect") === "game.html") {
+    registerLink.href = "register.html?redirect=game.html";
+}
+
 if (loginForm) {
     loginForm.addEventListener("submit", async function (event) {
         event.preventDefault();

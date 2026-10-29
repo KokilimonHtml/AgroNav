@@ -15,6 +15,18 @@
             height: 100vh; 
             margin: 0; 
         }
+        #game-error {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+            background: var(--bg-main);
+            color: var(--text-main);
+            text-align: center;
+        }
+        #game-error[hidden] { display: none; }
         .game-wrapper { 
             position: relative; 
             width: 100%; 
@@ -43,10 +55,15 @@
         .score-board span#coin-count { 
             color: #fbbf24; 
         }
+        .coin-save-status {
+            color: #ef4444;
+            font-size: 12px;
+            font-weight: 500;
+        }
         .coin-text { display: inline; } 
         .coin-icon { display: none; font-size: 26px; }
         
-        .btn-back-game, .btn-reset { 
+        .btn-reset {
             background: var(--bg-input); 
             color: var(--text-main); 
             padding: 10px 20px; 
@@ -58,7 +75,6 @@
             cursor: pointer; 
             font-family: inherit; 
         }
-        .btn-back-game:hover { border-color: var(--accent-green); }
         .btn-reset { color: #ef4444; border-color: rgba(239, 68, 68, 0.2); }
         .btn-reset:hover { background: rgba(239, 68, 68, 0.1); }
         
@@ -109,19 +125,31 @@
             .mobile-controls { display: grid; grid-template-columns: repeat(3, 1fr); justify-items: center; }
             .mobile-controls .empty { visibility: hidden; }
             .game-header { flex-direction: column; gap: 15px; }
-            .btn-back-game, .btn-reset { width: 100%; text-align: center; }
+            .btn-reset { width: 100%; text-align: center; }
         }
     </style>
 </head>
 <body>
+    <div id="game-error" role="alert" hidden>Играта не можа да се зареди. Проверете връзката и опитайте отново.</div>
+    <div class="dashboard-header">
+        <div class="header-left">
+            <a href="welcome.html" class="btn-back-game">← Назад</a>
+        </div>
+        <div class="header-right">
+            <div style="text-align: right; margin-right: 10px;">
+                <div id="game-date" style="font-size: 12px; color: var(--text-muted);"></div>
+                <div id="game-clock" style="font-size: 16px; font-weight: 700; color: var(--accent-green);"></div>
+            </div>
+            <button class="theme-toggle-btn" title="Смени тема">🌙</button>
+        </div>
+    </div>
     <div class="game-wrapper">
         <div class="game-header">
-            <a href="welcome.html" class="btn-back-game">← Назад</a>
             <div class="score-board">
                 <span class="coin-text">Монети:</span><span class="coin-icon">🪙</span><span id="coin-count">0</span>
+                <span id="coin-save-status" class="coin-save-status" role="status" aria-live="polite"></span>
             </div>
             <div style="display:flex; gap:10px;">
-                <button class="theme-toggle-btn" title="Смени тема">🌙</button>
                 <button id="reset-game" class="btn-reset">🔄 Отначало</button>
             </div>
         </div>
@@ -141,6 +169,53 @@
     <script src="theme.js"></script>
 
     <script>
+        (async function initializeGame() {
+        if (typeof supabaseClient === "undefined") {
+            console.error("Supabase is not available; the game requires an authenticated account.");
+            window.location.replace("pages/login.html?redirect=game.html");
+            return;
+        }
+
+        const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+        if (sessionError) {
+            console.error("Could not check authentication before starting the game:", sessionError);
+            document.getElementById("game-error").hidden = false;
+            return;
+        }
+        if (!session) {
+            window.location.replace("pages/login.html?redirect=game.html");
+            return;
+        }
+
+        const coinSaveStatus = document.getElementById("coin-save-status");
+        let coinSaveQueue = Promise.resolve();
+
+        function saveCoins() {
+            const scoreToSave = coins;
+            coinSaveStatus.textContent = "";
+            coinSaveQueue = coinSaveQueue.then(async () => {
+                const { error } = await supabaseClient.auth.updateUser({
+                    data: { game_coins: scoreToSave }
+                });
+                if (error) {
+                    console.error("Could not save the game score:", error);
+                    coinSaveStatus.textContent = "Неуспешно запазване";
+                }
+            }).catch(error => {
+                console.error("Could not save the game score:", error);
+                coinSaveStatus.textContent = "Неуспешно запазване";
+            });
+            return coinSaveQueue;
+        }
+
+        function updateGameDateTime() {
+            const now = new Date();
+            document.querySelector("#game-date").textContent = now.toLocaleDateString("bg-BG", { day: "2-digit", month: "long", year: "numeric" });
+            document.querySelector("#game-clock").textContent = now.toLocaleTimeString("bg-BG", { hour: "2-digit", minute: "2-digit" });
+        }
+        updateGameDateTime();
+        setInterval(updateGameDateTime, 60000);
+
         const canvas = document.getElementById("gameCanvas"); 
         const ctx = canvas.getContext("2d"); 
         const scoreEl = document.getElementById("coin-count");
@@ -159,7 +234,12 @@
             osc1.start(); osc2.start(); osc1.stop(audioCtx.currentTime + 0.4); osc2.stop(audioCtx.currentTime + 0.4);
         }
         
-        let coins = parseInt(localStorage.getItem("agronavCoins") || "0"); 
+        const storedCoins = session.user.user_metadata?.game_coins;
+        let coins = storedCoins === undefined ? 0 : Number(storedCoins);
+        if (!Number.isSafeInteger(coins) || coins < 0) {
+            console.error("The saved game score is invalid; starting this session at zero.");
+            coins = 0;
+        }
         scoreEl.textContent = coins;
         
         const tractor = { x: canvas.width / 2, y: canvas.height / 2, speed: 2.6, angle: 0, targetAngle: 0 };
@@ -175,7 +255,7 @@
             if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Space"].includes(e.code)) e.preventDefault(); 
         });
         window.addEventListener("keyup", e => keys[e.code] = false);
-        function setMobileDir(dir) { mobileDir = dir; }
+        window.setMobileDir = function (dir) { mobileDir = dir; };
         
         function spawnCrops() { 
             crops = []; 
@@ -206,7 +286,7 @@
             if(await showConfirm("Сигурни ли сте, че искате да започнете отначало? Всички монети ще бъдат изтрити.", "Нова игра")) { 
                 coins = 0; 
                 scoreEl.textContent = 0; 
-                localStorage.setItem("agronavCoins", 0); 
+                saveCoins();
                 tractor.x = canvas.width / 2; 
                 tractor.y = canvas.height / 2; 
                 tractor.angle = 0; 
@@ -250,7 +330,7 @@
                     crop.collected = true; 
                     coins++; 
                     scoreEl.textContent = coins; 
-                    localStorage.setItem("agronavCoins", coins); 
+                    saveCoins();
                     playChaChing(); 
                     createParticles(crop.x, crop.y, "spark"); 
                     floatingTexts.push({ x: crop.x, y: crop.y - 20, text: "+1", life: 1 }); 
@@ -369,6 +449,10 @@
             requestAnimationFrame(gameLoop); 
         }
         requestAnimationFrame(gameLoop);
+        })().catch(error => {
+            console.error("Could not initialize the game:", error);
+            document.getElementById("game-error").hidden = false;
+        });
     </script>
 </body>
 </html>
