@@ -14,51 +14,143 @@
         .left-col .dash-panel:nth-child(2) { position: relative; z-index: 40; }
         .left-col .dash-panel:nth-child(3) { position: relative; z-index: 30; }
 
-        /* Custom Dropdown */
-        .custom-select-wrapper { position: relative; width: 100%; user-select: none; font-family: inherit; }
+        /* Crop picker */
+        .custom-select-wrapper { position: relative; width: 100%; font-family: inherit; }
         .custom-select-trigger {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 14px 16px; background: var(--bg-input); border: 1px solid var(--border-glass);
-            border-radius: var(--radius-sm); color: var(--text-main); cursor: pointer; font-size: 15px; transition: 0.3s;
+            display: flex; justify-content: space-between; align-items: center; gap: 12px;
+            width: 100%; min-height: 56px; padding: 10px 14px;
+            background: linear-gradient(145deg, var(--bg-input), var(--bg-card));
+            border: 1px solid var(--border-glass); border-radius: 14px;
+            color: var(--text-main); cursor: pointer; font: inherit; text-align: left;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+            transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
         }
-        .custom-select-trigger:hover { border-color: var(--accent-green); }
+        .custom-select-trigger:hover,
+        .custom-select-trigger[aria-expanded="true"] {
+            border-color: var(--accent-green);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, .1), 0 12px 26px rgba(0, 0, 0, .1);
+        }
+        .custom-select-trigger:focus-visible { outline: 3px solid rgba(16, 185, 129, .34); outline-offset: 2px; }
+        #crop-select-placeholder { overflow: hidden; color: var(--text-muted); font-size: 14px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+        #crop-select-placeholder.is-selected { color: var(--text-main); font-weight: 700; }
+        .crop-trigger-chevron {
+            display: grid; width: 30px; height: 30px; flex: 0 0 30px; place-items: center;
+            border: 1px solid var(--border-glass); border-radius: 10px; color: var(--text-muted);
+            transition: transform .2s ease, color .2s ease, background .2s ease;
+        }
+        .custom-select-trigger[aria-expanded="true"] .crop-trigger-chevron {
+            transform: rotate(180deg); color: var(--accent-green); background: rgba(16, 185, 129, .1);
+        }
 
-        /* ПО-ШИРОКО ПАДАЩО МЕНЮ */
         .custom-options {
-            position: absolute; top: 100%; left: 0;
-            width: 540px; max-width: 92vw;
-            margin-top: 5px;
-            background: var(--bg-main); border: 1px solid var(--border-glass); border-radius: var(--radius-sm);
-            box-shadow: var(--shadow-glass); z-index: 1000; display: none; flex-direction: column;
-            max-height: 420px; overflow-y: auto; padding: 12px;
+            position: absolute; top: calc(100% + 10px); left: 0;
+            width: min(600px, calc(100vw - 40px)); max-width: 92vw;
+            background: var(--bg-main); border: 1px solid var(--border-glass); border-radius: 20px;
+            box-shadow: 0 24px 70px rgba(0, 0, 0, .22); z-index: 1000;
+            display: none; flex-direction: column; height: min(540px, 72vh);
+            overflow: hidden; padding: 16px; backdrop-filter: blur(22px);
+            transform-origin: top left;
         }
-        .custom-options.open { display: flex; }
-        .custom-search { width: 100%; padding: 10px; margin-bottom: 12px; border-radius: 8px; border: 1px solid var(--border-glass); background: var(--bg-card); color: var(--text-main); box-sizing: border-box; }
-        
-        /* ФИЛТРИ - 2 КОЛОНИ */
-        .category-filters { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr;
-            gap: 6px; 
-            margin-bottom: 12px; 
-            padding-bottom: 12px; 
-            border-bottom: 1px solid var(--border-glass); 
+        .custom-options.open { display: flex; animation: crop-menu-in .18s ease-out; }
+        @keyframes crop-menu-in {
+            from { opacity: 0; transform: translateY(-6px) scale(.985); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .crop-options-heading { display: flex; flex: 0 0 auto; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 13px; }
+        .crop-options-heading strong { display: block; color: var(--text-main); font-size: 15px; }
+        .crop-options-heading span { display: block; margin-top: 3px; color: var(--text-muted); font-size: 12px; }
+        .crop-options-count {
+            display: inline-flex !important; align-items: center; justify-content: center;
+            min-width: 30px; height: 28px; padding: 0 8px; border: 1px solid var(--border-glass);
+            border-radius: 999px; background: var(--bg-input); color: var(--text-muted);
+            font-size: 12px; font-weight: 700;
+        }
+        .crop-search-wrap { position: relative; flex: 0 0 auto; margin-bottom: 13px; }
+        .crop-search-icon { position: absolute; top: 50%; left: 14px; transform: translateY(-50%); color: var(--text-muted); font-size: 17px; pointer-events: none; }
+        .custom-search {
+            width: 100%; height: 46px; margin: 0; padding: 0 42px;
+            border: 1px solid var(--border-glass); border-radius: 13px;
+            background: var(--bg-input); color: var(--text-main); box-sizing: border-box;
+            font: inherit; font-size: 14px; outline: none;
+            transition: border-color .2s ease, box-shadow .2s ease;
+        }
+        .custom-search:focus { border-color: var(--accent-green); box-shadow: 0 0 0 4px rgba(16, 185, 129, .1); }
+        .custom-search::placeholder { color: var(--text-muted); }
+        .category-filters {
+            display: flex; flex: 0 0 auto; flex-wrap: nowrap; gap: 7px;
+            overflow-x: auto; overflow-y: hidden; margin: 0 0 13px; padding: 0 2px 9px;
+            border-bottom: 1px solid var(--border-glass);
+            overscroll-behavior-x: contain;
+            scrollbar-color: var(--border-glass) transparent; scrollbar-width: thin;
         }
         .cat-filter-label {
-            display: inline-flex; 
-            align-items: center; 
-            gap: 6px;
-            font-size: 13px; 
-            color: var(--text-main); 
-            cursor: pointer;
-            background: rgba(255, 255, 255, 0.05); 
-            padding: 6px 12px;
-            border-radius: 999px; 
-            border: 1px solid transparent; 
-            transition: 0.2s;
-            white-space: nowrap;
+            display: inline-flex; flex: 0 0 auto; align-items: center; gap: 7px; padding: 7px 10px;
+            border: 1px solid var(--border-glass); border-radius: 999px;
+            background: var(--bg-input); color: var(--text-muted); cursor: pointer;
+            font-size: 12px; font-weight: 600; transition: .2s ease; white-space: nowrap;
         }
-        body.light-theme .cat-filter-label { background: rgba(0, 0, 0, 0.05); }
+        .cat-filter-label:hover { border-color: rgba(16, 185, 129, .55); color: var(--text-main); }
+        .cat-filter-label input[type="checkbox"] {
+            width: 14px !important; height: 14px !important; margin: 0 !important;
+            padding: 0 !important; border: 0 !important; background: transparent !important;
+            box-shadow: none !important; cursor: pointer; accent-color: var(--accent-green);
+        }
+        .cat-filter-label:has(input:checked) {
+            background: rgba(16, 185, 129, .12); border-color: var(--accent-green);
+            color: var(--accent-green); font-weight: 700;
+        }
+        #crop-options-list {
+            display: grid; flex: 1 1 auto; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;
+            min-height: 0; overflow-y: auto; padding: 1px 3px 2px 1px;
+            grid-auto-rows: minmax(58px, max-content); align-content: start;
+            scrollbar-color: var(--border-glass) transparent; scrollbar-width: thin;
+        }
+        .custom-option {
+            display: flex; align-items: center; gap: 10px; min-width: 0; min-height: 58px;
+            padding: 9px 10px; overflow: hidden; border: 1px solid var(--border-glass);
+            border-radius: 14px; background: var(--bg-card); color: var(--text-main);
+            cursor: pointer; text-align: left; font: inherit;
+            transition: border-color .2s ease, background .2s ease, transform .2s ease, box-shadow .2s ease;
+        }
+        .custom-option:hover {
+            transform: translateY(-1px); border-color: rgba(16, 185, 129, .55);
+            background: rgba(16, 185, 129, .07); box-shadow: 0 7px 16px rgba(0, 0, 0, .08);
+        }
+        .custom-option[aria-selected="true"] { border-color: var(--accent-green); background: rgba(16, 185, 129, .1); }
+        .custom-option:focus-visible { outline: 3px solid rgba(16, 185, 129, .34); outline-offset: 1px; }
+        .custom-option-icon {
+            display: grid; width: 38px; height: 38px; flex: 0 0 38px; place-items: center;
+            border: 1px solid rgba(16, 185, 129, .14); border-radius: 12px;
+            background: rgba(16, 185, 129, .08); font-size: 21px;
+        }
+        .custom-option-copy { display: grid; gap: 3px; min-width: 0; flex: 1; }
+        .custom-option-name { overflow: hidden; color: inherit; font-size: 13px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+        .custom-option-category { overflow: hidden; color: var(--text-muted); font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+        .custom-option-arrow { color: var(--text-muted); font-size: 16px; opacity: 0; transform: translateX(-3px); transition: .2s ease; }
+        .custom-option:hover .custom-option-arrow,
+        .custom-option:focus-visible .custom-option-arrow { opacity: 1; transform: translateX(0); }
+        .crop-options-empty { grid-column: 1 / -1; padding: 22px 12px; border: 1px dashed var(--border-glass); border-radius: 14px; color: var(--text-muted); text-align: center; font-size: 13px; }
+
+        @media (max-width: 600px) {
+            .custom-options { left: 50%; width: calc(100vw - 32px); max-width: none; height: min(540px, 68vh); padding: 13px; transform: translateX(-50%); transform-origin: top center; }
+            .custom-options.open { animation-name: crop-menu-in-mobile; }
+            @keyframes crop-menu-in-mobile {
+                from { opacity: 0; transform: translate(-50%, -6px) scale(.985); }
+                to { opacity: 1; transform: translate(-50%, 0) scale(1); }
+            }
+            #crop-options-list { grid-template-columns: 1fr; }
+        }
+
+        #new-crop-date {
+            min-height: 50px; border-radius: 13px;
+            background: linear-gradient(145deg, var(--bg-input), var(--bg-card));
+            transition: border-color .2s ease, box-shadow .2s ease;
+        }
+        #new-crop-date:focus { border-color: var(--accent-green); box-shadow: 0 0 0 4px rgba(16, 185, 129, .1); }
+        .add-crop-field > label[for="new-crop-date"] { display: block; margin-bottom: 8px; }
+        .date-guidance { margin-top: 8px; padding: 10px 12px; border-radius: 11px; font-size: 12px; line-height: 1.5; }
+        .date-guidance.recommendation { display: flex; flex-wrap: wrap; gap: 4px 14px; background: rgba(59, 130, 246, .07); border: 1px solid rgba(59, 130, 246, .2); color: var(--text-muted); }
+        .date-guidance strong { color: var(--text-main); font-weight: 700; }
 
 .dash-panel.weather-hero-card {
     --weather-start: #2563a8;
@@ -402,52 +494,16 @@
     .weather-hero-card .weather-details > div { transition: none; }
 }
 
-        .cat-filter-label input[type="checkbox"] {
-            width: 14px !important; 
-            height: 14px !important; 
-            margin: 0 !important; 
-            cursor: pointer; 
-            accent-color: var(--accent-green);
-        }
-
-        .cat-filter-label:has(input:checked) {
-            background: rgba(16, 185, 129, 0.15);
-            border-color: var(--accent-green);
-            color: var(--accent-green);
-            font-weight: 700;
-        }
-
-        #crop-options-list {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
-        }
-
-        .custom-option {
-            padding: 10px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px;
-            transition: 0.2s; font-size: 14px;
-            min-width: 0;
-            overflow: hidden;
-        }
-        .custom-option span:first-child { flex-shrink: 0; }
-        .custom-option span:last-child {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            min-width: 0;
-        }
-        .custom-option:hover { background: var(--bg-card); color: var(--accent-green); }
-        .custom-option.disabled { opacity: 0.3; pointer-events: none; }
-
         /* AI Анализ на дата */
         .ai-date-analysis { margin-top: 10px; padding: 12px; border-radius: 8px; font-size: 14px; display: none; }
         .ai-date-analysis.success { display: block; background: rgba(16, 185, 129, 0.1); border: 1px solid var(--accent-green); color: var(--accent-green); }
         .ai-date-analysis.error { display: block; background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #ef4444; }
         .ai-date-analysis.recommendation { display: grid; gap: 6px; padding: 10px 12px; background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.3); color: var(--text-main); }
-        .crop-guidance-item { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 13px; line-height: 1.4; }
-        .crop-guidance-item strong { color: var(--text-muted); font-weight: 600; }
-        .crop-guidance-item span { text-align: right; }
-        .crop-guidance-note { color: var(--text-muted); font-size: 11px; line-height: 1.5; }
+        #crop-planting-recommendation.date-guidance.recommendation {
+            display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 8px; padding: 9px 11px;
+            border-radius: 11px; background: rgba(59, 130, 246, .07);
+            border: 1px solid rgba(59, 130, 246, .2); color: var(--text-muted); font-size: 12px;
+        }
         .crop-harvest-status { display: block; margin-top: 12px; font-size: 14px; line-height: 1.5; }
         .crop-harvest-status.harvest-ready { color: var(--accent-green); }
         .crop-harvest-status.harvest-overdue { color: #ef4444; }
@@ -543,23 +599,30 @@
                     <div class="add-crop-field" style="position: relative;">
                         <label>Култура</label>
                         <div class="custom-select-wrapper" id="crop-select-wrapper">
-                            <div class="custom-select-trigger" id="crop-select-trigger">
-                                <span id="crop-selected-text" style="color: var(--text-muted);">Избери култура...</span>
-                                <span>▾</span>
-                            </div>
+                            <button type="button" class="custom-select-trigger" id="crop-select-trigger" aria-haspopup="listbox" aria-expanded="false" aria-controls="crop-options-container">
+                                <span id="crop-select-placeholder">Избери култура</span>
+                                <span class="crop-trigger-chevron" aria-hidden="true">⌄</span>
+                            </button>
                             <div class="custom-options" id="crop-options-container">
-                                <input type="text" class="custom-search" id="crop-search" placeholder="Търси култура...">
+                                <div class="crop-options-heading">
+                                    <div><strong>Избери култура</strong><span>Намери я по име или категория</span></div>
+                                    <span class="crop-options-count" id="crop-options-count">0</span>
+                                </div>
+                                <div class="crop-search-wrap">
+                                    <span class="crop-search-icon" aria-hidden="true">⌕</span>
+                                    <input type="search" class="custom-search" id="crop-search" placeholder="Потърси култура..." autocomplete="off">
+                                </div>
                                 <div class="category-filters" id="category-filters"></div>
-                                <div id="crop-options-list"></div>
+                                <div id="crop-options-list" role="listbox" aria-label="Култури"></div>
                             </div>
                         </div>
                         <input type="hidden" id="new-crop" required>
                     </div>
                     
                     <div class="add-crop-field">
-                        <label>Дата на засаждане</label>
+                        <label for="new-crop-date">Дата на засаждане</label>
                         <input type="date" id="new-crop-date" required>
-                        <div id="crop-planting-recommendation" class="ai-date-analysis"></div>
+                        <div id="crop-planting-recommendation" class="ai-date-analysis date-guidance"></div>
                         <div id="ai-date-feedback" class="ai-date-analysis"></div>
                     </div>
                     
@@ -775,27 +838,62 @@
 
         optionsList.innerHTML = "";
         if (filtered.length === 0) {
-            optionsList.innerHTML = "<div style='padding:10px; color:var(--text-muted); font-size:14px; grid-column: 1 / -1;'>Няма намерени култури.</div>";
+            optionsList.innerHTML = '<div class="crop-options-empty">Няма намерени култури. Опитай с друга дума.</div>';
+            document.getElementById("crop-options-count").textContent = "0";
             return;
         }
 
+        document.getElementById("crop-options-count").textContent = String(filtered.length);
         filtered.sort((a,b) => a.label.localeCompare(b.label)).forEach(crop => {
-            const div = document.createElement("div");
-            div.className = "custom-option";
-            div.innerHTML = `<span>${crop.icon}</span> <span>${crop.label}</span>`;
-            div.onclick = () => {
+            const option = document.createElement("button");
+            option.type = "button";
+            option.className = "custom-option";
+            option.setAttribute("role", "option");
+            option.setAttribute("aria-selected", String(document.getElementById("new-crop").value === crop.name));
+
+            const icon = document.createElement("span");
+            icon.className = "custom-option-icon";
+            icon.setAttribute("aria-hidden", "true");
+            icon.textContent = crop.icon || "🌱";
+
+            const copy = document.createElement("span");
+            copy.className = "custom-option-copy";
+            const name = document.createElement("span");
+            name.className = "custom-option-name";
+            name.textContent = crop.label;
+            const category = document.createElement("span");
+            category.className = "custom-option-category";
+            category.textContent = crop.category || "Култура";
+            copy.append(name, category);
+
+            const arrow = document.createElement("span");
+            arrow.className = "custom-option-arrow";
+            arrow.setAttribute("aria-hidden", "true");
+            arrow.textContent = "→";
+
+            option.append(icon, copy, arrow);
+            option.addEventListener("click", () => {
                 document.getElementById("new-crop").value = crop.name;
-                document.getElementById("crop-selected-text").textContent = `${crop.icon} ${crop.label}`;
-                document.getElementById("crop-selected-text").style.color = "var(--text-main)";
+                const selectedText = document.getElementById("crop-select-placeholder");
+                selectedText.textContent = crop.label;
+                selectedText.classList.add("is-selected");
                 document.getElementById("crop-options-container").classList.remove("open");
+                document.getElementById("crop-select-trigger").setAttribute("aria-expanded", "false");
                 checkDateSuitability();
-            };
-            optionsList.appendChild(div);
+            });
+            optionsList.appendChild(option);
         });
     }
 
     document.getElementById("crop-select-trigger").addEventListener("click", () => {
-        document.getElementById("crop-options-container").classList.toggle("open");
+        const trigger = document.getElementById("crop-select-trigger");
+        const options = document.getElementById("crop-options-container");
+        const isOpen = options.classList.toggle("open");
+        trigger.setAttribute("aria-expanded", String(isOpen));
+        if (isOpen) {
+            renderOptions();
+            requestAnimationFrame(() => document.getElementById("crop-search").focus());
+        }
     });
 
     document.getElementById("crop-search").addEventListener("input", (e) => {
@@ -803,10 +901,19 @@
         renderOptions();
     });
 
+    document.getElementById("crop-search").addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+            document.getElementById("crop-options-container").classList.remove("open");
+            document.getElementById("crop-select-trigger").setAttribute("aria-expanded", "false");
+            document.getElementById("crop-select-trigger").focus();
+        }
+    });
+
     document.addEventListener("click", (e) => {
         const wrapper = document.getElementById("crop-select-wrapper");
         if (wrapper && !wrapper.contains(e.target)) {
             document.getElementById("crop-options-container").classList.remove("open");
+            document.getElementById("crop-select-trigger").setAttribute("aria-expanded", "false");
         }
     });
 
@@ -950,11 +1057,10 @@
         }
 
         const guidance = getCropGuidance(cropName);
-        recommendationEl.className = "ai-date-analysis recommendation";
+        recommendationEl.className = "ai-date-analysis date-guidance recommendation";
         recommendationEl.innerHTML = `
-            <div class="crop-guidance-item"><strong>Сеитба / засаждане</strong><span>${guidance.plantingPeriod}</span></div>
-            <div class="crop-guidance-item"><strong>До реколта</strong><span>Ориентировъчно ${guidance.harvestDays} дни</span></div>
-            <small class="crop-guidance-note">Срокът зависи от сорта, начина на отглеждане и местните условия.</small>
+            <span><strong>Период:</strong> ${guidance.plantingPeriod}</span>
+            <span><strong>До реколта:</strong> около ${guidance.harvestDays} дни</span>
         `;
     }
 
@@ -999,23 +1105,23 @@
                     
                     feedbackEl.className = "ai-date-analysis error";
                     if (betterDay) {
-                        feedbackEl.innerHTML = `❌ Не, на <b>${selectedDate.toLocaleDateString("bg-BG")}</b> НЕ Е подходящо да се засее. Очаква се екстремна топлина (${Math.round(maxT)}°C).<br>По-добра дата: <b>${betterDay}</b>.`;
+                        feedbackEl.innerHTML = `Очакват се ${Math.round(maxT)}°C. По-подходяща дата: <b>${betterDay}</b>.`;
                     } else {
-                        feedbackEl.innerHTML = `❌ Не, на <b>${selectedDate.toLocaleDateString("bg-BG")}</b> НЕ Е подходящо. Очаква се екстремна топлина.`;
+                        feedbackEl.textContent = `Очакват се високи температури (${Math.round(maxT)}°C).`;
                     }
                     return;
                 }
                 
                 if (minT < 5) {
                     feedbackEl.className = "ai-date-analysis error";
-                    feedbackEl.innerHTML = `❌ Не, на <b>${selectedDate.toLocaleDateString("bg-BG")}</b> НЕ Е подходящо. Очакват се слани (${Math.round(minT)}°C).`;
+                    feedbackEl.textContent = `Възможни са слани (${Math.round(minT)}°C).`;
                     return;
                 }
             }
         }
 
         feedbackEl.className = "ai-date-analysis success";
-        feedbackEl.innerHTML = `✅ Да, на <b>${selectedDate.toLocaleDateString("bg-BG")}</b> е подходящо да се засее избраната култура.`;
+        feedbackEl.textContent = "Подходяща дата за засаждане.";
     }
 
     /* --- ГРАДИНИ И КУЛТУРИ --- */
@@ -1241,7 +1347,7 @@
         const formattedHarvestDate = new Date(harvestDate.getTime()).toLocaleDateString("bg-BG", { day: "2-digit", month: "long", year: "numeric", timeZone: "UTC" });
 
         if (daysRemaining < 0) {
-            return { text: `Вече срокът за събирането е преминал (очаквана дата: ${formattedHarvestDate}).`, className: "harvest-overdue" };
+            return { text: `Срокът за събиране вече е преминал (очаквана дата: ${formattedHarvestDate}).`, className: "harvest-overdue" };
         }
         if (daysRemaining === 0) {
             return { text: "Подходящо е за събиране днес.", className: "harvest-ready" };
@@ -1375,8 +1481,9 @@
         
         document.querySelector("#new-crop").value = ""; 
         document.querySelector("#new-crop-date").value = "";
-        document.getElementById("crop-selected-text").textContent = "Избери култура...";
-        document.getElementById("crop-selected-text").style.color = "var(--text-muted)";
+        const selectedText = document.getElementById("crop-select-placeholder");
+        selectedText.textContent = "Избери култура";
+        selectedText.classList.remove("is-selected");
         document.getElementById("ai-date-feedback").className = "ai-date-analysis";
         document.getElementById("ai-date-feedback").textContent = "";
         renderPlantingRecommendation();
@@ -1475,7 +1582,7 @@
         document.querySelector("#crop-care").textContent = careSchedule.care;
         renderCropStage(cropKey, newDate); await renderCrops();
         renderHarvestStatus(document.querySelector("#crop-harvest-status"), cropKey, newDate);
-        document.querySelector("#crop-date-message").textContent = "✅ Датата е запазена.";
+        document.querySelector("#crop-date-message").textContent = "Датата е запазена.";
         
         if (isFarm) generateFarmPlan(cropKey, newDate);
         
