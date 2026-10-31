@@ -416,6 +416,8 @@ input:focus, select:focus {
 .crop-icon { font-size: 40px; margin-bottom: 10px; }
 .crop-name { font-size: 18px; font-weight: 700; color: var(--text-main); }
 .crop-status { font-size: 13px; color: var(--text-muted); margin-top: 6px; }
+.crop-status.harvest-ready { color: var(--accent-green); }
+.crop-status.harvest-overdue { color: #ef4444; }
 
 /* Време и AI */
 .weather-main { text-align: center; margin: 20px 0; }
@@ -448,10 +450,10 @@ body.light-theme .crop-stage-progress { background: rgba(0,0,0,0.1); }
 .close-crop-details:hover { background: #ef4444; color: #fff; }
 
 /* Форми */
-.add-crop-form { display: grid; grid-template-columns: 1fr 1fr auto; gap: 15px; align-items: end; }
+.add-crop-form { display: grid; grid-template-columns: 1fr 1fr auto; gap: 15px; align-items: start; }
 .add-crop-field { display: flex; flex-direction: column; gap: 8px; }
 .add-crop-field label { color: var(--text-muted); font-size: 14px; font-weight: 600; }
-.add-crop-button { background: var(--accent-blue); color: #fff; border: none; padding: 14px 24px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.3s; font-family: inherit; }
+.add-crop-button { align-self: start; margin-top: 24px; background: var(--accent-blue); color: #fff; border: none; padding: 14px 24px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.3s; font-family: inherit; }
 .add-crop-button:hover { background: #2563eb; box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
 .delete-crop-btn { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); padding: 12px 24px; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 20px; transition: 0.3s; font-family: inherit; width: 100%; }
 .delete-crop-btn:hover { background: #ef4444; color: #fff; }
@@ -506,6 +508,7 @@ body.light-theme .crop-stage-progress { background: rgba(0,0,0,0.1); }
     .bento-card { padding: 25px; }
     .container { gap: 16px; }
     .add-crop-form { grid-template-columns: 1fr; }
+    .add-crop-button { margin-top: 0; }
     .crop-info-grid { grid-template-columns: 1fr; }
     .crop-stage-box { grid-column: span 1; }
     .garden-header { flex-direction: column; align-items: flex-start; gap: 15px; }

@@ -104,6 +104,14 @@
         .ai-date-analysis { margin-top: 10px; padding: 12px; border-radius: 8px; font-size: 14px; display: none; }
         .ai-date-analysis.success { display: block; background: rgba(16, 185, 129, 0.1); border: 1px solid var(--accent-green); color: var(--accent-green); }
         .ai-date-analysis.error { display: block; background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #ef4444; }
+        .ai-date-analysis.recommendation { display: grid; gap: 6px; padding: 10px 12px; background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.3); color: var(--text-main); }
+        .crop-guidance-item { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 13px; line-height: 1.4; }
+        .crop-guidance-item strong { color: var(--text-muted); font-weight: 600; }
+        .crop-guidance-item span { text-align: right; }
+        .crop-guidance-note { color: var(--text-muted); font-size: 11px; line-height: 1.5; }
+        .crop-harvest-status { display: block; margin-top: 12px; font-size: 14px; line-height: 1.5; }
+        .crop-harvest-status.harvest-ready { color: var(--accent-green); }
+        .crop-harvest-status.harvest-overdue { color: #ef4444; }
 
         /* Агрономически план */
         .farm-plan-section { 
@@ -212,6 +220,7 @@
                     <div class="add-crop-field">
                         <label>Дата на засаждане</label>
                         <input type="date" id="new-crop-date" required>
+                        <div id="crop-planting-recommendation" class="ai-date-analysis"></div>
                         <div id="ai-date-feedback" class="ai-date-analysis"></div>
                     </div>
                     
@@ -241,6 +250,7 @@
                         <p style="color: var(--text-main); font-size: 14px; margin: 10px 0;" id="crop-stage-description">-</p>
                         <div class="crop-stage-progress"><div id="crop-stage-progress-bar" class="crop-stage-progress-bar"></div></div>
                         <span style="color: var(--text-muted); font-size: 12px; margin-top: 8px; display: block;" id="crop-stage-days">-</span>
+                        <span id="crop-harvest-status" class="crop-harvest-status"></span>
                     </div>
 
                     <div class="crop-info-box" style="grid-column: span 2;">
@@ -266,7 +276,7 @@
                     </div>
                     <div class="farm-plan-item">
                         <div>
-                            <strong>Поливане:</strong> 
+                            <strong>Следваща проверка на влагата:</strong>
                             <span id="plan-water-date">...</span>
                         </div>
                         <button class="edit-btn" onclick="editPlanDate('water')">✏️</button>
@@ -453,29 +463,132 @@
     /* --- AI АНАЛИЗ НА ДАТАТА --- */
     document.getElementById("new-crop-date").addEventListener("change", checkDateSuitability);
 
+    function getCropGuidance(cropName) {
+        const key = cropName.toLowerCase().trim();
+        const crop = allCropsData.find(item => item.name === key);
+        const fallback = crop && cropGrowingGuidance.byCategory[crop.category];
+        return cropGrowingGuidance.byName[key] || fallback || { plantingPeriod: "Според вида и местния климат", harvestDays: 90 };
+    }
+
+    function getDateAfterDays(dateString, days) {
+        if (!dateString) return null;
+        const [year, month, day] = dateString.split("-").map(Number);
+        const date = new Date(year, month - 1, day);
+        if (isNaN(date.getTime())) return null;
+        date.setDate(date.getDate() + days);
+        return date;
+    }
+
+    function formatScheduleDate(date) {
+        return date ? date.toLocaleDateString("bg-BG", { day: "2-digit", month: "long", year: "numeric" }) : "";
+    }
+
+    function getCropCareSchedule(cropName, plantingDate) {
+        if (!plantingDate) {
+            const missingDate = "Добави дата на засаждане, за да се изчисли графикът.";
+            return { watering: missingDate, fertilizing: missingDate, care: missingDate, nextFertilizingDate: null, nextWaterCheckDate: null };
+        }
+
+        const key = cropName.toLowerCase().trim();
+        const crop = allCropsData.find(item => item.name === key);
+        const guidance = getCropGuidance(key);
+        const harvestDays = guidance.harvestDays;
+        const harvestDate = getDateAfterDays(plantingDate, harvestDays);
+        const establishmentDate = getDateAfterDays(plantingDate, 14);
+        const firstWaterCheckDate = getDateAfterDays(plantingDate, 2);
+        const midCycleDate = getDateAfterDays(plantingDate, Math.round(harvestDays * 0.55));
+        const ripeningCheckDate = getDateAfterDays(plantingDate, Math.max(0, harvestDays - 14));
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const cropIsPastHarvest = harvestDate && harvestDate < today;
+        let nextWaterCheckDate = firstWaterCheckDate;
+        if (cropIsPastHarvest) {
+            nextWaterCheckDate = null;
+        } else if (nextWaterCheckDate && nextWaterCheckDate < today) {
+            nextWaterCheckDate = today;
+        }
+        const isPerennial = crop && (
+            key === "аспержи" ||
+            crop.category === "Ядки" ||
+            crop.category === "Цитруси и екзотични" ||
+            (crop.category === "Плодове" && key !== "диня" && key !== "пъпеш" && key !== "физалис")
+        );
+        const nitrogenFixers = new Set(["грах", "боб", "зелен фасул", "фасул за зърно", "едамаме", "бакла", "леща", "нахут", "соя", "фий", "детелина", "еспарзета"]);
+        const shortCycle = harvestDays <= 45;
+        const watering = `При засаждане (${formatCropDate(plantingDate)}) полей добре. До поникване/прихващане (${formatScheduleDate(establishmentDate)}) проверявай влагата ежедневно; след това проверявай почвата през 2–3 дни и поливай, когато горните 3–5 cm са сухи. Следи влагата особено редовно от средата на цикъла (${formatScheduleDate(midCycleDate)}) до ориентировъчната реколта (${formatScheduleDate(harvestDate)}).`;
+
+        let fertilizing;
+        let nextFertilizingDate = null;
+        if (nitrogenFixers.has(key)) {
+            fertilizing = `Не планирай рутинно азотно торене. Подхранването се определя при подготовка на почвата и според анализа ѝ; следвай етикета на тора.`;
+        } else if (isPerennial) {
+            fertilizing = `За трайни насаждения основното подхранване обикновено е в началото на пролетния растеж, а не през фиксирани дни след засаждането. При ново засаждане използвай тор само според анализа на почвата и указанията за вида.`;
+        } else if (shortCycle) {
+            fertilizing = `При кратък цикъл до ${formatScheduleDate(harvestDate)} подготви почвата преди сеитба. Не планирай автоматично допълнително торене след поникване; съобрази го с почвата и етикета на тора.`;
+        } else {
+            let scheduledDate = getDateAfterDays(plantingDate, 21);
+            const lastFeedingDate = getDateAfterDays(plantingDate, Math.max(21, harvestDays - 14));
+            const scheduledDates = [];
+            while (scheduledDate <= lastFeedingDate) {
+                scheduledDates.push(formatScheduleDate(scheduledDate));
+                if (!cropIsPastHarvest && !nextFertilizingDate && scheduledDate >= today) {
+                    nextFertilizingDate = scheduledDate;
+                }
+                scheduledDate = getDateAfterDays(
+                    `${scheduledDate.getFullYear()}-${String(scheduledDate.getMonth() + 1).padStart(2, "0")}-${String(scheduledDate.getDate()).padStart(2, "0")}`,
+                    28
+                );
+            }
+            fertilizing = `Ориентировъчни дати за проверка на подхранването (от 3 седмици след засаждането, после през 4 седмици): ${scheduledDates.length ? scheduledDates.join(", ") : "няма преди очакваната реколта"}. Подхранвай само ако е подходящо за културата; дозата се определя по етикета и почвата.`;
+        }
+
+        const care = `Започни плевене и оглед за вредители около седмица след засаждането (${formatScheduleDate(getDateAfterDays(plantingDate, 7))}); проверявай всяка седмица. Започни оглед за зрялост около 2 седмици преди ориентировъчната реколта (${formatScheduleDate(ripeningCheckDate)}).`;
+        return { watering, fertilizing, care, nextFertilizingDate, nextWaterCheckDate };
+    }
+
+    function renderPlantingRecommendation() {
+        const cropName = document.getElementById("new-crop").value;
+        const recommendationEl = document.getElementById("crop-planting-recommendation");
+        if (!cropName) {
+            recommendationEl.className = "ai-date-analysis";
+            recommendationEl.textContent = "";
+            return;
+        }
+
+        const guidance = getCropGuidance(cropName);
+        recommendationEl.className = "ai-date-analysis recommendation";
+        recommendationEl.innerHTML = `
+            <div class="crop-guidance-item"><strong>Сеитба / засаждане</strong><span>${guidance.plantingPeriod}</span></div>
+            <div class="crop-guidance-item"><strong>До реколта</strong><span>Ориентировъчно ${guidance.harvestDays} дни</span></div>
+            <small class="crop-guidance-note">Срокът зависи от сорта, начина на отглеждане и местните условия.</small>
+        `;
+    }
+
     function checkDateSuitability() {
         const cropName = document.getElementById("new-crop").value;
         const dateVal = document.getElementById("new-crop-date").value;
         const feedbackEl = document.getElementById("ai-date-feedback");
+        renderPlantingRecommendation();
         
         if (!cropName || !dateVal) {
             feedbackEl.className = "ai-date-analysis";
+            feedbackEl.textContent = "";
             return;
         }
 
-        const selectedDate = new Date(dateVal);
+        const selectedDate = new Date(dateVal + "T00:00:00");
         const today = new Date();
-        today.setHours(0,0,0,0);
+        today.setHours(0, 0, 0, 0);
 
         if (selectedDate < today) {
-            feedbackEl.className = "ai-date-analysis error";
-            feedbackEl.textContent = "Датата е в миналото. Моля, изберете бъдеща дата.";
+            feedbackEl.className = "ai-date-analysis";
+            feedbackEl.textContent = "";
             return;
         }
 
         if (agroForecast && agroForecast.daily) {
             const forecastDays = agroForecast.daily.time;
-            const dateIndex = forecastDays.findIndex(d => new Date(d).toDateString() === selectedDate.toDateString());
+            const dateIndex = forecastDays.findIndex(d => new Date(d + "T00:00:00").getTime() === selectedDate.getTime());
             
             if (dateIndex !== -1) {
                 const maxT = agroForecast.daily.temperature_2m_max[dateIndex];
@@ -673,11 +786,11 @@
     });
 
     const baseCropData = {
-        "домати": { name: "Домати", icon: "🍅", description: "Топлолюбива зеленчукова култура.", watering: "Редовно.", temperature: "20–30°C.", fertilizing: "Балансирано.", diseases: "Мана, въшки.", care: "Следене на влагата." },
-        "краставици": { name: "Краставици", icon: "🥒", description: "Топлолюбива култура.", watering: "Редовно.", temperature: "20–30°C.", fertilizing: "Редовно.", diseases: "Мана, акари.", care: "Проветряване." },
-        "пипер": { name: "Пипер", icon: "🌶️", description: "Топлолюбива култура.", watering: "Редовно.", temperature: "20–30°C.", fertilizing: "Балансирано.", diseases: "Въшки, гъби.", care: "Плевене." },
-        "царевица": { name: "Царевица", icon: "🌽", description: "Полска култура.", watering: "Критични фази.", temperature: "Топло време.", fertilizing: "Азотно.", diseases: "Червеи, гъби.", care: "Плевели." },
-        "пшеница": { name: "Пшеница", icon: "🌾", description: "Житна култура.", watering: "От валежите.", temperature: "Според фазата.", fertilizing: "Азотно.", diseases: "Ръжди.", care: "Наблюдение." }
+        "домати": { name: "Домати", icon: "🍅", description: "Топлолюбива зеленчукова култура.", temperature: "20–30°C.", diseases: "Мана, въшки." },
+        "краставици": { name: "Краставици", icon: "🥒", description: "Топлолюбива култура.", temperature: "20–30°C.", diseases: "Мана, акари." },
+        "пипер": { name: "Пипер", icon: "🌶️", description: "Топлолюбива култура.", temperature: "20–30°C.", diseases: "Въшки, гъби." },
+        "царевица": { name: "Царевица", icon: "🌽", description: "Полска култура.", temperature: "Топло време.", diseases: "Червеи, гъби." },
+        "пшеница": { name: "Пшеница", icon: "🌾", description: "Житна култура.", temperature: "Според фазата.", diseases: "Ръжди." }
     };
 
     const baseCropStages = {
@@ -698,7 +811,6 @@
 
     let cropDates = {}; let userCrops = [];
 
-    function getTodayISO() { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
     function formatCropDate(dateString) { if (!dateString) return "-"; const date = new Date(dateString + "T00:00:00"); return isNaN(date.getTime()) ? "-" : date.toLocaleDateString("bg-BG", { day: "2-digit", month: "long", year: "numeric" }); }
     function capitalizeFirst(str) { return str ? str.charAt(0).toUpperCase() + str.slice(1) : ""; }
 
@@ -713,6 +825,50 @@
     function getCropAgeText(dateString) {
         const days = getCropAge(dateString);
         if (days === null) return "Няма дата"; if (days === 0) return "Днес"; if (days === 1) return "Преди 1 ден"; if (days > 1) return "Преди " + days + " дни"; return "Невалидна";
+    }
+
+    function getHarvestStatus(cropName, plantingDate) {
+        if (!plantingDate) return { text: "Добави дата на засаждане, за да видиш срока за събиране.", className: "" };
+
+        const [year, month, day] = plantingDate.split("-").map(Number);
+        const harvestDate = new Date(Date.UTC(year, month - 1, day));
+        if (isNaN(harvestDate.getTime())) return { text: "Невалидна дата на засаждане.", className: "" };
+        harvestDate.setUTCDate(harvestDate.getUTCDate() + getCropGuidance(cropName).harvestDays);
+
+        const now = new Date();
+        const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+        const daysRemaining = Math.round((harvestDate.getTime() - today) / 86400000);
+        const formattedHarvestDate = new Date(harvestDate.getTime()).toLocaleDateString("bg-BG", { day: "2-digit", month: "long", year: "numeric", timeZone: "UTC" });
+
+        if (daysRemaining < 0) {
+            return { text: `Вече срокът за събирането е преминал (очаквана дата: ${formattedHarvestDate}).`, className: "harvest-overdue" };
+        }
+        if (daysRemaining === 0) {
+            return { text: "Подходящо е за събиране днес.", className: "harvest-ready" };
+        }
+
+        let remainingText;
+        if (daysRemaining < 30) {
+            remainingText = `след ${daysRemaining} ${daysRemaining === 1 ? "ден" : "дни"}`;
+        } else if (daysRemaining >= 365) {
+            const years = Math.ceil(daysRemaining / 365);
+            remainingText = `след около ${years} ${years === 1 ? "година" : "години"}`;
+        } else {
+            const months = Math.ceil(daysRemaining / 30);
+            remainingText = `след около ${months} ${months === 1 ? "месец" : "месеца"}`;
+        }
+
+        const isPlanted = today >= Date.UTC(year, month - 1, day);
+        const text = isPlanted
+            ? `Подходящо е за събиране ${remainingText} (очаквана дата: ${formattedHarvestDate}).`
+            : `След засаждането ориентировъчното събиране е ${remainingText} (очаквана дата: ${formattedHarvestDate}).`;
+        return { text, className: isPlanted ? "harvest-ready" : "" };
+    }
+
+    function renderHarvestStatus(element, cropName, plantingDate) {
+        const status = getHarvestStatus(cropName, plantingDate);
+        element.className = `crop-harvest-status ${status.className}`.trim();
+        element.textContent = status.text;
     }
 
     function getCropStage(cropName, dateString) {
@@ -775,19 +931,36 @@
             const savedDate = cropRow.planting_date;
             const cropCard = document.createElement("div");
             cropCard.className = "crop-card";
+            cropCard.dataset.cropName = cropRow.crop_name;
+            cropCard.dataset.plantingDate = savedDate || "";
             
-            let statusText = "Детайли";
-            if (savedDate) { const age = getCropAge(savedDate); if (age === 0) statusText = "Днес"; else if (age === 1) statusText = "Преди 1 ден"; else if (age > 1) statusText = "Преди " + age + " дни"; }
+            const harvestStatus = getHarvestStatus(cropRow.crop_name, savedDate);
 
             cropCard.innerHTML = `
                 <div class="crop-icon">${cropIcon}</div>
                 <div class="crop-name">${displayName}</div>
-                <div class="crop-status">${statusText}</div>
+                <div class="crop-status ${harvestStatus.className}">${harvestStatus.text}</div>
             `;
             cropCard.addEventListener("click", () => openCropDetails(cropRow.id, cropRow.crop_name));
             cropsList.appendChild(cropCard);
         });
     }
+
+    function refreshHarvestStatuses() {
+        document.querySelectorAll(".crop-card").forEach(cropCard => {
+            const statusEl = cropCard.querySelector(".crop-status");
+            const status = getHarvestStatus(cropCard.dataset.cropName, cropCard.dataset.plantingDate);
+            statusEl.className = `crop-status ${status.className}`.trim();
+            statusEl.textContent = status.text;
+        });
+
+        const details = document.querySelector("#crop-details");
+        if (details.style.display !== "none" && details.dataset.cropKey) {
+            renderHarvestStatus(document.querySelector("#crop-harvest-status"), details.dataset.cropKey, cropDates[details.dataset.cropKey]);
+        }
+    }
+
+    setInterval(refreshHarvestStatuses, 60000);
 
     document.querySelector("#add-crop-form").addEventListener("submit", async function (event) {
         event.preventDefault();
@@ -805,6 +978,8 @@
         document.getElementById("crop-selected-text").textContent = "Избери култура...";
         document.getElementById("crop-selected-text").style.color = "var(--text-muted)";
         document.getElementById("ai-date-feedback").className = "ai-date-analysis";
+        document.getElementById("ai-date-feedback").textContent = "";
+        renderPlantingRecommendation();
         
         await renderCrops();
     });
@@ -819,7 +994,7 @@
                 const found = allCropsData.find(c => c.name === cropKey);
                 if (found) icon = found.icon;
             }
-            crop = { name: capitalizeFirst(cropKey), icon: icon, description: "Растение за отглеждане в градината.", watering: "Според нуждите на растението.", temperature: "Според сезона и вида.", fertilizing: "Според нуждите през вегетацията.", diseases: "Редовно наблюдение.", care: "Плевене, поливане и грижи според вида." };
+            crop = { name: capitalizeFirst(cropKey), icon: icon, description: "Растение за отглеждане в градината.", temperature: "Според сезона и вида.", diseases: "Проверявай растенията редовно за признаци на болести и вредители." };
         }
 
         const details = document.querySelector("#crop-details");
@@ -828,20 +1003,22 @@
         details.dataset.cropId = cropId; details.dataset.cropKey = cropKey;
         const cropDate = cropDates[cropKey];
         
-        document.querySelector("#crop-details-date").max = getTodayISO(); document.querySelector("#crop-details-date").value = cropDate || "";
+        document.querySelector("#crop-details-date").value = cropDate || "";
         
         document.querySelector("#crop-details-icon").textContent = crop.icon || "🌱";
         document.querySelector("#crop-details-name").textContent = crop.name || capitalizeFirst(cropKey);
         document.querySelector("#crop-details-description").textContent = crop.description || "";
-        document.querySelector("#crop-watering").textContent = crop.watering || "";
+        const careSchedule = getCropCareSchedule(cropKey, cropDate);
+        document.querySelector("#crop-watering").textContent = careSchedule.watering;
         document.querySelector("#crop-temperature").textContent = crop.temperature || "";
-        document.querySelector("#crop-fertilizing").textContent = crop.fertilizing || "";
+        document.querySelector("#crop-fertilizing").textContent = careSchedule.fertilizing;
         document.querySelector("#crop-diseases").textContent = crop.diseases || "";
-        document.querySelector("#crop-care").textContent = crop.care || "";
+        document.querySelector("#crop-care").textContent = careSchedule.care;
         
         document.querySelector("#crop-planting").textContent = cropDate ? formatCropDate(cropDate) : "-";
         document.querySelector("#crop-age").textContent = getCropAgeText(cropDate);
         renderCropStage(cropKey, cropDate);
+        renderHarvestStatus(document.querySelector("#crop-harvest-status"), cropKey, cropDate);
         document.querySelector("#crop-date-message").textContent = "";
 
         if (isFarm) {
@@ -856,20 +1033,18 @@
     function generateFarmPlan(cropKey, cropDate) {
         if (!cropDate) {
             document.querySelector("#plan-fert-date").textContent = "Няма дата на засаждане";
+            document.querySelector("#plan-fert-desc").textContent = "Добави дата на засаждане, за да се изчисли графикът.";
             document.querySelector("#plan-water-date").textContent = "Няма дата";
             return;
         }
-        
-        const plantDate = new Date(cropDate);
-        const fertDate = new Date(plantDate);
-        fertDate.setDate(fertDate.getDate() + 20);
-        
-        const waterDate = new Date(); 
-        waterDate.setDate(waterDate.getDate() + 2);
-
-        document.querySelector("#plan-fert-date").textContent = fertDate.toLocaleDateString("bg-BG");
-        document.querySelector("#plan-fert-desc").textContent = "Азотно торене (NPK 20-20-20) - 200 г/дка";
-        document.querySelector("#plan-water-date").textContent = waterDate.toLocaleDateString("bg-BG");
+        const careSchedule = getCropCareSchedule(cropKey, cropDate);
+        document.querySelector("#plan-fert-date").textContent = careSchedule.nextFertilizingDate
+            ? formatScheduleDate(careSchedule.nextFertilizingDate)
+            : "Няма фиксирана дата";
+        document.querySelector("#plan-fert-desc").textContent = careSchedule.fertilizing;
+        document.querySelector("#plan-water-date").textContent = careSchedule.nextWaterCheckDate
+            ? `${formatScheduleDate(careSchedule.nextWaterCheckDate)}; проверявай през 2–3 дни`
+            : "Срокът за реколта е настъпил";
     }
 
     async function editPlanDate(type) {
@@ -894,7 +1069,12 @@
         cropDates[cropKey] = newDate;
         document.querySelector("#crop-planting").textContent = formatCropDate(newDate);
         document.querySelector("#crop-age").textContent = getCropAgeText(newDate);
+        const careSchedule = getCropCareSchedule(cropKey, newDate);
+        document.querySelector("#crop-watering").textContent = careSchedule.watering;
+        document.querySelector("#crop-fertilizing").textContent = careSchedule.fertilizing;
+        document.querySelector("#crop-care").textContent = careSchedule.care;
         renderCropStage(cropKey, newDate); await renderCrops();
+        renderHarvestStatus(document.querySelector("#crop-harvest-status"), cropKey, newDate);
         document.querySelector("#crop-date-message").textContent = "✅ Датата е запазена.";
         
         if (isFarm) generateFarmPlan(cropKey, newDate);
