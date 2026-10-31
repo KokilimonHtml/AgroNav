@@ -59,8 +59,349 @@
             white-space: nowrap;
         }
         body.light-theme .cat-filter-label { background: rgba(0, 0, 0, 0.05); }
-        
-        /* Фиксираме размера на чекбокса, за да не се разтяга */
+
+.dash-panel.weather-hero-card {
+    --weather-start: #2563a8;
+    --weather-end: #182b55;
+    --weather-glow: rgba(125, 211, 252, 0.42);
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 20px;
+    padding: 24px;
+    color: #fff;
+    background: linear-gradient(135deg, var(--weather-start), var(--weather-end));
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.24);
+    transition: background 0.8s ease, box-shadow 0.5s ease;
+}
+
+.weather-hero-card::before,
+.weather-hero-card::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.weather-hero-card::before {
+    inset: -35%;
+    background:
+        radial-gradient(ellipse at 82% 24%, var(--weather-glow), transparent 34%),
+        radial-gradient(ellipse at 10% 100%, rgba(255, 255, 255, 0.14), transparent 42%);
+    animation: weather-glow-drift 16s ease-in-out infinite alternate;
+}
+
+.weather-hero-card::after {
+    left: -12%;
+    right: -12%;
+    bottom: -72px;
+    height: 145px;
+    border-radius: 50% 50% 0 0;
+    background: linear-gradient(180deg, rgba(9, 22, 46, 0.02), rgba(9, 22, 46, 0.38));
+}
+
+.weather-hero-card > .weather-scene {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.weather-hero-card > * {
+    position: relative;
+    z-index: 2;
+}
+
+.weather-scene > span { position: absolute; display: block; }
+
+.weather-sun {
+    top: 54px;
+    right: 55px;
+    width: 78px;
+    height: 78px;
+    border-radius: 50%;
+    opacity: 0;
+    transform: scale(0.82);
+    background: radial-gradient(circle at 35% 32%, #fffce5 0 8%, #ffe9a3 34%, #ffc857 72%, rgba(255, 200, 87, 0.18) 100%);
+    box-shadow: 0 0 24px rgba(255, 218, 132, 0.76), 0 0 72px rgba(255, 193, 91, 0.45);
+    transition: opacity 0.8s ease, transform 1s ease;
+}
+
+.weather-cloud {
+    top: 102px;
+    right: 18px;
+    width: 150px;
+    height: 42px;
+    border-radius: 40px;
+    opacity: 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(208, 225, 240, 0.74));
+    filter: drop-shadow(0 10px 15px rgba(18, 36, 65, 0.2));
+    transition: opacity 0.7s ease;
+}
+
+.weather-cloud::before,
+.weather-cloud::after {
+    content: "";
+    position: absolute;
+    bottom: 8px;
+    border-radius: 50%;
+    background: inherit;
+}
+
+.weather-cloud::before { left: 25px; width: 56px; height: 56px; }
+.weather-cloud::after { left: 66px; width: 68px; height: 68px; }
+
+.weather-cloud-two {
+    top: 72px;
+    right: 112px;
+    transform: scale(0.68);
+    opacity: 0;
+}
+
+.weather-rain {
+    inset: 0 0 18px 36%;
+    opacity: 0;
+    background: repeating-linear-gradient(105deg, transparent 0 17px, rgba(224, 242, 255, 0.7) 18px 19px, transparent 20px 34px);
+    -webkit-mask-image: linear-gradient(180deg, transparent 5%, #000 38%, transparent 96%);
+    mask-image: linear-gradient(180deg, transparent 5%, #000 38%, transparent 96%);
+}
+
+.weather-snow {
+    inset: 0 0 12px 34%;
+    opacity: 0;
+    background-image:
+        radial-gradient(circle, rgba(255, 255, 255, 0.94) 0 1.5px, transparent 2px),
+        radial-gradient(circle, rgba(230, 246, 255, 0.86) 0 2px, transparent 2.5px),
+        radial-gradient(circle, rgba(255, 255, 255, 0.75) 0 1px, transparent 1.8px);
+    background-size: 47px 52px, 71px 76px, 31px 38px;
+    background-position: 0 0, 20px 15px, 12px 26px;
+}
+
+.weather-fog {
+    top: 104px;
+    right: -12%;
+    width: 76%;
+    height: 17px;
+    border-radius: 50%;
+    opacity: 0;
+    filter: blur(7px);
+    background: rgba(235, 244, 250, 0.52);
+}
+
+.weather-fog-two {
+    top: 143px;
+    right: 4%;
+    width: 62%;
+    opacity: 0;
+    background: rgba(235, 244, 250, 0.38);
+}
+
+.weather-lightning {
+    top: 155px;
+    right: 78px;
+    width: 28px;
+    height: 60px;
+    opacity: 0;
+    clip-path: polygon(53% 0, 100% 0, 69% 39%, 100% 39%, 22% 100%, 42% 52%, 8% 52%);
+    background: #fff5b8;
+    filter: drop-shadow(0 0 12px #fff3a1);
+}
+
+.weather-hero-card.clear {
+    --weather-start: #1687c5;
+    --weather-end: #303e83;
+    --weather-glow: rgba(255, 211, 110, 0.72);
+}
+
+.weather-hero-card.partly-cloudy,
+.weather-hero-card.drizzle {
+    --weather-start: #357eaa;
+    --weather-end: #364c78;
+    --weather-glow: rgba(255, 255, 255, 0.48);
+}
+
+.weather-hero-card.cloudy,
+.weather-hero-card.foggy {
+    --weather-start: #647d94;
+    --weather-end: #34445d;
+    --weather-glow: rgba(226, 238, 248, 0.44);
+}
+
+.weather-hero-card.rainy {
+    --weather-start: #315d83;
+    --weather-end: #202b4d;
+    --weather-glow: rgba(100, 181, 246, 0.48);
+}
+
+.weather-hero-card.showers {
+    --weather-start: #286d91;
+    --weather-end: #23395f;
+    --weather-glow: rgba(117, 204, 255, 0.52);
+}
+
+.weather-hero-card.freezing-rain {
+    --weather-start: #597c9a;
+    --weather-end: #34425e;
+    --weather-glow: rgba(191, 230, 255, 0.58);
+}
+
+.weather-hero-card.snowy {
+    --weather-start: #6592b2;
+    --weather-end: #415a82;
+    --weather-glow: rgba(232, 247, 255, 0.62);
+}
+
+.weather-hero-card.stormy {
+    --weather-start: #45416f;
+    --weather-end: #1d2944;
+    --weather-glow: rgba(171, 153, 255, 0.54);
+}
+
+.weather-hero-card.is-night {
+    --weather-start: #18264d;
+    --weather-end: #10172f;
+    --weather-glow: rgba(174, 193, 255, 0.4);
+}
+
+.weather-hero-card.clear .weather-sun,
+.weather-hero-card.is-night .weather-sun {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.weather-hero-card.is-night .weather-sun {
+    background: radial-gradient(circle at 36% 35%, #fff 0 4%, #e8edff 32%, #b4c5f7 70%, rgba(180, 197, 247, 0.12) 100%);
+    box-shadow: 0 0 25px rgba(222, 232, 255, 0.68), 0 0 70px rgba(177, 198, 255, 0.36);
+}
+
+.weather-hero-card.partly-cloudy .weather-sun { opacity: 0.84; transform: scale(0.92); }
+.weather-hero-card.partly-cloudy .weather-cloud,
+.weather-hero-card.partly-cloudy .weather-cloud-two,
+.weather-hero-card.drizzle .weather-cloud,
+.weather-hero-card.cloudy .weather-cloud,
+.weather-hero-card.foggy .weather-cloud,
+.weather-hero-card.rainy .weather-cloud,
+.weather-hero-card.showers .weather-cloud,
+.weather-hero-card.freezing-rain .weather-cloud,
+.weather-hero-card.snowy .weather-cloud,
+.weather-hero-card.stormy .weather-cloud { opacity: 0.9; }
+
+.weather-hero-card.partly-cloudy .weather-cloud-one,
+.weather-hero-card.cloudy .weather-cloud-one,
+.weather-hero-card.foggy .weather-cloud-one,
+.weather-hero-card.drizzle .weather-cloud-one,
+.weather-hero-card.rainy .weather-cloud-one,
+.weather-hero-card.showers .weather-cloud-one,
+.weather-hero-card.freezing-rain .weather-cloud-one,
+.weather-hero-card.snowy .weather-cloud-one,
+.weather-hero-card.stormy .weather-cloud-one {
+    animation: weather-cloud-drift 18s ease-in-out infinite alternate;
+}
+
+.weather-hero-card.partly-cloudy .weather-cloud-two {
+    animation: weather-cloud-drift 24s ease-in-out -8s infinite alternate-reverse;
+}
+
+.weather-hero-card.clear .weather-sun,
+.weather-hero-card.is-night .weather-sun { animation: weather-sun-pulse 7s ease-in-out infinite alternate; }
+
+.weather-hero-card.drizzle .weather-rain,
+.weather-hero-card.rainy .weather-rain,
+.weather-hero-card.showers .weather-rain,
+.weather-hero-card.freezing-rain .weather-rain,
+.weather-hero-card.stormy .weather-rain { opacity: 0.42; animation: weather-rain-fall 1.2s linear infinite; }
+
+.weather-hero-card.rainy .weather-rain,
+.weather-hero-card.showers .weather-rain,
+.weather-hero-card.stormy .weather-rain { opacity: 0.68; }
+
+.weather-hero-card.snowy .weather-snow { opacity: 0.9; animation: weather-snow-fall 8s linear infinite; }
+.weather-hero-card[data-weather-intensity="light"] .weather-rain { opacity: 0.28; animation-duration: 2s; }
+.weather-hero-card[data-weather-intensity="moderate"] .weather-rain { opacity: 0.48; animation-duration: 1.2s; }
+.weather-hero-card[data-weather-intensity="heavy"] .weather-rain { opacity: 0.78; animation-duration: 0.7s; }
+.weather-hero-card[data-weather-intensity="light"] .weather-snow { opacity: 0.58; animation-duration: 14s; }
+.weather-hero-card[data-weather-intensity="heavy"] .weather-snow { opacity: 1; animation-duration: 5s; }
+.weather-hero-card.foggy .weather-fog,
+.weather-hero-card.foggy .weather-fog-two { opacity: 0.56; animation: weather-fog-drift 9s ease-in-out infinite alternate; }
+.weather-hero-card.foggy .weather-fog-two { animation-delay: -4s; }
+.weather-hero-card.stormy .weather-lightning { animation: weather-lightning-flash 6s ease-in-out infinite; }
+
+.weather-hero-card.is-night .weather-cloud { background: linear-gradient(180deg, rgba(205, 220, 244, 0.82), rgba(112, 132, 169, 0.72)); }
+
+.weather-hero-card h3,
+.weather-hero-card .weather-temperature,
+.weather-hero-card .weather-condition,
+.weather-hero-card .weather-details b {
+    color: #fff;
+}
+
+.weather-hero-card #weather-location,
+.weather-hero-card .weather-details span {
+    color: rgba(255, 255, 255, 0.76) !important;
+}
+
+.weather-hero-card .weather-details > div {
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.weather-hero-card .weather-details > div:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.16);
+}
+
+.weather-main {
+    position: relative;
+}
+
+.weather-icon {
+    display: none;
+}
+
+@keyframes weather-glow-drift {
+    from { transform: translate3d(-2%, 1%, 0) scale(1); }
+    to { transform: translate3d(2%, -1%, 0) scale(1.05); }
+}
+
+@keyframes weather-cloud-drift {
+    from { translate: -10px 0; }
+    to { translate: 10px -4px; }
+}
+
+@keyframes weather-sun-pulse {
+    from { filter: brightness(0.96); }
+    to { filter: brightness(1.08); }
+}
+
+@keyframes weather-rain-fall {
+    to { background-position: -16px 38px; }
+}
+
+@keyframes weather-snow-fall {
+    to { background-position: -18px 104px, 54px 126px, -20px 76px; }
+}
+
+@keyframes weather-fog-drift {
+    from { transform: translateX(-8%); }
+    to { transform: translateX(10%); }
+}
+
+@keyframes weather-lightning-flash {
+    0%, 88%, 92%, 100% { opacity: 0; }
+    89%, 91% { opacity: 0.95; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .weather-hero-card::before,
+    .weather-hero-card .weather-scene > span { animation: none !important; }
+    .weather-hero-card,
+    .weather-hero-card .weather-details > div { transition: none; }
+}
+
         .cat-filter-label input[type="checkbox"] {
             width: 14px !important; 
             height: 14px !important; 
@@ -68,8 +409,7 @@
             cursor: pointer; 
             accent-color: var(--accent-green);
         }
-        
-        /* Оцветяване на избрания филтър */
+
         .cat-filter-label:has(input:checked) {
             background: rgba(16, 185, 129, 0.15);
             border-color: var(--accent-green);
@@ -77,7 +417,6 @@
             font-weight: 700;
         }
 
-        /* КУЛТУРИ - 2 НА РЕД */
         #crop-options-list {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -300,12 +639,23 @@
         </div>
 
         <div class="right-col">
-            <div class="dash-panel" style="text-align: center;">
+            <div class="dash-panel weather-hero-card" style="text-align: center;">
+                <div class="weather-scene" aria-hidden="true">
+                    <span class="weather-sun"></span>
+                    <span class="weather-cloud weather-cloud-one"></span>
+                    <span class="weather-cloud weather-cloud-two"></span>
+                    <span class="weather-rain"></span>
+                    <span class="weather-snow"></span>
+                    <span class="weather-fog"></span>
+                    <span class="weather-fog weather-fog-two"></span>
+                    <span class="weather-lightning"></span>
+                </div>
                 <h3>🌤️ Времето</h3>
                 <p id="weather-location" style="color: var(--text-muted); font-size: 14px; margin-bottom: 15px;">Местоположение: зареждане...</p>
                 <div class="weather-main">
+                    <span class="weather-icon" id="weather-icon" aria-hidden="true">🌤️</span>
                     <div class="weather-temperature">--°C</div>
-                    <div class="weather-condition">Зареждане...</div>
+                    <div class="weather-condition" role="status" aria-live="polite">Зареждане...</div>
                 </div>
                 <div class="weather-details">
                     <div><b>--%</b><span>Влажност</span></div>
@@ -459,6 +809,50 @@
             document.getElementById("crop-options-container").classList.remove("open");
         }
     });
+
+    function updateWeatherUI(weatherCode, isDay) {
+        const card = document.querySelector(".weather-hero-card");
+        const icon = document.querySelector("#weather-icon");
+        const condition = document.querySelector(".weather-condition");
+        const conditions = {
+            0: { className: "clear", label: isDay ? "Слънчево" : "Ясно", icon: isDay ? "☀️" : "🌙" },
+            1: { className: "partly-cloudy", label: isDay ? "Предимно слънчево" : "Предимно ясно", icon: isDay ? "🌤️" : "☁️" },
+            2: { className: "partly-cloudy", label: "Частично облачно", icon: "⛅" },
+            3: { className: "cloudy", label: "Облачно", icon: "☁️" },
+            45: { className: "foggy", label: "Мъгла", icon: "🌫️" },
+            48: { className: "foggy", label: "Скрежна мъгла", icon: "🌫️" },
+            51: { className: "drizzle", intensity: "light", label: "Слаб ръмеж", icon: "🌦️" },
+            53: { className: "drizzle", intensity: "moderate", label: "Умерен ръмеж", icon: "🌦️" },
+            55: { className: "drizzle", intensity: "heavy", label: "Силен ръмеж", icon: "🌧️" },
+            56: { className: "freezing-rain", intensity: "light", label: "Слаб леден ръмеж", icon: "🌧️" },
+            57: { className: "freezing-rain", intensity: "heavy", label: "Силен леден ръмеж", icon: "🌧️" },
+            61: { className: "rainy", intensity: "light", label: "Слаб дъжд", icon: "🌦️" },
+            63: { className: "rainy", intensity: "moderate", label: "Умерен дъжд", icon: "🌧️" },
+            65: { className: "rainy", intensity: "heavy", label: "Силен дъжд", icon: "🌧️" },
+            66: { className: "freezing-rain", intensity: "light", label: "Слаб леден дъжд", icon: "🌧️" },
+            67: { className: "freezing-rain", intensity: "heavy", label: "Силен леден дъжд", icon: "🌧️" },
+            71: { className: "snowy", intensity: "light", label: "Слаб снеговалеж", icon: "🌨️" },
+            73: { className: "snowy", intensity: "moderate", label: "Умерен снеговалеж", icon: "🌨️" },
+            75: { className: "snowy", intensity: "heavy", label: "Силен снеговалеж", icon: "❄️" },
+            77: { className: "snowy", intensity: "moderate", label: "Снежни зърна", icon: "❄️" },
+            80: { className: "showers", intensity: "light", label: "Слаби превалявания", icon: "🌦️" },
+            81: { className: "showers", intensity: "moderate", label: "Умерени превалявания", icon: "🌧️" },
+            82: { className: "showers", intensity: "heavy", label: "Силни превалявания", icon: "🌧️" },
+            85: { className: "snowy", intensity: "light", label: "Слаб сняг на превалявания", icon: "🌨️" },
+            86: { className: "snowy", intensity: "heavy", label: "Силен сняг на превалявания", icon: "❄️" },
+            95: { className: "stormy", intensity: "moderate", label: "Гръмотевична буря", icon: "⛈️" },
+            96: { className: "stormy", intensity: "moderate", label: "Буря с дребна градушка", icon: "⛈️" },
+            99: { className: "stormy", intensity: "heavy", label: "Буря със силна градушка", icon: "⛈️" }
+        };
+        const current = conditions[weatherCode] || { className: "cloudy", label: "Променливо време", icon: "🌥️" };
+
+        card.classList.remove("clear", "partly-cloudy", "cloudy", "foggy", "drizzle", "freezing-rain", "rainy", "showers", "snowy", "stormy", "is-night");
+        card.classList.add(current.className);
+        card.dataset.weatherIntensity = current.intensity || "normal";
+        if (!isDay) card.classList.add("is-night");
+        icon.textContent = current.icon;
+        condition.textContent = current.label;
+    }
 
     /* --- AI АНАЛИЗ НА ДАТАТА --- */
     document.getElementById("new-crop-date").addEventListener("change", checkDateSuitability);
@@ -663,6 +1057,7 @@
                 if (currentGardenId) await supabaseClient.from('crops').update({ garden_id: currentGardenId }).eq('user_id', session.user.id).is('garden_id', null);
 
                 renderGardenHeader();
+                await loadWeatherForActiveGarden();
                 if (currentGardenId) renderCrops();
                 else if (gardenModal) gardenModal.style.display = "flex";
             } catch (err) {
@@ -676,7 +1071,8 @@
 
             titleEl.textContent = activeGarden.name;
             subtitleEl.textContent = `Населено място: ${activeGarden.city || 'не е въведено'}`;
-            
+
+             
             if (typeof loadWeatherForCity === "function") {
                 loadWeatherForCity(activeGarden.city || currentProfile.location);
             }
@@ -690,12 +1086,13 @@
                     const nameSpan = document.createElement("span");
                     nameSpan.className = "garden-item-name";
                     nameSpan.textContent = garden.name;
-                    nameSpan.addEventListener("click", () => {
+                    nameSpan.addEventListener("click", async () => {
                         currentGardenId = garden.id;
                         localStorage.setItem("selectedGardenId", currentGardenId);
                         dropdownMenu.style.display = "none";
                         toggleMenuBtn.classList.remove("open");
                         renderGardenHeader();
+                        await loadWeatherForActiveGarden();
                         loadCropsForGarden(currentGardenId);
                     });
 
@@ -728,8 +1125,10 @@
                         
                         await supabaseClient.from('gardens').delete().eq('id', garden.id);
                         userGardens = userGardens.filter(g => g.id != garden.id);
-                        if (currentGardenId == garden.id) currentGardenId = userGardens[0].id;
+                        const deletedActiveGarden = currentGardenId == garden.id;
+                        if (deletedActiveGarden) currentGardenId = userGardens[0].id;
                         renderGardenHeader(); 
+                        if (deletedActiveGarden) await loadWeatherForActiveGarden();
                         loadCropsForGarden(currentGardenId);
                     });
 
@@ -779,6 +1178,7 @@
             closeGardenModal(); userGardens.push(data); currentGardenId = data.id;
             localStorage.setItem("selectedGardenId", currentGardenId);
             renderGardenHeader(); 
+            await loadWeatherForActiveGarden();
             loadCropsForGarden(currentGardenId);
         });
 
@@ -1109,7 +1509,7 @@
 
     // AI Анализ
     function generateAgroRecommendation(cropName) {
-        if (!agroWeather || !agroForecast) return;
+        if (!cropName || !agroWeather || !agroForecast) return;
         const cropKey = cropName.toLowerCase().trim(); const stage = getCropStage(cropKey, cropDates[cropKey]);
         let status = "🟢 Условията изглеждат подходящи";
         let recommendation = stage ? "Културата е в фаза " + stage.name.replace(/^.\s/, "") + ". " : "";
@@ -1130,23 +1530,40 @@
     }
 
     // Време API
-    let agroWeather = null; let agroForecast = null;
+    let agroWeather = null; let agroForecast = null; let weatherRequestId = 0;
+    async function loadWeatherForActiveGarden() {
+        const activeGarden = userGardens.find(g => g.id == currentGardenId) || userGardens[0];
+        const city = activeGarden?.city?.trim() || currentProfile?.location?.trim() || userGardens.find(g => g.city?.trim())?.city?.trim();
+        if (!city) {
+            document.querySelector(".weather-condition").textContent = "Добави населено място";
+            return;
+        }
+        await loadWeatherForCity(city);
+    }
+
     async function loadWeatherForCity(city) {
-        if (!city) return;
+        const requestId = ++weatherRequestId;
+        if (!city) {
+            document.querySelector(".weather-condition").textContent = "Добави населено място";
+            return;
+        }
         try {
             const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=bg&format=json`);
+            if (!geoRes.ok) throw new Error("Грешка при търсене на населеното място");
             const geoData = await geoRes.json(); 
+            if (requestId !== weatherRequestId) return;
             if (!geoData.results || geoData.results.length === 0) {
                 document.querySelector(".weather-condition").textContent = "Локацията не е намерена";
                 return;
             }
             const place = geoData.results[0];
 
-            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${place.latitude}&longitude=${place.longitude}&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max&temperature_unit=celsius&wind_speed_unit=kmh&precipitation_unit=mm&timezone=auto&forecast_days=7`);
+            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${place.latitude}&longitude=${place.longitude}&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m,weather_code,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max&temperature_unit=celsius&wind_speed_unit=kmh&precipitation_unit=mm&timezone=auto&forecast_days=7`);
             
             if (!res.ok) throw new Error("API Грешка");
             
             const data = await res.json(); 
+            if (requestId !== weatherRequestId) return;
             if (!data.current || !data.daily) throw new Error("Липсват данни");
 
             agroWeather = data.current; 
@@ -1154,7 +1571,7 @@
 
             document.querySelector("#weather-location").textContent = "Местоположение: " + place.name;
             document.querySelector(".weather-temperature").textContent = Math.round(data.current.temperature_2m) + "°C";
-            document.querySelector(".weather-condition").textContent = "Актуално";
+            updateWeatherUI(data.current.weather_code, data.current.is_day === 1);
             document.querySelector(".weather-details div:nth-child(1) b").textContent = Math.round(data.current.relative_humidity_2m) + "%";
             document.querySelector(".weather-details div:nth-child(2) b").textContent = data.current.precipitation + " mm";
             document.querySelector(".weather-details div:nth-child(3) b").textContent = Math.round(data.current.wind_speed_10m) + " km/h";
@@ -1175,10 +1592,14 @@
                 `;
             }
             const detailsEl = document.querySelector("#crop-details");
-            if (detailsEl && detailsEl.style.display !== "none") generateAgroRecommendation(detailsEl.dataset.cropKey);
+            if (detailsEl && detailsEl.style.display !== "none" && detailsEl.dataset.cropKey) {
+                generateAgroRecommendation(detailsEl.dataset.cropKey);
+            }
         } catch (e) { 
             console.error("Грешка при времето:", e); 
-            document.querySelector(".weather-condition").textContent = "Грешка при зареждане";
+            if (requestId === weatherRequestId) {
+                document.querySelector(".weather-condition").textContent = "Времето временно не е налично";
+            }
         }
     }
 
