@@ -34,9 +34,14 @@
         #crop-select-placeholder { overflow: hidden; color: var(--text-muted); font-size: 14px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
         #crop-select-placeholder.is-selected { color: var(--text-main); font-weight: 700; }
         .crop-trigger-chevron {
-            display: grid; width: 30px; height: 30px; flex: 0 0 30px; place-items: center;
+            position: relative; display: grid; width: 30px; height: 30px; flex: 0 0 30px; place-items: center;
             border: 1px solid var(--border-glass); border-radius: 10px; color: var(--text-muted);
             transition: transform .2s ease, color .2s ease, background .2s ease;
+        }
+        .crop-trigger-chevron::before {
+            content: ""; position: absolute; top: 50%; left: 50%; width: 7px; height: 7px;
+            border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+            transform: translate(-50%, -50%) rotate(45deg);
         }
         .custom-select-trigger[aria-expanded="true"] .crop-trigger-chevron {
             transform: rotate(180deg); color: var(--accent-green); background: rgba(16, 185, 129, .1);
@@ -601,7 +606,7 @@
                         <div class="custom-select-wrapper" id="crop-select-wrapper">
                             <button type="button" class="custom-select-trigger" id="crop-select-trigger" aria-haspopup="listbox" aria-expanded="false" aria-controls="crop-options-container">
                                 <span id="crop-select-placeholder">Избери култура</span>
-                                <span class="crop-trigger-chevron" aria-hidden="true">⌄</span>
+                                <span class="crop-trigger-chevron" aria-hidden="true"></span>
                             </button>
                             <div class="custom-options" id="crop-options-container">
                                 <div class="crop-options-heading">

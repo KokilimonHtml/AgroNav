@@ -6,8 +6,7 @@
     <title>AgroNav - Редактирай профила</title>
     <link rel="stylesheet" href="../style.css">
     <style>
-        .edit-profile-page { min-height: 100vh; width: 100%; padding: 30px 20px 60px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; }
-        .edit-profile-header { width: 100%; max-width: 900px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .edit-profile-page { min-height: 100vh; width: 100%; padding: 120px 20px 60px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; }
         .edit-profile-card { width: 100%; max-width: 520px; margin: 0 auto; padding: 40px; background: var(--bg-card); backdrop-filter: var(--blur-glass); border: 1px solid var(--border-glass); border-radius: var(--radius-xl); box-shadow: var(--shadow-glass); box-sizing: border-box; }
         .edit-profile-card h1 { color: var(--text-main); font-family: "Lora", serif; text-align: center; margin-top: 0; margin-bottom: 30px; font-size: 28px; }
         .edit-profile-card label { display: block; margin-bottom: 8px; color: var(--text-muted); font-weight: 600; font-size: 14px; }
@@ -44,9 +43,17 @@
 <body>
 
     <div class="edit-profile-page">
-        <div class="edit-profile-header">
-            <a href="../welcome.html" class="btn-back-game" style="text-decoration:none;">← Назад</a>
-            <button class="theme-toggle-btn" title="Смени тема">🌙</button>
+        <div class="dashboard-header">
+            <div class="header-left">
+                <a href="../welcome.html" class="btn-back-game">← Назад</a>
+            </div>
+            <div class="header-right">
+                <div style="text-align: right; margin-right: 10px;">
+                    <div id="edit-profile-date" style="font-size: 12px; color: var(--text-muted);"></div>
+                    <div id="edit-profile-clock" style="font-size: 16px; font-weight: 700; color: var(--accent-green);"></div>
+                </div>
+                <button class="theme-toggle-btn" title="Смени тема">🌙</button>
+            </div>
         </div>
 
         <div class="edit-profile-card">
@@ -108,6 +115,14 @@
     <script src="../theme.js"></script>
 
     <script>
+    function updateEditProfileClock() {
+        const now = new Date();
+        document.querySelector("#edit-profile-date").textContent = now.toLocaleDateString("bg-BG", { day: "2-digit", month: "short", year: "numeric" });
+        document.querySelector("#edit-profile-clock").textContent = now.toLocaleTimeString("bg-BG", { hour: "2-digit", minute: "2-digit" });
+    }
+    updateEditProfileClock();
+    setInterval(updateEditProfileClock, 60000);
+
     let currentUser = null; let currentAvatarUrl = null;
     let originalProfileType = "home"; // За проверка при смяна
 

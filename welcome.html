@@ -8,15 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,200..1000&display=swap" rel="stylesheet">
     <title>AgroNav - Начало</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        /* Тук определяме съотношението на блоковете */
-        .card-one { grid-column: span 4; } /* Моята градина - по-малък */
-        .card-two { grid-column: span 8; } /* Новини - по-голям */
-        
-        @media (max-width: 1024px) {
-            .card-one, .card-two { grid-column: span 12; }
-        }
-    </style>
 </head>
 <body class="welcome-page">
 
@@ -33,7 +24,6 @@
                 <div id="welcome-clock" style="font-size: 16px; font-weight: 700; color: var(--accent-green);"></div>
             </div>
             <button class="theme-toggle-btn" title="Смени тема">🌙</button>
-            <a href="game.html" class="mini-game-icon-btn">🎮 Игра</a>
             <a href="pages/login.html" id="RegistrationBut">Вход / Регистрация</a>
             <div class="profile-menu-wrapper" id="profile-menu-wrapper" style="display: none;">
                 <button id="profile-avatar" class="profile-avatar" type="button">
@@ -53,14 +43,20 @@
     </div>
 
     <div class="container">
-        <!-- Блок 1: Моята градина (по-малък) -->
-        <div class="bento-card card-one reveal">
-            <h2 style="color: var(--accent-green);">Моята градина</h2>
-            <p class="garden-description">Управлявай леглата и насажденията си, следи фазите на развитие и получавай AI анализ за твоите култури.</p>
-            <button id="MyGarden" class="modern-btn">🌱 Влез в градината</button>
+        <div class="welcome-side-column">
+            <div class="bento-card card-one reveal">
+                <h2 style="color: var(--accent-green);">Моята градина</h2>
+                <p class="garden-description">Управлявай леглата и насажденията си, следи фазите на развитие и получавай AI анализ за твоите култури.</p>
+                <button id="MyGarden" class="modern-btn">🌱 Влез в градината</button>
+            </div>
+
+            <div class="bento-card game-card reveal">
+                <h2>Мини игра</h2>
+                
+                <a href="game.html" class="modern-btn accent-gold game-card-link">🎮 Играй</a>
+            </div>
         </div>
 
-        <!-- Блок 2: Новини (по-голям) -->
         <div class="bento-card card-two reveal">
             <h2 style="color: var(--accent-purple);">Новини</h2>
             <p>Най-важното от аграрния свят, събрано на едно място.</p>

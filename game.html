@@ -55,11 +55,6 @@
         .score-board span#coin-count { 
             color: #fbbf24; 
         }
-        .coin-save-status {
-            color: #ef4444;
-            font-size: 12px;
-            font-weight: 500;
-        }
         .coin-text { display: inline; } 
         .coin-icon { display: none; font-size: 26px; }
         
@@ -147,7 +142,6 @@
         <div class="game-header">
             <div class="score-board">
                 <span class="coin-text">Монети:</span><span class="coin-icon">🪙</span><span id="coin-count">0</span>
-                <span id="coin-save-status" class="coin-save-status" role="status" aria-live="polite"></span>
             </div>
             <div style="display:flex; gap:10px;">
                 <button id="reset-game" class="btn-reset">🔄 Отначало</button>
@@ -187,25 +181,64 @@
             return;
         }
 
-        const coinSaveStatus = document.getElementById("coin-save-status");
-        let coinSaveQueue = Promise.resolve();
+        const localCoinStorageKey = `agronav-game-coins:${session.user.id}`;
+        const coinSaveDebounceMs = 800;
+        const minCoinSaveIntervalMs = 3 * 60 * 1000;
+        let pendingCoinSave = null;
+        let coinSaveTimer = null;
+        let lastCoinSaveAttempt = 0;
+        let coinSaveInProgress = false;
 
         function saveCoins() {
-            const scoreToSave = coins;
-            coinSaveStatus.textContent = "";
-            coinSaveQueue = coinSaveQueue.then(async () => {
+            pendingCoinSave = coins;
+            try {
+                localStorage.setItem(localCoinStorageKey, String(coins));
+            } catch (error) {
+                console.error("Could not save the game score locally:", error);
+            }
+
+            clearTimeout(coinSaveTimer);
+            const wait = Math.max(
+                coinSaveDebounceMs,
+                minCoinSaveIntervalMs - (Date.now() - lastCoinSaveAttempt)
+            );
+            coinSaveTimer = setTimeout(flushCoinSave, wait);
+        }
+
+        async function flushCoinSave() {
+            if (coinSaveInProgress || pendingCoinSave === null) return;
+
+            const scoreToSave = pendingCoinSave;
+            pendingCoinSave = null;
+            coinSaveInProgress = true;
+            lastCoinSaveAttempt = Date.now();
+            try {
                 const { error } = await supabaseClient.auth.updateUser({
                     data: { game_coins: scoreToSave }
                 });
-                if (error) {
-                    console.error("Could not save the game score:", error);
-                    coinSaveStatus.textContent = "Неуспешно запазване";
+                if (error) throw error;
+
+                if (pendingCoinSave === null && coins === scoreToSave) {
+                    try {
+                        localStorage.removeItem(localCoinStorageKey);
+                    } catch (storageError) {
+                        console.error("Could not clear the locally saved game score:", storageError);
+                    }
                 }
-            }).catch(error => {
+            } catch (error) {
                 console.error("Could not save the game score:", error);
-                coinSaveStatus.textContent = "Неуспешно запазване";
-            });
-            return coinSaveQueue;
+                if (pendingCoinSave === null) pendingCoinSave = scoreToSave;
+            } finally {
+                coinSaveInProgress = false;
+                if (pendingCoinSave !== null) {
+                    clearTimeout(coinSaveTimer);
+                    const wait = Math.max(
+                        coinSaveDebounceMs,
+                        minCoinSaveIntervalMs - (Date.now() - lastCoinSaveAttempt)
+                    );
+                    coinSaveTimer = setTimeout(flushCoinSave, wait);
+                }
+            }
         }
 
         function updateGameDateTime() {
@@ -239,6 +272,25 @@
         if (!Number.isSafeInteger(coins) || coins < 0) {
             console.error("The saved game score is invalid; starting this session at zero.");
             coins = 0;
+        }
+        try {
+            const locallySavedCoins = localStorage.getItem(localCoinStorageKey);
+            if (locallySavedCoins !== null) {
+                const recoveredCoins = Number(locallySavedCoins);
+                if (Number.isSafeInteger(recoveredCoins) && recoveredCoins >= 0) {
+                    if (recoveredCoins !== coins) {
+                        coins = recoveredCoins;
+                        saveCoins();
+                    } else {
+                        localStorage.removeItem(localCoinStorageKey);
+                    }
+                } else {
+                    console.error("The locally saved game score is invalid.");
+                    localStorage.removeItem(localCoinStorageKey);
+                }
+            }
+        } catch (error) {
+            console.error("Could not recover the locally saved game score:", error);
         }
         scoreEl.textContent = coins;
         

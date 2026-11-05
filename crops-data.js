@@ -12,7 +12,7 @@ const allCropsData = [
     { name: "репички", label: "Репички", icon: "🫜", category: "Зеленчуци" },
     { name: "лук", label: "Лук", icon: "🧅", category: "Зеленчуци" },
     { name: "чесън", label: "Чесън", icon: "🧄", category: "Зеленчуци" },
-    { name: "праз", label: "Праз", icon: "🥬", category: "Зеленчуци" },
+    { name: "праз", label: "Праз", icon: "🧅", category: "Зеленчуци" },
     { name: "зеле", label: "Зеле", icon: "🥬", category: "Зеленчуци" },
     { name: "карфиол", label: "Карфиол", icon: "🥦", category: "Зеленчуци" },
     { name: "броколи", label: "Броколи", icon: "🥦", category: "Зеленчуци" },
@@ -136,7 +136,7 @@ const allCropsData = [
     { name: "драконов плод", label: "Драконов плод", icon: "🍈", category: "Цитруси и екзотични" },
     { name: "тамарило", label: "Тамарило", icon: "🍅", category: "Цитруси и екзотични" },
 
-    // ЗЪРНЕНИ И ТЕХНИЧЕСКИ (Само за Земеделски производител)
+    // ЗЪРНЕНИ И ТЕХНИЧЕСКИ
     { name: "пшеница", label: "Пшеница", icon: "🌾", category: "Зърнени и технически" },
     { name: "ечемик", label: "Ечемик", icon: "🌾", category: "Зърнени и технически" },
     { name: "ръж", label: "Ръж", icon: "🌾", category: "Зърнени и технически" },
@@ -161,7 +161,7 @@ const allCropsData = [
     { name: "детелина", label: "Детелина", icon: "🍀", category: "Зърнени и технически" },
     { name: "еспарзета", label: "Еспарзета", icon: "🌿", category: "Зърнени и технически" },
 
-    // ЯДКИ
+    // ЯДКЙ
     { name: "орех", label: "Орех", icon: "🌰", category: "Ядки" },
     { name: "лешник", label: "Лешник", icon: "🌰", category: "Ядки" },
     { name: "бадем", label: "Бадем", icon: "🌰", category: "Ядки" },
