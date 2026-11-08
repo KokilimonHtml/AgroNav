@@ -108,11 +108,9 @@
                     const { data: { user } } = await supabaseClient.auth.getUser();
                     if (user) {
                         const { data } = await supabaseClient.from('profiles').select('theme').eq('id', user.id).maybeSingle();
-                        if (data && data.theme) {
-                            localStorage.setItem('theme', data.theme);
-                            applyTheme(data.theme);
-                        } else if (data && !data.theme) {
-                            await supabaseClient.from('profiles').update({ theme: savedTheme }).eq('id', user.id);
+                        const currentTheme = localStorage.getItem('theme') || savedTheme;
+                        if (data && data.theme !== currentTheme) {
+                            await supabaseClient.from('profiles').update({ theme: currentTheme }).eq('id', user.id);
                         }
                     }
                 } catch (e) {

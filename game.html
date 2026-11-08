@@ -294,7 +294,7 @@
         }
         scoreEl.textContent = coins;
         
-        const tractor = { x: canvas.width / 2, y: canvas.height / 2, speed: 2.6, angle: 0, targetAngle: 0 };
+        const tractor = { x: canvas.width / 2, y: canvas.height / 2, speed: 192, angle: 0, targetAngle: 0 };
         let crops = [], particles = [], floatingTexts = []; 
         const keys = {}; let mobileDir = null;
         const emojis = ["🌾", "🍅", "🥕", "🌽", "🍎"]; 
@@ -349,7 +349,8 @@
             } 
         });
 
-        function update(dt) {
+        function update(deltaTime) {
+            const frameScale = deltaTime * 60;
             let dx = 0, dy = 0, moving = false;
             if (keys["ArrowUp"] || keys["KeyW"] || mobileDir === "up") { dy -= 1; tractor.targetAngle = -Math.PI / 2; moving = true; }
             if (keys["ArrowDown"] || keys["KeyS"] || mobileDir === "down") { dy += 1; tractor.targetAngle = Math.PI / 2; moving = true; }
@@ -366,16 +367,16 @@
             while (angleDiff > Math.PI) angleDiff -= Math.PI * 2; 
             while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
             
-            tractor.angle += angleDiff * 0.15; 
-            tractor.x += dx * tractor.speed; 
-            tractor.y += dy * tractor.speed;
+            tractor.angle += angleDiff * (1 - Math.pow(0.85, frameScale));
+            tractor.x += dx * tractor.speed * deltaTime;
+            tractor.y += dy * tractor.speed * deltaTime;
             
             if (tractor.x < 30) tractor.x = 30; 
             if (tractor.x > canvas.width - 30) tractor.x = canvas.width - 30; 
             if (tractor.y < 30) tractor.y = 30; 
             if (tractor.y > canvas.height - 30) tractor.y = canvas.height - 30;
             
-            if (moving && Math.random() < 0.3) createParticles(tractor.x - Math.cos(tractor.angle) * 25, tractor.y - Math.sin(tractor.angle) * 25, "dust");
+            if (moving && Math.random() < 1 - Math.pow(0.7, frameScale)) createParticles(tractor.x - Math.cos(tractor.angle) * 25, tractor.y - Math.sin(tractor.angle) * 25, "dust");
             
             crops.forEach(crop => { 
                 if (!crop.collected && Math.hypot(tractor.x - crop.x, tractor.y - crop.y) < 40) { 
@@ -391,10 +392,10 @@
             
             if (crops.every(c => c.collected)) spawnCrops();
             
-            particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.life -= dt / p.maxLife; }); 
+            particles.forEach(p => { p.x += p.vx * frameScale; p.y += p.vy * frameScale; p.life -= deltaTime / p.maxLife; });
             particles = particles.filter(p => p.life > 0);
             
-            floatingTexts.forEach(t => { t.y -= 1.5; t.life -= dt * 1.2; }); 
+            floatingTexts.forEach(t => { t.y -= 1.5 * frameScale; t.life -= deltaTime * 1.2; });
             floatingTexts = floatingTexts.filter(t => t.life > 0);
         }
 
@@ -493,10 +494,10 @@
         }
         
         let lastTime = performance.now();
-        function gameLoop(time) { 
-            const dt = (time - lastTime) / 1000; 
-            lastTime = time; 
-            update(dt); 
+        function gameLoop(currentTime) {
+            const deltaTime = Math.min((currentTime - lastTime) / 1000, 0.1);
+            lastTime = currentTime;
+            update(deltaTime);
             draw(); 
             requestAnimationFrame(gameLoop); 
         }
