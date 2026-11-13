@@ -17,6 +17,67 @@
         .garden-item-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; }
         .btn-switch-garden .arrow { display: inline-block; transition: transform 0.3s ease; }
         .btn-switch-garden.open .arrow { transform: rotate(180deg); }
+
+        .ai-widget-container { position: fixed; left: 25px; bottom: 25px; z-index: 9999; font-family: var(--font-body); }
+        .ai-float-btn { width: 56px; height: 56px; border: 1px solid var(--border-glass); border-radius: 50%; color: #fff; background: linear-gradient(135deg, #22c55e, #15803d); font-size: 26px; cursor: pointer; box-shadow: 0 8px 20px rgba(0,0,0,.4); transition: transform .2s ease; }
+        .ai-float-btn:hover { transform: scale(1.06); }
+        .ai-chat-box { display: none; position: absolute; left: 0; bottom: 70px; width: min(390px, calc(100vw - 32px)); height: min(560px, calc(100dvh - 110px)); flex-direction: column; overflow: hidden; color: var(--text-main); background: var(--bg-main); border: 1px solid var(--border-glass); border-radius: 16px; box-shadow: 0 15px 40px rgba(0,0,0,.5); }
+        .ai-chat-box.open { display: flex; animation: ai-chat-in .2s ease-out; }
+        .ai-chat-box.expanded { width: min(700px, calc(100vw - 32px)); height: min(760px, calc(100dvh - 110px)); }
+        .ai-chat-box.history-open { width: min(660px, calc(100vw - 32px)); }
+        .ai-chat-box.expanded.history-open { width: min(820px, calc(100vw - 32px)); }
+        @keyframes ai-chat-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .ai-chat-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 12px; background: var(--bg-card); border-bottom: 1px solid var(--border-glass); }
+        .ai-header-title { display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 14px; font-weight: 600; }
+        .ai-status-dot { flex: 0 0 8px; width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 8px #22c55e; }
+        .ai-header-actions { display: flex; align-items: center; gap: 3px; }
+        .ai-header-actions button { display: grid; place-items: center; width: 32px; height: 32px; padding: 0; color: var(--text-muted); background: transparent; border: 0; border-radius: 7px; font: inherit; cursor: pointer; }
+        .ai-header-actions button:hover { color: var(--text-main); background: var(--bg-input); }
+        .ai-chat-body, .ai-chat-main { display: flex; flex: 1; min-width: 0; min-height: 0; }
+        .ai-chat-main { flex-direction: column; }
+        .ai-chat-history { display: none; flex: 0 0 190px; flex-direction: column; gap: 9px; overflow: hidden; padding: 11px 8px 11px 11px; background: var(--bg-surface); border-right: 1px solid var(--border-glass); }
+        .history-open .ai-chat-history { display: flex; }
+        .ai-chat-history-label { margin: 0; color: var(--text-muted); font-size: 11px; font-weight: 600; text-transform: uppercase; }
+        .ai-chat-history-new { padding: 8px; color: var(--text-main); background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 8px; font: inherit; font-size: 12px; cursor: pointer; }
+        .ai-chat-history-list { display: flex; flex: 1; flex-direction: column; gap: 5px; overflow-y: auto; }
+        .ai-chat-history-item { width: 100%; padding: 8px; color: var(--text-main); text-align: left; background: transparent; border: 0; border-radius: 7px; cursor: pointer; }
+        .ai-chat-history-item:hover, .ai-chat-history-item.active { background: var(--bg-card); }
+        .ai-chat-history-title, .ai-chat-history-date { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .ai-chat-history-title { font-size: 12px; }
+        .ai-chat-history-date { margin-top: 3px; color: var(--text-muted); font-size: 10px; }
+        .ai-chat-storage-status { color: var(--accent-danger); font-size: 11px; }
+        .ai-messages-area { display: flex; flex: 1; flex-direction: column; gap: 10px; min-height: 0; overflow-y: auto; padding: 14px; }
+        .ai-msg { max-width: 88%; padding: 10px 13px; border-radius: 12px; font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; }
+        .bot-msg { align-self: flex-start; color: var(--text-main); background: var(--bg-card); border-bottom-left-radius: 4px; }
+        .user-msg { align-self: flex-end; color: #fff; background: #2563eb; border-bottom-right-radius: 4px; }
+        .bot-msg h1, .bot-msg h2, .bot-msg h3 { margin: .7em 0 .35em; line-height: 1.25; }
+        .bot-msg h1 { font-size: 1.3em; }
+        .bot-msg h2 { font-size: 1.15em; }
+        .bot-msg h3 { font-size: 1.05em; }
+        .bot-msg p { margin: .3em 0; }
+        .bot-msg ul, .bot-msg ol { margin: .35em 0; padding-left: 1.4em; }
+        .bot-msg code { padding: 1px 4px; border-radius: 4px; background: var(--bg-input); font-family: Consolas, monospace; }
+        .ai-reply-block { animation: ai-reply-in .3s ease-out both; animation-delay: var(--reply-delay, 0ms); }
+        .ai-reply-word { animation: ai-word-in .18s ease-out both; animation-delay: var(--reply-delay, 0ms); }
+        .ai-typing-reply .ai-reply-block { animation: none; }
+        .ai-typing-reply .ai-reply-word { display: none; animation: none; }
+        .ai-typing-reply .ai-reply-word.is-visible { display: inline; animation: ai-word-in .12s ease-out both; }
+        @keyframes ai-reply-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes ai-word-in { from { opacity: 0; } to { opacity: 1; } }
+        .ai-input-area { display: flex; gap: 8px; padding: 10px; background: var(--bg-surface); border-top: 1px solid var(--border-glass); }
+        .ai-input-area input { flex: 1; min-width: 0; padding: 10px 12px; color: var(--text-main); background: var(--bg-input); border: 1px solid var(--border-glass); border-radius: 9px; font: inherit; font-size: 13px; }
+        .ai-input-area input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+        .ai-input-area button { padding: 0 14px; color: var(--btn-text-color); background: var(--accent); border: 0; border-radius: 9px; font-size: 16px; cursor: pointer; }
+        .ai-input-area button:disabled { opacity: .55; cursor: wait; }
+        .ai-typing-indicator { color: var(--text-muted); font-style: italic; }
+        @media (max-width: 600px) {
+            .ai-widget-container { left: 16px; bottom: 16px; }
+            .ai-chat-box, .ai-chat-box.expanded, .ai-chat-box.history-open, .ai-chat-box.expanded.history-open { width: calc(100vw - 32px); height: min(600px, calc(100dvh - 100px)); }
+            .ai-chat-history { flex-basis: 145px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .ai-chat-box.open, .ai-reply-block, .ai-reply-word { animation: none !important; }
+        }
     </style>
 </head>
 <body>
@@ -211,6 +272,38 @@
     </div>
 
     <button id="scroll-to-top" class="scroll-to-top-btn" style="display:none;">↑</button>
+
+    <div id="ai-chat-widget" class="ai-widget-container">
+        <button id="ai-toggle-btn" class="ai-float-btn" type="button" title="Попитай AgroNav AI" aria-label="Попитай AgroNav AI">🤖</button>
+        <div id="ai-chat-window" class="ai-chat-box">
+            <div class="ai-chat-header">
+                <div class="ai-header-title"><span class="ai-status-dot"></span><span>AgroNav AI Асистент</span></div>
+                <div class="ai-header-actions">
+                    <button id="ai-history-toggle-btn" type="button" title="Запазени разговори" aria-label="Запазени разговори" aria-expanded="false">☷</button>
+                    <button id="ai-new-chat-btn" type="button" title="Нов разговор" aria-label="Нов разговор">↻</button>
+                    <button id="ai-expand-btn" type="button" title="Разшири чата" aria-label="Разшири чата" aria-expanded="false">⤢</button>
+                    <button id="ai-close-btn" type="button" title="Затвори чата" aria-label="Затвори чата">✕</button>
+                </div>
+            </div>
+            <div class="ai-chat-body">
+                <aside id="ai-chat-history" class="ai-chat-history" aria-label="Запазени разговори">
+                    <p class="ai-chat-history-label">Разговори</p>
+                    <button id="ai-chat-history-new" class="ai-chat-history-new" type="button">＋ Нов разговор</button>
+                    <div id="ai-chat-history-list" class="ai-chat-history-list"></div>
+                    <div id="ai-chat-storage-status" class="ai-chat-storage-status" role="status" aria-live="polite"></div>
+                </aside>
+                <div class="ai-chat-main">
+                    <div id="ai-chat-messages" class="ai-messages-area">
+                        <div class="ai-msg bot-msg">Здравей! Аз съм твоят агрономически асистент. Попитай ме за култури, поливане или времето. 🌱</div>
+                    </div>
+                    <div class="ai-input-area">
+                        <input type="text" id="ai-user-input" placeholder="Напиши въпрос..." autocomplete="off" aria-label="Съобщение до AgroNav AI">
+                        <button id="ai-send-btn" type="button" aria-label="Изпрати">➤</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../supabase.js"></script>
@@ -1151,6 +1244,400 @@
     const scrollBtn = document.querySelector("#scroll-to-top");
     window.addEventListener("scroll", () => { if (window.scrollY > 300) scrollBtn.style.display = "block"; else scrollBtn.style.display = "none"; });
     scrollBtn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+
+    const aiToggleBtn = document.getElementById("ai-toggle-btn");
+    const aiCloseBtn = document.getElementById("ai-close-btn");
+    const aiExpandBtn = document.getElementById("ai-expand-btn");
+    const aiHistoryToggleBtn = document.getElementById("ai-history-toggle-btn");
+    const aiNewChatBtn = document.getElementById("ai-new-chat-btn");
+    const aiHistoryNewBtn = document.getElementById("ai-chat-history-new");
+    const aiHistoryList = document.getElementById("ai-chat-history-list");
+    const aiStorageStatus = document.getElementById("ai-chat-storage-status");
+    const aiChatWindow = document.getElementById("ai-chat-window");
+    const aiSendBtn = document.getElementById("ai-send-btn");
+    const aiUserInput = document.getElementById("ai-user-input");
+    const aiMessagesArea = document.getElementById("ai-chat-messages");
+    const aiWelcomeMessage = "Здравей! Аз съм твоят агрономически асистент. Попитай ме за култури, поливане или времето. 🌱";
+    let aiSavedChats = [];
+    let aiActiveChatId = null;
+
+    function getAiChatStorageKey() {
+        return currentUser ? `agronav-ai-chats:${currentUser.id}` : null;
+    }
+
+    function showAiStorageError() {
+        aiStorageStatus.textContent = "Разговорите не могат да бъдат запазени на това устройство.";
+    }
+
+    function saveAiChats() {
+        const storageKey = getAiChatStorageKey();
+        if (!storageKey) return;
+        try {
+            localStorage.setItem(storageKey, JSON.stringify({
+                activeChatId: aiActiveChatId,
+                chats: aiSavedChats
+            }));
+            aiStorageStatus.textContent = "";
+        } catch (error) {
+            console.error("Грешка при запазване на AI разговорите:", error);
+            showAiStorageError();
+        }
+    }
+
+    function appendAiMessage(text, isUser) {
+        const message = document.createElement("div");
+        message.classList.add("ai-msg", isUser ? "user-msg" : "bot-msg");
+        message.textContent = text;
+        aiMessagesArea.appendChild(message);
+        aiMessagesArea.scrollTop = aiMessagesArea.scrollHeight;
+        return message;
+    }
+
+    function renderAiChatHistory() {
+        aiHistoryList.replaceChildren();
+        [...aiSavedChats]
+            .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+            .forEach(chat => {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = `ai-chat-history-item${chat.id === aiActiveChatId ? " active" : ""}`;
+                button.setAttribute("aria-current", chat.id === aiActiveChatId ? "true" : "false");
+                button.addEventListener("click", () => openAiSavedChat(chat.id));
+
+                const title = document.createElement("span");
+                title.className = "ai-chat-history-title";
+                title.textContent = chat.title;
+                const date = document.createElement("span");
+                date.className = "ai-chat-history-date";
+                const updatedAt = new Date(chat.updatedAt);
+                date.textContent = Number.isNaN(updatedAt.getTime())
+                    ? ""
+                    : updatedAt.toLocaleDateString("bg-BG", { day: "2-digit", month: "2-digit", year: "numeric" });
+                button.append(title, date);
+                aiHistoryList.appendChild(button);
+            });
+    }
+
+    function restoreAiChats() {
+        const storageKey = getAiChatStorageKey();
+        if (!storageKey) return;
+        try {
+            const storedChats = localStorage.getItem(storageKey);
+            if (storedChats) {
+                const parsed = JSON.parse(storedChats);
+                if (!parsed || !Array.isArray(parsed.chats)) {
+                    throw new Error("Запазените AI разговори са в невалиден формат.");
+                }
+                aiSavedChats = parsed.chats.filter(chat =>
+                    chat &&
+                    typeof chat.id === "string" &&
+                    typeof chat.title === "string" &&
+                    typeof chat.updatedAt === "string" &&
+                    Array.isArray(chat.messages) &&
+                    chat.messages.every(message =>
+                        message &&
+                        ["user", "assistant"].includes(message.role) &&
+                        typeof message.content === "string"
+                    )
+                );
+                aiActiveChatId = aiSavedChats.some(chat => chat.id === parsed.activeChatId)
+                    ? parsed.activeChatId
+                    : null;
+            }
+        } catch (error) {
+            console.error("Грешка при зареждане на AI разговорите:", error);
+            showAiStorageError();
+        }
+
+        renderAiChatHistory();
+        const activeChat = aiSavedChats.find(chat => chat.id === aiActiveChatId);
+        if (activeChat) renderAiChat(activeChat);
+    }
+
+    function renderAiChat(chat) {
+        aiMessagesArea.replaceChildren();
+        if (!chat || chat.messages.length === 0) {
+            appendAiMessage(aiWelcomeMessage, false);
+            return;
+        }
+        chat.messages.forEach(message => {
+            if (message.role === "user") appendAiMessage(message.content, true);
+            else appendAiMarkdownMessage(message.content);
+        });
+    }
+
+    function openAiSavedChat(chatId) {
+        if (aiSendBtn.disabled) return;
+        const chat = aiSavedChats.find(item => item.id === chatId);
+        if (!chat) return;
+        aiActiveChatId = chat.id;
+        saveAiChats();
+        renderAiChatHistory();
+        renderAiChat(chat);
+    }
+
+    function startAiNewChat() {
+        if (aiSendBtn.disabled) return;
+        aiActiveChatId = null;
+        saveAiChats();
+        renderAiChatHistory();
+        renderAiChat(null);
+        aiUserInput.focus();
+    }
+
+    aiToggleBtn.addEventListener("click", () => {
+        aiChatWindow.classList.toggle("open");
+        if (aiChatWindow.classList.contains("open")) aiUserInput.focus();
+    });
+    aiCloseBtn.addEventListener("click", () => aiChatWindow.classList.remove("open"));
+    aiExpandBtn.addEventListener("click", () => {
+        const expanded = aiChatWindow.classList.toggle("expanded");
+        aiExpandBtn.setAttribute("aria-expanded", String(expanded));
+        aiExpandBtn.setAttribute("aria-label", expanded ? "Свий чата" : "Разшири чата");
+        aiExpandBtn.title = expanded ? "Свий чата" : "Разшири чата";
+        aiExpandBtn.textContent = expanded ? "⤡" : "⤢";
+    });
+    aiHistoryToggleBtn.addEventListener("click", () => {
+        const isOpen = aiChatWindow.classList.toggle("history-open");
+        aiHistoryToggleBtn.setAttribute("aria-expanded", String(isOpen));
+    });
+    aiNewChatBtn.addEventListener("click", startAiNewChat);
+    aiHistoryNewBtn.addEventListener("click", startAiNewChat);
+    profileReady.then(restoreAiChats);
+
+    function escapeAiHtml(text) {
+        return text.replace(/[&<>"']/g, character => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        })[character]);
+    }
+
+    function renderAiInlineMarkdown(text) {
+        return text.split(/(`[^`\n]+`)/g).map(segment => {
+            if (segment.startsWith("`") && segment.endsWith("`")) {
+                return `<code>${escapeAiHtml(segment.slice(1, -1))}</code>`;
+            }
+            return escapeAiHtml(segment)
+                .replace(/\*\*(.+?)\*\*|__(.+?)__/g, (_match, stars, underscores) => `<strong>${stars || underscores}</strong>`)
+                .replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, (_match, prefix, content) => `${prefix}<em>${content}</em>`)
+                .replace(/~~(.+?)~~/g, "<del>$1</del>");
+        }).join("");
+    }
+
+    function renderAiMarkdown(text) {
+        const blocks = [];
+        let paragraph = [];
+        let listItems = [];
+        let listTag = "";
+        let wordIndex = 0;
+
+        function animateWords(html) {
+            return html.replace(/(^|>)([^<]+)(?=<|$)/g, (_match, prefix, textNode) => {
+                const words = textNode.match(/\s+|[^\s]+/g) || [];
+                const animated = words.map(word => {
+                    if (/^\s+$/.test(word)) return word;
+                    const delay = Math.min(wordIndex++, 48) * 18;
+                    return `<span class="ai-reply-word" style="--reply-delay:${delay}ms">${word}</span>`;
+                }).join("");
+                return `${prefix}${animated}`;
+            });
+        }
+
+        function addBlock(tag, content) {
+            const delay = Math.min(blocks.length, 12) * 45;
+            blocks.push(`<${tag} class="ai-reply-block" style="--reply-delay:${delay}ms">${animateWords(content)}</${tag}>`);
+        }
+
+        function flushParagraph() {
+            if (paragraph.length) {
+                addBlock("p", paragraph.map(renderAiInlineMarkdown).join("<br>"));
+                paragraph = [];
+            }
+        }
+
+        function flushList() {
+            if (listItems.length) {
+                addBlock(listTag, listItems.map(item => `<li>${renderAiInlineMarkdown(item)}</li>`).join(""));
+                listItems = [];
+                listTag = "";
+            }
+        }
+
+        text.split(/\r?\n/).forEach(line => {
+            const heading = line.match(/^(#{1,3})\s+(.+)$/);
+            const unorderedItem = line.match(/^\s*[-+*]\s+(.+)$/);
+            const orderedItem = line.match(/^\s*\d+[.)]\s+(.+)$/);
+            if (!line.trim()) {
+                flushParagraph();
+                flushList();
+            } else if (heading) {
+                flushParagraph();
+                flushList();
+                addBlock(`h${heading[1].length}`, renderAiInlineMarkdown(heading[2]));
+            } else if (unorderedItem || orderedItem) {
+                flushParagraph();
+                const nextTag = unorderedItem ? "ul" : "ol";
+                if (listTag && listTag !== nextTag) flushList();
+                listTag = nextTag;
+                listItems.push((unorderedItem || orderedItem)[1]);
+            } else {
+                flushList();
+                paragraph.push(line);
+            }
+        });
+        flushParagraph();
+        flushList();
+        return blocks.join("");
+    }
+
+    function appendAiMarkdownMessage(text) {
+        const message = document.createElement("div");
+        message.classList.add("ai-msg", "bot-msg");
+        message.innerHTML = renderAiMarkdown(text);
+        aiMessagesArea.appendChild(message);
+        aiMessagesArea.scrollTop = aiMessagesArea.scrollHeight;
+        return message;
+    }
+
+    async function appendTypedAiMarkdownMessage(text) {
+        const template = document.createElement("template");
+        template.innerHTML = renderAiMarkdown(text);
+        const message = document.createElement("div");
+        message.classList.add("ai-msg", "bot-msg", "ai-typing-reply");
+        aiMessagesArea.appendChild(message);
+
+        const blocks = Array.from(template.content.children);
+        const wordCount = blocks.reduce((count, block) => count + block.querySelectorAll(".ai-reply-word").length, 0);
+        const wordDelay = Math.min(18, Math.max(6, 1600 / Math.max(wordCount, 1)));
+        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        for (const block of blocks) {
+            message.appendChild(block);
+            for (const word of block.querySelectorAll(".ai-reply-word")) {
+                const previousHeight = aiMessagesArea.scrollHeight;
+                word.classList.add("is-visible");
+                const distanceFromBottom = aiMessagesArea.scrollHeight - aiMessagesArea.scrollTop - aiMessagesArea.clientHeight;
+                if (distanceFromBottom < 64 && aiMessagesArea.scrollHeight > previousHeight) {
+                    aiMessagesArea.scrollTo({ top: aiMessagesArea.scrollHeight, behavior: "smooth" });
+                }
+                if (!reduceMotion) await new Promise(resolve => window.setTimeout(resolve, wordDelay));
+            }
+        }
+        return message;
+    }
+
+    function buildAiConversationPrompt(question) {
+        const chat = aiSavedChats.find(item => item.id === aiActiveChatId);
+        const history = chat ? chat.messages : [];
+        const continuation = history.some(message => message.role === "assistant");
+        let guidance = continuation ? "Продължи директно, без нов поздрав или общ увод.\n" : "";
+        const questionLine = `Въпрос: ${question}`;
+        const prefix = "Предишен разговор:\n";
+        let remaining = 1000 - questionLine.length - guidance.length - prefix.length;
+        if (remaining < 0 && guidance) {
+            guidance = "";
+            remaining = 1000 - questionLine.length - prefix.length;
+        }
+
+        const contextLines = [];
+        for (let i = history.length - 1; i >= 0 && remaining > 12; i--) {
+            const item = history[i];
+            const label = item.role === "user" ? "Потребител: " : "Асистент: ";
+            const lineBudget = remaining - label.length - 1;
+            if (lineBudget <= 1) break;
+            const content = item.content.length > lineBudget
+                ? `…${item.content.slice(-(lineBudget - 1))}`
+                : item.content;
+            const line = `${label}${content}`;
+            contextLines.unshift(line);
+            remaining -= line.length + 1;
+        }
+
+        if (!contextLines.length) return `${guidance}${question}`;
+        return `${guidance}${prefix}${contextLines.join("\n")}\n${questionLine}`;
+    }
+
+    async function askAgroNavAI(question) {
+        const { data, error } = await supabaseClient.functions.invoke("ask-ai", {
+            body: { question }
+        });
+        if (error) {
+            const response = error.context;
+            if (response instanceof Response) {
+                let errorBody;
+                try {
+                    errorBody = await response.clone().json();
+                } catch {
+                    errorBody = null;
+                }
+                if (typeof errorBody?.error === "string") throw new Error(errorBody.error);
+            }
+            throw error;
+        }
+        if (typeof data?.reply !== "string") throw new Error("AI функцията върна невалиден отговор.");
+        return data.reply;
+    }
+
+    async function handleAiSendMessage() {
+        const question = aiUserInput.value.trim();
+        if (!question || aiSendBtn.disabled) return;
+        if (question.length > 1000) {
+            appendAiMessage("Въпросът трябва да е до 1000 символа.", false);
+            return;
+        }
+
+        const prompt = buildAiConversationPrompt(question);
+        let chat = aiSavedChats.find(item => item.id === aiActiveChatId);
+        if (!chat) {
+            const id = window.crypto && typeof window.crypto.randomUUID === "function"
+                ? window.crypto.randomUUID()
+                : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+            chat = {
+                id,
+                title: question.replace(/\s+/g, " ").slice(0, 48) || "Нов разговор",
+                updatedAt: new Date().toISOString(),
+                messages: []
+            };
+            aiSavedChats.push(chat);
+            aiActiveChatId = id;
+        }
+
+        chat.messages.push({ role: "user", content: question });
+        chat.updatedAt = new Date().toISOString();
+        saveAiChats();
+        renderAiChatHistory();
+        appendAiMessage(question, true);
+        aiUserInput.value = "";
+        const loadingMessage = appendAiMessage("Моля изчакайте...", false);
+        loadingMessage.classList.add("ai-typing-indicator");
+        aiSendBtn.disabled = true;
+
+        try {
+            const reply = await askAgroNavAI(prompt);
+            loadingMessage.remove();
+            const answer = reply || "Няма отговор от AI.";
+            await appendTypedAiMarkdownMessage(answer);
+            chat.messages.push({ role: "assistant", content: answer });
+            chat.updatedAt = new Date().toISOString();
+            saveAiChats();
+            renderAiChatHistory();
+        } catch (error) {
+            console.error("Грешка с AgroNav AI:", error);
+            const errorMessage = error instanceof Error ? error.message : "AI асистентът временно не е достъпен.";
+            if (loadingMessage.isConnected) loadingMessage.textContent = errorMessage;
+            else appendAiMessage(errorMessage, false);
+        } finally {
+            aiSendBtn.disabled = false;
+        }
+    }
+
+    aiSendBtn.addEventListener("click", handleAiSendMessage);
+    aiUserInput.addEventListener("keydown", event => {
+        if (event.key === "Enter") handleAiSendMessage();
+    });
     </script>
 </body>
 </html>
