@@ -1,0 +1,39 @@
+:root {
+    --bg-main: #0A1C14;
+    --bg-surface: #11291D;
+    --bg-card: #173625;
+    --bg-input: #08160F;
+    --bg-nav: rgba(10, 28, 20, 0.9);
+    --text-main: #F4F1EA;
+    --text-muted: #A3B8AD;
+    --accent: #D4AF37;
+    --accent-hover: #E5C35B;
+    --accent-glow: rgba(212, 175, 55, 0.2);
+    --btn-text-color: #0A1C14;
+    --danger: #E55B5B;
+    --success: #4ADE80;
+    --border-light: rgba(244, 241, 234, 0.15);
+    --font-heading: 'Cinzel', serif;
+    --font-body: 'Outfit', sans-serif;
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 16px;
+    --shadow-glass: 0 10px 30px rgba(0,0,0,0.3);
+    --bg-pattern: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    --bg-pattern-size: 24px 24px;
+}
+[data-theme="light"] {
+    --bg-main: #F4F1EA;
+    --bg-surface: #FFFFFF;
+    --bg-card: #F9F6EE;
+    --bg-input: #E8E4D9;
+    --bg-nav: rgba(244, 241, 234, 0.9);
+    --text-main: #0A1C14;
+    --text-muted: #4A5D53;
+    --accent: #B8860B;
+    --accent-hover: #D4AF37;
+    --btn-text-color: #FFFFFF;
+    --border-light: rgba(10, 28, 20, 0.15);
+    --shadow-glass: 0 10px 30px rgba(0,0,0,0.1);
+    --bg-pattern: radial-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+}

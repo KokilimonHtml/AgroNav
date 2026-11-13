@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroNav - Новини</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <a href="#" class="global-logo" style="position:fixed; top:25px; left:40px; z-index:1000; font-family:var(--font-heading); font-size:22px; font-weight:700; color:var(--accent); text-decoration:none;">AG</a>
+    
+    <div style="position:fixed; top:25px; left:90px; z-index:1000;">
+        <a href="welcome.html" class="btn-back-game" style="padding: 5px 12px; font-size: 12px; border-radius: 20px;">← Назад</a>
+    </div>
+
+    <nav class="top-nav">
+        <a href="welcome.html" class="nav-link">Начало</a>
+        <a href="pages/dashboard.html" class="nav-link">Градина</a>
+        <a href="news.html" class="nav-link active">Новини</a>
+        <a href="game.html" class="nav-link">Игра</a>
+    </nav>
+
+    <div class="layout-container" style="margin-top: 120px;">
+        <div class="text-center mb-20" style="margin-top: 40px;">
+            <h1 style="font-size: 42px;">Новини от аграрния свят</h1>
+            <p style="color: var(--text-muted);">Актуална информация, събрана специално за теб.</p>
+        </div>
+
+        <div id="news-grid" class="layout-grid">
+            <div class="dash-panel text-center" style="grid-column: 1/-1;">
+                <p>Новините се зареждат...</p>
+            </div>
+        </div>
+
+        <div class="text-center mt-20">
+            <button id="reload-news-btn" class="btn-primary">🔄 Обнови новините</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
+    <script src="theme.js"></script>
+    <script>
+    function timeAgo(date) {
+        const s = Math.floor((new Date() - date) / 1000);
+        let i = s / 86400; if (i > 1) return Math.floor(i) + " дни";
+        i = s / 3600; if (i > 1) return Math.floor(i) + " ч.";
+        i = s / 60; if (i > 1) return Math.floor(i) + " мин.";
+        return Math.floor(s) + " сек.";
+    }
+
+    async function loadNews() {
+        const grid = document.getElementById("news-grid");
+        grid.innerHTML = '<div class="dash-panel text-center" style="grid-column: 1/-1;"><p>Зареждане...</p></div>';
+        try {
+            const { data, error } = await supabaseClient.functions.invoke('get-news');
+            if (error) throw error;
+            let articles = data || [];
+            if (articles.length === 0) { grid.innerHTML = '<div class="dash-panel text-center" style="grid-column:1/-1;"><p>Няма новини.</p></div>'; return; }
+            grid.innerHTML = "";
+            articles.slice(0, 15).forEach(article => {
+                const card = document.createElement('div');
+                card.className = 'dash-panel';
+                card.innerHTML = `
+                    <h3 style="font-family:var(--font-body); font-size:18px; margin-bottom:15px;">${article.title}</h3>
+                    <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-muted); margin-bottom:20px;">
+                        <span>🕘 ${timeAgo(new Date(article.pubDate))}</span>
+                        <span>🌐 ${article.source || "Agro News"}</span>
+                    </div>
+                    <a href="${article.link}" target="_blank" class="btn-secondary" style="width:100%; font-size:12px; height:36px;">Прочети повече →</a>
+                `;
+                grid.appendChild(card);
+            });
+        } catch (error) {
+            grid.innerHTML = '<div class="dash-panel text-center" style="grid-column:1/-1;"><p style="color:var(--accent-danger);">Грешка при зареждане.</p></div>';
+        }
+    }
+    loadNews();
+    document.getElementById("reload-news-btn").addEventListener("click", loadNews);
+    </script>
+</body>
+</html>

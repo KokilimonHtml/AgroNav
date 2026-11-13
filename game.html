@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AgroNav - Мини Игра</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body style="overflow-x: hidden;">
+
+    <a href="#" class="global-logo" style="position:fixed; top:25px; left:40px; z-index:1000; font-family:var(--font-heading); font-size:22px; font-weight:700; color:var(--accent); text-decoration:none;">AG</a>
+    
+    <div style="position:fixed; top:25px; left:90px; z-index:1000;">
+        <a href="welcome.html" class="btn-back-game" style="padding: 5px 12px; font-size: 12px; border-radius: 20px;">← Назад</a>
+    </div>
+
+    <nav class="top-nav">
+        <a href="welcome.html" class="nav-link">Начало</a>
+        <a href="pages/dashboard.html" class="nav-link">Градина</a>
+        <a href="news.html" class="nav-link">Новини</a>
+        <a href="game.html" class="nav-link active">Игра</a>
+    </nav>
+
+    <div class="layout-container" style="max-width: 850px; margin-top: 100px;">
+        
+        <div id="game-intro" class="dash-panel text-center">
+            <h2 style="color:var(--accent);">Добре дошъл в Мини Играта!</h2>
+            <p style="margin-bottom: 20px;">Използвай трактора, за да събираш културите от полето.</p>
+            
+            <div class="layout-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 30px;">
+                <div class="dash-panel" style="padding: 15px;">
+                    <div style="font-size: 24px; color: var(--accent);">↑</div>
+                    <div style="font-size: 12px; text-transform: uppercase;">Нагоре</div>
+                </div>
+                <div class="dash-panel" style="padding: 15px;">
+                    <div style="font-size: 24px; color: var(--accent);">↓</div>
+                    <div style="font-size: 12px; text-transform: uppercase;">Надолу</div>
+                </div>
+                <div class="dash-panel" style="padding: 15px;">
+                    <div style="font-size: 24px; color: var(--accent);">←</div>
+                    <div style="font-size: 12px; text-transform: uppercase;">Наляво</div>
+                </div>
+                <div class="dash-panel" style="padding: 15px;">
+                    <div style="font-size: 24px; color: var(--accent);">→</div>
+                    <div style="font-size: 12px; text-transform: uppercase;">Надясно</div>
+                </div>
+            </div>
+
+            <button id="start-game-btn" class="btn-primary" style="font-size: 16px; padding: 0 40px; height: 50px;">🚜 Стартирай играта</button>
+        </div>
+
+        <div id="game-active-area" style="display: none; flex-direction: column; align-items: center;">
+            <div class="dash-panel w-full" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 24px; margin-bottom: 20px;">
+                <div style="font-size: 20px; font-weight: 600;">
+                    Монети: <span id="coin-count" style="color: var(--accent); font-size: 24px;">0</span>
+                </div>
+                <button id="reset-game" class="btn-secondary" style="height: 38px; padding: 0 15px; font-size: 12px;">🔄 Отначало</button>
+            </div>
+            
+            <canvas id="gameCanvas" width="700" height="500" style="border-radius: 16px; border: 1px solid var(--border-glass); background: var(--bg-surface);"></canvas>
+            
+            <div class="mobile-controls" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px;">
+                <div></div>
+                <button class="btn-secondary" onpointerdown="setMobileDir('up')" onpointerup="setMobileDir(null)">↑</button>
+                <div></div>
+                <button class="btn-secondary" onpointerdown="setMobileDir('left')" onpointerup="setMobileDir(null)">←</button>
+                <button class="btn-secondary" onpointerdown="setMobileDir('down')" onpointerup="setMobileDir(null)">↓</button>
+                <button class="btn-secondary" onpointerdown="setMobileDir('right')" onpointerup="setMobileDir(null)">→</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
+    <script src="theme.js"></script>
+    <script>
+        // Полифил за roundRect (за по-стари браузъри)
+        if (!CanvasRenderingContext2D.prototype.roundRect) {
+            CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+                if (w < 2 * r) r = w / 2; if (h < 2 * r) r = h / 2;
+                this.beginPath(); this.moveTo(x + r, y);
+                this.arcTo(x + w, y, x + w, y + h, r); this.arcTo(x + w, y + h, x, y + h, r);
+                this.arcTo(x, y + h, x, y, r); this.arcTo(x, y, x + w, y, r);
+                this.closePath(); return this;
+            };
+        }
+
+        let gameStarted = false;
+
+        document.getElementById("start-game-btn").addEventListener("click", () => {
+            document.getElementById("game-intro").style.display = "none";
+            document.getElementById("game-active-area").style.display = "flex";
+            if (!gameStarted) {
+                initializeGame();
+                gameStarted = true;
+            }
+        });
+
+        async function initializeGame() {
+            if (typeof supabaseClient === "undefined") { window.location.replace("pages/login.html?redirect=game.html"); return; }
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session) { window.location.replace("pages/login.html?redirect=game.html"); return; }
+
+            const canvas = document.getElementById("gameCanvas");
+            const ctx = canvas.getContext("2d");
+            const scoreEl = document.getElementById("coin-count");
+            
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            const audioCtx = new AudioContext();
+
+            function playChaChing() {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc1 = audioCtx.createOscillator(); const osc2 = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+                osc1.type = 'sine'; osc2.type = 'triangle';
+                osc1.frequency.setValueAtTime(987.77, audioCtx.currentTime); osc2.frequency.setValueAtTime(987.77, audioCtx.currentTime);
+                osc1.frequency.setValueAtTime(1318.51, audioCtx.currentTime + 0.1); osc2.frequency.setValueAtTime(1318.51, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc1.connect(gain); osc2.connect(gain); gain.connect(audioCtx.destination);
+                osc1.start(); osc2.start(); osc1.stop(audioCtx.currentTime + 0.4); osc2.stop(audioCtx.currentTime + 0.4);
+            }
+
+            let coins = session.user.user_metadata?.game_coins || 0;
+            scoreEl.textContent = coins;
+
+            const tractor = { x: canvas.width / 2, y: canvas.height / 2, speed: 2.6, angle: 0, targetAngle: 0 };
+            let crops = [], particles = [], floatingTexts = [];
+            const keys = {}; let mobileDir = null;
+            const emojis = ["🌾", "🍅", "🥕", "🌽", "🍎"];
+
+            window.addEventListener("keydown", e => { keys[e.code] = true; if (["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Space"].includes(e.code)) e.preventDefault(); });
+            window.addEventListener("keyup", e => keys[e.code] = false);
+            window.setMobileDir = (dir) => mobileDir = dir;
+
+            function spawnCrops() {
+                crops = [];
+                for (let i = 0; i < 6; i++) crops.push({ x: Math.random() * (canvas.width - 80) + 40, y: Math.random() * (canvas.height - 80) + 40, emoji: emojis[Math.floor(Math.random() * emojis.length)], collected: false, timeOffset: Math.random() * Math.PI * 2 });
+            }
+            spawnCrops();
+
+            function createParticles(x, y, type) {
+                const count = type === "dust" ? 2 : 8;
+                for (let i = 0; i < count; i++) particles.push({ x, y, vx: (Math.random() - 0.5) * (type === "dust" ? 3 : 6), vy: (Math.random() - 0.5) * (type === "dust" ? 3 : 6), life: 1, maxLife: type === "dust" ? 0.5 : 0.8, color: type === "dust" ? "rgba(120, 100, 80, 0.7)" : "rgba(212, 175, 55, 1)", size: type === "dust" ? Math.random() * 5 + 2 : Math.random() * 4 + 2 });
+            }
+
+            document.getElementById("reset-game").addEventListener("click", async () => {
+                if(await showConfirm("Сигурни ли сте?", "Нова игра")) {
+                    coins = 0; scoreEl.textContent = 0;
+                    supabaseClient.auth.updateUser({ data: { game_coins: 0 } });
+                    tractor.x = canvas.width / 2; tractor.y = canvas.height / 2;
+                    spawnCrops(); particles = []; floatingTexts = [];
+                }
+            });
+
+            function update(dt) {
+                let dx = 0, dy = 0, moving = false;
+                if (keys["ArrowUp"] || keys["KeyW"] || mobileDir === "up") { dy -= 1; tractor.targetAngle = -Math.PI / 2; moving = true; }
+                if (keys["ArrowDown"] || keys["KeyS"] || mobileDir === "down") { dy += 1; tractor.targetAngle = Math.PI / 2; moving = true; }
+                if (keys["ArrowLeft"] || keys["KeyA"] || mobileDir === "left") { dx -= 1; tractor.targetAngle = Math.PI; moving = true; }
+                if (keys["ArrowRight"] || keys["KeyD"] || mobileDir === "right") { dx += 1; tractor.targetAngle = 0; moving = true; }
+
+                if (dx !== 0 && dy !== 0) { dx *= 0.7071; dy *= 0.7071; }
+                tractor.angle += (tractor.targetAngle - tractor.angle) * 0.15;
+                tractor.x += dx * tractor.speed; tractor.y += dy * tractor.speed;
+
+                if (tractor.x < 30) tractor.x = 30; if (tractor.x > canvas.width - 30) tractor.x = canvas.width - 30;
+                if (tractor.y < 30) tractor.y = 30; if (tractor.y > canvas.height - 30) tractor.y = canvas.height - 30;
+
+                if (moving && Math.random() < 0.3) createParticles(tractor.x - Math.cos(tractor.angle) * 25, tractor.y - Math.sin(tractor.angle) * 25, "dust");
+
+                crops.forEach(crop => {
+                    if (!crop.collected && Math.hypot(tractor.x - crop.x, tractor.y - crop.y) < 40) {
+                        crop.collected = true; coins++; scoreEl.textContent = coins;
+                        supabaseClient.auth.updateUser({ data: { game_coins: coins } });
+                        playChaChing(); createParticles(crop.x, crop.y, "spark");
+                        floatingTexts.push({ x: crop.x, y: crop.y - 20, text: "+1", life: 1 });
+                    }
+                });
+                if (crops.every(c => c.collected)) spawnCrops();
+
+                particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.life -= dt / p.maxLife; });
+                particles = particles.filter(p => p.life > 0);
+                floatingTexts.forEach(t => { t.y -= 1.5; t.life -= dt * 1.2; });
+                floatingTexts = floatingTexts.filter(t => t.life > 0);
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = "#11291D"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.strokeStyle = "rgba(244, 241, 234, 0.05)"; ctx.lineWidth = 20;
+                for (let i = 0; i < canvas.width; i += 60) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke(); }
+
+                crops.forEach(crop => { if (!crop.collected) { ctx.font = "40px Arial"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(crop.emoji, crop.x, crop.y + Math.sin(Date.now() / 300 + crop.timeOffset) * 3); } });
+                
+                particles.forEach(p => { ctx.globalAlpha = p.life; ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill(); });
+                ctx.globalAlpha = 1;
+
+                // ==========================================
+                // НОВ ДИЗАЙН НА ТРАКТОРЧЕТО
+                // ==========================================
+                ctx.save(); 
+                ctx.translate(tractor.x, tractor.y); 
+                ctx.rotate(tractor.angle);
+                
+                // Сянка
+                ctx.fillStyle = "rgba(0,0,0,0.5)";
+                ctx.beginPath(); ctx.ellipse(-2, 10, 24, 18, 0, 0, Math.PI * 2); ctx.fill();
+
+                // Задни гуми (тъмни)
+                ctx.fillStyle = "#111827";
+                ctx.beginPath(); ctx.ellipse(-12, -18, 8, 14, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(-12, 18, 8, 14, 0, 0, Math.PI * 2); ctx.fill();
+                
+                // Предна гума (тъмна)
+                ctx.beginPath(); ctx.ellipse(14, 0, 6, 10, 0, 0, Math.PI * 2); ctx.fill();
+                
+                // Джанти (жълти/златни)
+                ctx.fillStyle = "#D4AF37";
+                ctx.beginPath(); ctx.ellipse(-12, -18, 4, 7, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(-12, 18, 4, 7, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(14, 0, 3, 5, 0, 0, Math.PI * 2); ctx.fill();
+
+                // Основно тяло (шаси)
+                ctx.fillStyle = "#D4AF37";
+                ctx.beginPath(); ctx.roundRect(-18, -12, 28, 24, 6); ctx.fill();
+                ctx.strokeStyle = "#b8952d"; ctx.lineWidth = 2; ctx.stroke();
+
+                // Капак на двигателя (предница)
+                ctx.fillStyle = "#f3d57a"; 
+                ctx.beginPath(); ctx.roundRect(8, -8, 12, 16, 4); ctx.fill();
+                ctx.strokeStyle = "#b8952d"; ctx.stroke();
+
+                // Кабина
+                ctx.fillStyle = "#1f2937";
+                ctx.beginPath(); ctx.roundRect(-14, -10, 16, 20, 4); ctx.fill();
+                
+                // Стъкло на кабината
+                ctx.fillStyle = "rgba(74, 222, 128, 0.8)";
+                ctx.beginPath(); ctx.roundRect(-10, -6, 10, 12, 2); ctx.fill();
+
+                // Ауспух
+                ctx.fillStyle = "#4b5563";
+                ctx.fillRect(6, -14, 3, 8);
+                
+                // Фар
+                ctx.fillStyle = "#fde047";
+                ctx.beginPath(); ctx.arc(21, 0, 3, 0, Math.PI * 2); ctx.fill();
+                // Светлина от фара
+                ctx.fillStyle = "rgba(253, 224, 71, 0.3)";
+                ctx.beginPath(); ctx.arc(22, 0, 7, 0, Math.PI * 2); ctx.fill();
+
+                ctx.restore();
+                // ==========================================
+
+                floatingTexts.forEach(t => { ctx.globalAlpha = t.life; ctx.fillStyle = "#D4AF37"; ctx.font = "900 28px 'Cinzel'"; ctx.textAlign = "center"; ctx.fillText(t.text, t.x, t.y); });
+                ctx.globalAlpha = 1;
+            }
+
+            let lastTime = performance.now();
+            function gameLoop(time) { const dt = (time - lastTime) / 1000; lastTime = time; update(dt); draw(); requestAnimationFrame(gameLoop); }
+            requestAnimationFrame(gameLoop);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+:root {
+    --bg-main: #0D1117;
+    --bg-surface: #161B22;
+    --bg-card: #1C2128;
+    --bg-input: #0B0F17;
+    --bg-nav: rgba(13, 17, 23, 0.9);
+    --text-main: #E6EDF3;
+    --text-muted: #8B949E;
+    --accent: #FF7A3D;
+    --accent-hover: #FF5F1F;
+    --accent-glow: rgba(255, 122, 61, 0.2);
+    --btn-text-color: #111827;
+    --danger: #FF5F5F;
+    --success: #2DD4BF;
+    --border-light: #E6EDF3;
+    --font-heading: 'Archivo Black', sans-serif;
+    --font-body: 'Space Grotesk', sans-serif;
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --shadow-glass: 6px 6px 0 var(--border-light); /* Твърда сянка */
+    --bg-pattern: none;
+    --bg-pattern-size: auto;
+}
+[data-theme="light"] {
+    --bg-main: #FDF6E3;
+    --bg-surface: #FFFFFF;
+    --bg-card: #F3EBD5;
+    --bg-input: #F5ECD2;
+    --bg-nav: rgba(253, 246, 227, 0.9);
+    --text-main: #111827;
+    --text-muted: #4B5563;
+    --accent: #FF5F1F;
+    --accent-hover: #E54D0F;
+    --btn-text-color: #FFFFFF;
+    --border-light: #111827;
+    --shadow-glass: 6px 6px 0 #111827;
+}

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroNav - Начало</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <a href="#" class="global-logo" style="position:fixed; top:25px; left:40px; z-index:1000; font-family:var(--font-heading); font-size:22px; font-weight:700; color:var(--accent); text-decoration:none;">AG</a>
+    
+    <nav class="top-nav">
+        <a href="index.html" class="nav-link active">Начало</a>
+        <a href="#testimonials" class="nav-link">Мнения</a>
+        <a href="#contacts" class="nav-link">Контакти</a>
+        <a href="pages/login.html" class="nav-link">Вход / Регистрация</a>
+    </nav>
+
+    <main class="hero-section">
+        <div class="hero-date">Дигитален компас в земеделието</div>
+        <h1 class="hero-title">Agro<span>Nav</span></h1>
+        <p class="hero-subtitle">Управлявай лехите си, следи времето и отглеждай културите си с лекота. Твоето земеделско приключение започва тук.</p>
+        <a href="pages/login.html" class="btn-primary" style="font-size: 16px; padding: 0 40px; height: 50px;">● Влез в профила</a>
+        <div class="decor-line"></div>
+    </main>
+
+    <section id="testimonials" class="section-container" style="background: rgba(17, 41, 29, 0.4); border-top: 1px solid var(--border-glass); border-bottom: 1px solid var(--border-glass);">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <h2 class="section-title">Какво казват фермерите?</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"AgroNav промени начина, по който управлявам оранжерията си. AI анализът ми спести стотици левове от излишно торене и поливане!"</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">👨‍🌾</div>
+                        <div class="testimonial-info"><strong>Иван Петров</strong><span>Земеделски производител</span></div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"Най-накрая едно приложение, което не само показва времето, но и ми казва КАКВО да правя в градината днес. Препоръчвам горещо!"</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">👩‍🌾</div>
+                        <div class="testimonial-info"><strong>Мария Иванова</strong><span>Домашна градина</span></div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"Мини играта е страхотна за релакс след дълъг ден на полето. Събирам монети и си тествам рефлексите. Дизайнът е уникален!"</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">👨‍🔬</div>
+                        <div class="testimonial-info"><strong>Георги Димитров</strong><span>Земеделски производител</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-container">
+        <h2 class="section-title">Защо да избереш AGRONAV?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🌦️</div>
+                <h3>Точна Прогноза</h3>
+                <p>Следи реалното време и 7-дневната прогноза директно за твоето населено място. Планирай дейностите си без риск от изненади.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3>AI Препоръки</h3>
+                <p>Нашият изкуствен интелект анализира фазата на твоите култури и климата, за да ти даде съвет кога да поливаш и торя.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎮</div>
+                <h3>Забавление</h3>
+                <p>Не всичко е работа! Отпусни се с нашата мини игра за събиране на реколта и спечели виртуални монети.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contacts" class="footer">
+        <div class="footer-content">
+            <div class="footer-col">
+                <h4>AGRONAV</h4>
+                <p>Твоят дигитален партньор в земеделието. Създаден с любов към природата и технологиите.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Контакти</h4>
+                <p>📞 +359 000 000 000</p>
+                <p>✉️ info@0000000000</p>
+                <p>📍 гр. 000000, ул. 0000000000 00</p>
+            </div>
+            <div class="footer-col">
+                <h4>Полезни връзки</h4>
+                <a href="pages/login.html">Вход в системата</a>
+                <a href="pages/register.html">Регистрация</a>
+                <a href="pages/dashboard.html">Моята градина</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 AgroNav. Всички права запазени.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
+    <script src="theme.js"></script>
+    <script>
+        document.querySelectorAll('.top-nav .nav-link').forEach(link => {
+            link.addEventListener('click', function() {
+                if (this.getAttribute('href').startsWith('#')) {
+                    document.querySelectorAll('.top-nav .nav-link').forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+<!-- супер е. сега, искам когато натисна бутона "нова" и се появи изкачащото меню да няма зелени (или съответно другите цветове) краища. -->
