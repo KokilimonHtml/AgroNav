@@ -142,7 +142,7 @@
         window.location.href = session ? path : "pages/login.html";
     }
 
-    document.querySelector("#MyGarden").addEventListener("click", () => navigateToProtectedPage("pages/dashboard.html").catch(error => console.error("Could not navigate to the garden:", error)));
+    document.querySelector("#MyGarden").addEventListener("click", () => navigateToProtectedPage("pages/garden.html").catch(error => console.error("Could not navigate to the garden:", error)));
     document.querySelector("#news-button").addEventListener("click", () => navigateToProtectedPage("news.html").catch(error => console.error("Could not navigate to the news:", error)));
 
     /* НОВИНИ */
