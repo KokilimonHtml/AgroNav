@@ -232,7 +232,7 @@ a:hover { color: var(--accent-hover); }
 .hero-subtitle { font-size: 16px; color: var(--text-muted); max-width: 500px; margin: 0 auto 40px; line-height: 1.6; font-weight: 300; }
 .hero-date { font-size: 14px; letter-spacing: 3px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 20px; font-weight: 400; }
 
-.decor-line { width: 2px; height: 60px; background: var(--accent); margin: 20px auto; position: relative; opacity: 0.6; }
+.decor-line { width: 2px; height: 60px; background: var(--accent); margin: 60px auto 0; position: relative; opacity: 0.6; }
 .decor-line::before, .decor-line::after { content: ''; position: absolute; width: 20px; height: 1px; background: var(--accent); top: 50%; transform-origin: left center; }
 .decor-line::before { right: 0; transform: rotate(-30deg); }
 .decor-line::after { left: 0; transform: rotate(30deg); }
@@ -457,7 +457,7 @@ input:focus, select:focus { border-color: var(--accent); }
 
 /* Помощни */
 @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-.scroll-to-top-btn { position: fixed; bottom: 30px; right: 30px; width: 45px; height: 45px; border-radius: 50%; background: var(--bg-card); color: var(--accent); border: 1px solid var(--border-glass); font-size: 20px; cursor: pointer; z-index: 1000; }
+.scroll-to-top-btn { box-sizing: border-box; position: fixed; bottom: 106.5px; right: 30px; width: 58.5px; height: 58.5px; border-radius: 50%; background: var(--bg-card); color: var(--accent); border: 1px solid var(--border-glass); font-size: 26px; cursor: pointer; z-index: 1000; }
 .scroll-to-top-btn:hover { background: var(--accent); color: var(--btn-text-color); }
 
 /* =========================================

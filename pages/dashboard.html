@@ -18,17 +18,19 @@
         .btn-switch-garden .arrow { display: inline-block; transition: transform 0.3s ease; }
         .btn-switch-garden.open .arrow { transform: rotate(180deg); }
 
-        .ai-widget-container { position: fixed; left: 25px; bottom: 25px; z-index: 9999; font-family: var(--font-body); }
-        .ai-float-btn { width: 56px; height: 56px; border: 1px solid var(--border-glass); border-radius: 50%; color: #fff; background: linear-gradient(135deg, #22c55e, #15803d); font-size: 26px; cursor: pointer; box-shadow: 0 8px 20px rgba(0,0,0,.4); transition: transform .2s ease; }
+        .ai-widget-container { position: fixed; right: 30px; bottom: 30px; z-index: 9999; font-family: var(--font-body);}
+        .ai-float-btn { box-sizing: border-box; width: 58.5px; height: 58.5px; border: 1px solid var(--border-glass); border-radius: 50%; color: #fff; background: linear-gradient(135deg, #22c55e, #15803d); font-size: 26px; cursor: pointer; box-shadow: 0 8px 20px rgba(0,0,0,.4); transition: transform .2s ease; }
         .ai-float-btn:hover { transform: scale(1.06); }
-        .ai-chat-box { display: none; position: absolute; left: 0; bottom: 70px; width: min(390px, calc(100vw - 32px)); height: min(560px, calc(100dvh - 110px)); flex-direction: column; overflow: hidden; color: var(--text-main); background: var(--bg-main); border: 1px solid var(--border-glass); border-radius: 16px; box-shadow: 0 15px 40px rgba(0,0,0,.5); }
+        .ai-chat-box { display: none; position: fixed; left: 25px; bottom: 70px; width: min(390px, calc(100vw - 32px)); height: min(560px, calc(100dvh - 110px)); flex-direction: column; overflow: hidden; color: var(--text-main); background: var(--bg-main); border: 1px solid var(--border-glass); border-radius: 16px; box-shadow: 0 15px 40px rgba(0,0,0,.5); }
         .ai-chat-box.open { display: flex; animation: ai-chat-in .2s ease-out; }
+        .ai-chat-box.dragging { transition: none; }
         .ai-chat-box.expanded { width: min(700px, calc(100vw - 32px)); height: min(760px, calc(100dvh - 110px)); }
         .ai-chat-box.history-open { width: min(660px, calc(100vw - 32px)); }
         .ai-chat-box.expanded.history-open { width: min(820px, calc(100vw - 32px)); }
         @keyframes ai-chat-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .ai-chat-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 12px; background: var(--bg-card); border-bottom: 1px solid var(--border-glass); }
-        .ai-header-title { display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 14px; font-weight: 600; }
+        .ai-chat-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 12px; background: var(--bg-card); border-bottom: 1px solid var(--border-glass); cursor: grab; user-select: none; touch-action: none; }
+        .ai-chat-header:active { cursor: grabbing; }
+        .ai-header-title { display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 14px; font-weight: 600; pointer-events: none; }
         .ai-status-dot { flex: 0 0 8px; width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 8px #22c55e; }
         .ai-header-actions { display: flex; align-items: center; gap: 3px; }
         .ai-header-actions button { display: grid; place-items: center; width: 32px; height: 32px; padding: 0; color: var(--text-muted); background: transparent; border: 0; border-radius: 7px; font: inherit; cursor: pointer; }
@@ -40,8 +42,11 @@
         .ai-chat-history-label { margin: 0; color: var(--text-muted); font-size: 11px; font-weight: 600; text-transform: uppercase; }
         .ai-chat-history-new { padding: 8px; color: var(--text-main); background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 8px; font: inherit; font-size: 12px; cursor: pointer; }
         .ai-chat-history-list { display: flex; flex: 1; flex-direction: column; gap: 5px; overflow-y: auto; }
-        .ai-chat-history-item { width: 100%; padding: 8px; color: var(--text-main); text-align: left; background: transparent; border: 0; border-radius: 7px; cursor: pointer; }
-        .ai-chat-history-item:hover, .ai-chat-history-item.active { background: var(--bg-card); }
+        .ai-chat-history-entry { display: flex; align-items: center; gap: 3px; border-radius: 7px; }
+        .ai-chat-history-entry:hover, .ai-chat-history-entry.active { background: var(--bg-card); }
+        .ai-chat-history-item { flex: 1; min-width: 0; padding: 8px; color: var(--text-main); text-align: left; background: transparent; border: 0; border-radius: 7px; cursor: pointer; }
+        .ai-chat-history-rename { flex: 0 0 28px; width: 28px; height: 28px; padding: 0; color: var(--text-muted); background: transparent; border: 0; border-radius: 6px; cursor: pointer; }
+        .ai-chat-history-rename:hover { color: var(--text-main); background: var(--bg-input); }
         .ai-chat-history-title, .ai-chat-history-date { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .ai-chat-history-title { font-size: 12px; }
         .ai-chat-history-date { margin-top: 3px; color: var(--text-muted); font-size: 10px; }
@@ -71,7 +76,8 @@
         .ai-input-area button:disabled { opacity: .55; cursor: wait; }
         .ai-typing-indicator { color: var(--text-muted); font-style: italic; }
         @media (max-width: 600px) {
-            .ai-widget-container { left: 16px; bottom: 16px; }
+            .ai-widget-container { right: 16px; bottom: 16px;}
+            .scroll-to-top-btn { right: 16px; bottom: 92.5px;}
             .ai-chat-box, .ai-chat-box.expanded, .ai-chat-box.history-open, .ai-chat-box.expanded.history-open { width: calc(100vw - 32px); height: min(600px, calc(100dvh - 100px)); }
             .ai-chat-history { flex-basis: 145px; }
         }
@@ -178,6 +184,7 @@
                         <div class="crop-stage-progress"><div id="crop-stage-progress-bar" class="crop-stage-progress-bar"></div></div>
                         <span style="color: var(--text-muted); font-size: 12px; margin-top: 8px; display: block;" id="crop-stage-days">-</span>
                         <span id="crop-harvest-status" class="crop-harvest-status"></span>
+                        <span id="crop-ai-harvest-estimate" class="crop-harvest-status" aria-live="polite"></span>
                     </div>
 
                     <div class="crop-info-box" style="grid-column: span 2;">
@@ -856,16 +863,37 @@
     ];
 
     let cropDates = {}; let userCrops = [];
+    let harvestPredictionRequestId = 0;
+    const harvestPredictionCache = new Map();
 
     function formatCropDate(dateString) { if (!dateString) return "-"; const date = new Date(dateString + "T00:00:00"); return isNaN(date.getTime()) ? "-" : date.toLocaleDateString("bg-BG", { day: "2-digit", month: "long", year: "numeric" }); }
     function capitalizeFirst(str) { return str ? str.charAt(0).toUpperCase() + str.slice(1) : ""; }
 
+    function getUtcDateFromDateString(dateString) {
+        const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateString || "");
+        if (!match) return null;
+        const date = new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3])));
+        if (date.getUTCFullYear() !== Number(match[1]) || date.getUTCMonth() !== Number(match[2]) - 1 || date.getUTCDate() !== Number(match[3])) return null;
+        return date;
+    }
+
+    function addDaysToUtcDate(dateString, days) {
+        const date = getUtcDateFromDateString(dateString);
+        if (!date || !Number.isInteger(days)) return null;
+        date.setUTCDate(date.getUTCDate() + days);
+        return date;
+    }
+
+    function formatUtcDate(date) {
+        return date.toLocaleDateString("bg-BG", { day: "2-digit", month: "long", year: "numeric", timeZone: "UTC" });
+    }
+
     function getCropAge(dateString) {
-        if (!dateString) return null;
-        const plantingDate = new Date(dateString + "T00:00:00");
-        if (isNaN(plantingDate.getTime())) return null;
-        const today = new Date(); today.setHours(0, 0, 0, 0);
-        return Math.floor((today.getTime() - plantingDate.getTime()) / (1000 * 60 * 60 * 24));
+        const plantingDate = getUtcDateFromDateString(dateString);
+        if (!plantingDate) return null;
+        const now = new Date();
+        const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+        return Math.round((today - plantingDate.getTime()) / 86400000);
     }
 
     function getCropAgeText(dateString) {
@@ -876,21 +904,19 @@
     function getHarvestStatus(cropName, plantingDate) {
         if (!plantingDate) return { text: "Добави дата на засаждане, за да видиш срока за събиране.", className: "" };
 
-        const [year, month, day] = plantingDate.split("-").map(Number);
-        const harvestDate = new Date(Date.UTC(year, month - 1, day));
-        if (isNaN(harvestDate.getTime())) return { text: "Невалидна дата на засаждане.", className: "" };
-        harvestDate.setUTCDate(harvestDate.getUTCDate() + getCropGuidance(cropName).harvestDays);
+        const harvestDate = addDaysToUtcDate(plantingDate, getCropGuidance(cropName).harvestDays);
+        if (!harvestDate) return { text: "Невалидна дата на засаждане.", className: "" };
 
         const now = new Date();
         const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
         const daysRemaining = Math.round((harvestDate.getTime() - today) / 86400000);
-        const formattedHarvestDate = new Date(harvestDate.getTime()).toLocaleDateString("bg-BG", { day: "2-digit", month: "long", year: "numeric", timeZone: "UTC" });
+        const formattedHarvestDate = formatUtcDate(harvestDate);
 
         if (daysRemaining < 0) {
-            return { text: `Срокът за събиране вече е преминал (очаквана дата: ${formattedHarvestDate}).`, className: "harvest-overdue" };
+            return { text: `Справочният срок за реколта е минал (ориентировъчна дата: ${formattedHarvestDate}). Провери зрелостта на растението.`, className: "harvest-overdue" };
         }
         if (daysRemaining === 0) {
-            return { text: "Подходящо е за събиране днес.", className: "harvest-ready" };
+            return { text: "Справочният ориентир е днес. Провери зрелостта на растението преди беритба.", className: "harvest-ready" };
         }
 
         let remainingText;
@@ -904,17 +930,110 @@
             remainingText = `след около ${months} ${months === 1 ? "месец" : "месеца"}`;
         }
 
-        const isPlanted = today >= Date.UTC(year, month - 1, day);
-        const text = isPlanted
-            ? `Подходящо е за събиране ${remainingText} (очаквана дата: ${formattedHarvestDate}).`
-            : `След засаждането ориентировъчното събиране е ${remainingText} (очаквана дата: ${formattedHarvestDate}).`;
-        return { text, className: isPlanted ? "harvest-ready" : "" };
+        return { text: `Справочен ориентир за реколта: ${remainingText} (около ${formattedHarvestDate}); срокът зависи от сорта и условията.`, className: "" };
     }
 
     function renderHarvestStatus(element, cropName, plantingDate) {
         const status = getHarvestStatus(cropName, plantingDate);
         element.className = `crop-harvest-status ${status.className}`.trim();
         element.textContent = status.text;
+    }
+
+    function parseAiHarvestPrediction(reply) {
+        const jsonMatch = reply.match(/\{[\s\S]*\}/);
+        if (!jsonMatch) throw new Error("AI отговорът не съдържа валидна прогноза.");
+
+        const prediction = JSON.parse(jsonMatch[0]);
+        if (prediction?.min_days === null && prediction?.max_days === null) {
+            return {
+                unavailable: true,
+                note: typeof prediction.note === "string" ? prediction.note.trim().slice(0, 160) : ""
+            };
+        }
+        if (
+            !prediction ||
+            !Number.isInteger(prediction.min_days) ||
+            !Number.isInteger(prediction.max_days) ||
+            prediction.min_days < 1 ||
+            prediction.max_days < prediction.min_days ||
+            prediction.max_days > 3650
+        ) {
+            throw new Error("AI върна невалиден диапазон за срока до реколта.");
+        }
+
+        return {
+            minDays: prediction.min_days,
+            maxDays: prediction.max_days,
+            note: typeof prediction.note === "string" ? prediction.note.trim().slice(0, 160) : ""
+        };
+    }
+
+    async function renderAiHarvestPrediction(cropName, plantingDate) {
+        const estimateEl = document.querySelector("#crop-ai-harvest-estimate");
+        const requestId = ++harvestPredictionRequestId;
+        if (!plantingDate) {
+            estimateEl.textContent = "";
+            return;
+        }
+
+        const plantingDateUtc = getUtcDateFromDateString(plantingDate);
+        if (!plantingDateUtc) {
+            estimateEl.textContent = "AI прогнозата не може да се изчисли за невалидна дата.";
+            return;
+        }
+
+        const crop = allCropsData.find(item => item.name === cropName);
+        const guidance = getCropGuidance(cropName);
+        const today = new Date();
+        const todayString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+        const location = currentProfile?.location || userGardens?.find(garden => garden.id === currentGardenId)?.city || "не е зададено";
+        const cacheKey = `${currentUser?.id || "user"}:${cropName}:${plantingDate}:${location}`;
+        const prompt = [
+            "Оцени ориентировъчния прозорец до първата/основната реколта. Не се опитвай да угодиш и не измисляй наблюдения.",
+            `Култура: ${cropName}; категория: ${crop?.category || "неизвестна"}; записана дата на засаждане: ${plantingDate}.`,
+            `Днес: ${todayString}; местоположение: ${location}.`,
+            `Справочна оценка AgroNav: около ${guidance.harvestDays} дни (може да е обща, не е потвърден срок за сорт).`,
+            "Няма данни за сорт, начин на отглеждане или реално състояние на растението. Дай реалистичен диапазон в календарни дни от записаната дата; ако липсват данни за надеждна оценка, върни null.",
+            "Върни само JSON: {\"min_days\": integer|null, \"max_days\": integer|null, \"note\": \"кратко уточнение на български\"}. Не обявявай растението за готово само по дата."
+        ].join(" ");
+
+        estimateEl.textContent = "AI изчислява ориентировъчен прозорец за реколта...";
+        try {
+            let prediction;
+            if (harvestPredictionCache.has(cacheKey)) {
+                prediction = harvestPredictionCache.get(cacheKey);
+            } else {
+                const reply = await askAgroNavAI(prompt);
+                prediction = parseAiHarvestPrediction(reply);
+                harvestPredictionCache.set(cacheKey, prediction);
+            }
+            if (requestId !== harvestPredictionRequestId) return;
+            if (prediction.unavailable) {
+                estimateEl.textContent = `AI няма достатъчно данни за надеждна прогноза${prediction.note ? `: ${prediction.note}` : ""}. Справочният срок е само ориентир; провери зрелостта на място.`;
+                return;
+            }
+
+            const firstHarvestDate = addDaysToUtcDate(plantingDate, prediction.minDays);
+            const lastHarvestDate = addDaysToUtcDate(plantingDate, prediction.maxDays);
+            if (!firstHarvestDate || !lastHarvestDate) throw new Error("AI прогнозата съдържа невалидни дати.");
+
+            const now = new Date();
+            const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+            const windowIsPast = lastHarvestDate.getTime() < today;
+            const dateRange = prediction.minDays === prediction.maxDays
+                ? formatUtcDate(firstHarvestDate)
+                : `${formatUtcDate(firstHarvestDate)} – ${formatUtcDate(lastHarvestDate)}`;
+            const dayRange = prediction.minDays === prediction.maxDays
+                ? `${prediction.minDays} ${prediction.minDays === 1 ? "ден" : "дни"}`
+                : `${prediction.minDays}–${prediction.maxDays} дни`;
+            const timing = windowIsPast ? "Оцененият прозорец вече е минал" : "AI ориентировъчен прозорец";
+            estimateEl.textContent = `${timing}: ${dateRange} (${dayRange} след засаждането). ${prediction.note} Провери зрелостта на място; това не е гарантирана дата.`;
+        } catch (error) {
+            console.error("Грешка при AI прогноза за реколтата:", error);
+            if (requestId === harvestPredictionRequestId) {
+                estimateEl.textContent = "AI прогнозата не е налична. Показаният справочен срок е само ориентир.";
+            }
+        }
     }
 
     function getCropStage(cropName, dateString) {
@@ -1066,6 +1185,7 @@
         document.querySelector("#crop-age").textContent = getCropAgeText(cropDate);
         renderCropStage(cropKey, cropDate);
         renderHarvestStatus(document.querySelector("#crop-harvest-status"), cropKey, cropDate);
+        renderAiHarvestPrediction(cropKey, cropDate);
         document.querySelector("#crop-date-message").textContent = "";
 
         if (isFarm) {
@@ -1122,6 +1242,7 @@
         document.querySelector("#crop-care").textContent = careSchedule.care;
         renderCropStage(cropKey, newDate); await renderCrops();
         renderHarvestStatus(document.querySelector("#crop-harvest-status"), cropKey, newDate);
+        renderAiHarvestPrediction(cropKey, newDate);
         document.querySelector("#crop-date-message").textContent = "Датата е запазена.";
         
         if (isFarm) generateFarmPlan(cropKey, newDate);
@@ -1298,9 +1419,12 @@
         [...aiSavedChats]
             .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
             .forEach(chat => {
+                const entry = document.createElement("div");
+                entry.className = `ai-chat-history-entry${chat.id === aiActiveChatId ? " active" : ""}`;
+
                 const button = document.createElement("button");
                 button.type = "button";
-                button.className = `ai-chat-history-item${chat.id === aiActiveChatId ? " active" : ""}`;
+                button.className = "ai-chat-history-item";
                 button.setAttribute("aria-current", chat.id === aiActiveChatId ? "true" : "false");
                 button.addEventListener("click", () => openAiSavedChat(chat.id));
 
@@ -1314,8 +1438,36 @@
                     ? ""
                     : updatedAt.toLocaleDateString("bg-BG", { day: "2-digit", month: "2-digit", year: "numeric" });
                 button.append(title, date);
-                aiHistoryList.appendChild(button);
+
+                const renameButton = document.createElement("button");
+                renameButton.type = "button";
+                renameButton.className = "ai-chat-history-rename";
+                renameButton.textContent = "✎";
+                renameButton.title = "Преименувай разговора";
+                renameButton.setAttribute("aria-label", `Преименувай разговора: ${chat.title}`);
+                renameButton.addEventListener("click", () => renameAiChat(chat.id));
+
+                entry.append(button, renameButton);
+                aiHistoryList.appendChild(entry);
             });
+    }
+
+    async function renameAiChat(chatId) {
+        const chat = aiSavedChats.find(item => item.id === chatId);
+        if (!chat) return;
+
+        const newTitle = await showPrompt("Въведи ново име за разговора:", chat.title, "Преименуване");
+        if (newTitle === false) return;
+
+        const trimmedTitle = newTitle.trim();
+        if (!trimmedTitle) {
+            await showAlert("Името на разговора не може да бъде празно.", "Грешка");
+            return;
+        }
+
+        chat.title = trimmedTitle;
+        saveAiChats();
+        renderAiChatHistory();
     }
 
     function restoreAiChats() {
@@ -1385,11 +1537,88 @@
         aiUserInput.focus();
     }
 
+    function clampAiChatPosition(left, top) {
+        const width = aiChatWindow.offsetWidth || 390;
+        const height = aiChatWindow.offsetHeight || 560;
+        const maxLeft = Math.max(12, window.innerWidth - width - 12);
+        const maxTop = Math.max(12, window.innerHeight - height - 12);
+        return {
+            left: Math.min(Math.max(left, 12), maxLeft),
+            top: Math.min(Math.max(top, 12), maxTop)
+        };
+    }
+
+    function positionAiChatNearToggle() {
+        const toggleRect = aiToggleBtn.getBoundingClientRect();
+        const width = aiChatWindow.offsetWidth || 390;
+        const height = aiChatWindow.offsetHeight || 560;
+        const left = clampAiChatPosition(toggleRect.left - 10, toggleRect.top - height - 14).left;
+        const top = clampAiChatPosition(toggleRect.left - 10, toggleRect.top - height - 14).top;
+        aiChatWindow.style.left = `${left}px`;
+        aiChatWindow.style.top = `${top}px`;
+        aiChatWindow.style.bottom = "auto";
+    }
+
+    function beginAiChatDrag(event) {
+        if (event.target.closest("button")) return;
+        const boxRect = aiChatWindow.getBoundingClientRect();
+        const dragState = {
+            startX: event.clientX,
+            startY: event.clientY,
+            startLeft: boxRect.left,
+            startTop: boxRect.top,
+        };
+        aiChatWindow.dataset.dragging = "true";
+        aiChatWindow.classList.add("dragging");
+
+        function onMove(moveEvent) {
+            const next = clampAiChatPosition(
+                dragState.startLeft + (moveEvent.clientX - dragState.startX),
+                dragState.startTop + (moveEvent.clientY - dragState.startY)
+            );
+            aiChatWindow.style.left = `${next.left}px`;
+            aiChatWindow.style.top = `${next.top}px`;
+            aiChatWindow.style.bottom = "auto";
+        }
+
+        function onStop() {
+            aiChatWindow.classList.remove("dragging");
+            document.removeEventListener("pointermove", onMove);
+            document.removeEventListener("pointerup", onStop);
+            document.removeEventListener("pointercancel", onStop);
+        }
+
+        document.addEventListener("pointermove", onMove);
+        document.addEventListener("pointerup", onStop);
+        document.addEventListener("pointercancel", onStop);
+    }
+
+    window.addEventListener("wheel", (event) => {
+        const insideChat = event.target && event.target.closest && event.target.closest("#ai-chat-window");
+        if (!insideChat) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        const content = aiMessagesArea;
+        const maxScroll = Math.max(0, content.scrollHeight - content.clientHeight);
+        content.scrollTop = Math.min(Math.max(content.scrollTop + event.deltaY, 0), maxScroll);
+    }, { passive: false });
+
     aiToggleBtn.addEventListener("click", () => {
-        aiChatWindow.classList.toggle("open");
-        if (aiChatWindow.classList.contains("open")) aiUserInput.focus();
+        const isOpen = aiChatWindow.classList.toggle("open");
+        if (isOpen) {
+            if (!aiChatWindow.dataset.dragging) {
+                positionAiChatNearToggle();
+            }
+            aiUserInput.focus();
+        }
     });
-    aiCloseBtn.addEventListener("click", () => aiChatWindow.classList.remove("open"));
+    aiCloseBtn.addEventListener("click", () => {
+        aiChatWindow.classList.remove("open");
+        delete aiChatWindow.dataset.dragging;
+    });
+    document.querySelector(".ai-chat-header").addEventListener("pointerdown", beginAiChatDrag);
     aiExpandBtn.addEventListener("click", () => {
         const expanded = aiChatWindow.classList.toggle("expanded");
         aiExpandBtn.setAttribute("aria-expanded", String(expanded));
@@ -1529,17 +1758,86 @@
         return message;
     }
 
+    function buildAiRuntimeContext() {
+        const lines = [];
+        const userName = currentProfile?.name || currentUser?.email?.split("@")[0] || "Потребител";
+        const profileType = currentProfile?.profile_type === "farm" ? "фермер" : "градинар";
+        const homeLocation = currentProfile?.location || userGardens?.[0]?.city || "Не е зададено";
+        const gardenName = document.querySelector("#active-garden-title")?.textContent?.trim();
+        const gardenSubtitle = document.querySelector("#active-garden-subtitle")?.textContent?.trim();
+        const weatherLocation = document.querySelector("#weather-location")?.textContent?.replace(/^Местоположение:\s*/i, "")?.trim();
+        const weatherTemp = document.querySelector(".weather-temperature")?.textContent?.trim();
+        const weatherCondition = document.querySelector(".weather-condition")?.textContent?.trim();
+        const humidity = document.querySelector(".weather-details div:nth-child(1) b")?.textContent?.trim();
+        const rain = document.querySelector(".weather-details div:nth-child(2) b")?.textContent?.trim();
+        const wind = document.querySelector(".weather-details div:nth-child(3) b")?.textContent?.trim();
+        const rain48 = document.querySelector(".weather-details div:nth-child(4) b")?.textContent?.trim();
+        const agroStatus = document.querySelector("#agro-status")?.textContent?.trim();
+        const agroRecommendation = document.querySelector("#agro-recommendation-text")?.textContent?.trim();
+
+        lines.push(`Потребител: ${userName} (${profileType})`);
+        lines.push(`Локация на профила: ${homeLocation}`);
+        if (userGardens?.length) {
+            lines.push(`Градини: ${userGardens.map(g => `${g.name} (${g.city || "без град"})`).join("; ")}`);
+        }
+        if (gardenName || gardenSubtitle) {
+            lines.push(`Активна градина: ${gardenName || "Не е избрана"}${gardenSubtitle ? ` | ${gardenSubtitle}` : ""}`);
+        }
+        if (weatherLocation) lines.push(`Място: ${weatherLocation}`);
+        if (weatherTemp || weatherCondition) lines.push(`Време: ${weatherTemp || "--"}${weatherCondition ? `, ${weatherCondition}` : ""}`);
+        if (humidity || rain || wind || rain48) {
+            lines.push(`Показатели: влажност ${humidity || "--"}, валежи ${rain || "--"}, вятър ${wind || "--"}, валежи 48ч ${rain48 || "--"}`);
+        }
+
+        const detailsEl = document.querySelector("#crop-details");
+        const cropKey = detailsEl?.dataset?.cropKey;
+        const cropName = detailsEl?.dataset?.cropKey ? detailsEl.dataset.cropKey.charAt(0).toUpperCase() + detailsEl.dataset.cropKey.slice(1) : null;
+        const cropDate = cropKey && cropDates[cropKey] ? cropDates[cropKey] : null;
+        const cropStageName = document.querySelector("#crop-stage-name")?.textContent?.trim();
+        const cropStageDescription = document.querySelector("#crop-stage-description")?.textContent?.trim();
+        const cropAge = document.querySelector("#crop-age")?.textContent?.trim();
+        const cropPlanting = document.querySelector("#crop-planting")?.textContent?.trim();
+        const cropWatering = document.querySelector("#crop-watering")?.textContent?.trim();
+        const cropFertilizing = document.querySelector("#crop-fertilizing")?.textContent?.trim();
+        const cropCare = document.querySelector("#crop-care")?.textContent?.trim();
+
+        const recentCrops = userCrops?.slice(0, 3).map(c => `${c.crop_name} (${c.planting_date || "без дата"})`).join("; ") || "Няма регистрирани култури";
+        lines.push(`Скорошни култури: ${recentCrops}`);
+
+        if (cropKey || cropName) {
+            const cropLine = [
+                `Култура: ${cropName || cropKey || "Не е избрана"}`,
+                cropDate ? `Дата на засаждане: ${cropDate}` : "",
+                cropStageName ? `Фаза: ${cropStageName}` : "",
+                cropStageDescription ? `Описание на фазата: ${cropStageDescription}` : "",
+                cropPlanting ? `Дата на засаждане в картата: ${cropPlanting}` : "",
+                cropAge ? `Възраст: ${cropAge}` : "",
+                cropWatering ? `Поливане: ${cropWatering}` : "",
+                cropFertilizing ? `Торене: ${cropFertilizing}` : "",
+                cropCare ? `Грижи: ${cropCare}` : ""
+            ].filter(Boolean).join(" | ");
+            if (cropLine) lines.push(cropLine);
+        }
+
+        if (agroStatus || agroRecommendation) {
+            lines.push(`AI агро-оценка: ${agroStatus || "Няма данни"}${agroRecommendation ? ` | ${agroRecommendation}` : ""}`);
+        }
+
+        return lines.length ? lines.join("\n") : "Няма налични външни показатели за момента.";
+    }
+
     function buildAiConversationPrompt(question) {
         const chat = aiSavedChats.find(item => item.id === aiActiveChatId);
         const history = chat ? chat.messages : [];
         const continuation = history.some(message => message.role === "assistant");
         let guidance = continuation ? "Продължи директно, без нов поздрав или общ увод.\n" : "";
+        const runtimeContext = buildAiRuntimeContext();
         const questionLine = `Въпрос: ${question}`;
         const prefix = "Предишен разговор:\n";
-        let remaining = 1000 - questionLine.length - guidance.length - prefix.length;
+        let remaining = 1000 - questionLine.length - guidance.length - prefix.length - runtimeContext.length - 30;
         if (remaining < 0 && guidance) {
             guidance = "";
-            remaining = 1000 - questionLine.length - prefix.length;
+            remaining = 1000 - questionLine.length - prefix.length - runtimeContext.length - 30;
         }
 
         const contextLines = [];
@@ -1556,8 +1854,10 @@
             remaining -= line.length + 1;
         }
 
-        if (!contextLines.length) return `${guidance}${question}`;
-        return `${guidance}${prefix}${contextLines.join("\n")}\n${questionLine}`;
+        const runtimeBlock = `Текущи показатели:\n${runtimeContext}\n`;
+        const header = `${guidance}${runtimeBlock}`;
+        if (!contextLines.length) return `${header}${questionLine}`;
+        return `${header}${prefix}${contextLines.join("\n")}\n${questionLine}`;
     }
 
     async function askAgroNavAI(question) {
