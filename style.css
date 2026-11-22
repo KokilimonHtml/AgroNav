@@ -178,6 +178,57 @@ a:hover { color: var(--accent-hover); }
     color: var(--accent); text-decoration: none; margin-right: 15px;
 }
 
+/* =========================================
+   ЛОГО + БУТОН НАЗАД – едно до друго, фиксирано
+   ========================================= */
+.logo-back-wrap {
+    position: fixed;
+    top: 25px;
+    left: 40px;
+    z-index: 1000;
+    display: inline-flex;
+    align-items: center;
+    gap: 20px; /* визуално около 2–3 см между логото и бутона */
+}
+
+/* =========================================
+   ГЛОБАЛНО ЛОГО (АГ) – бутон с анимация
+   ========================================= */
+.global-logo {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-glass);
+    box-shadow: var(--shadow-glass);
+    color: var(--accent);
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.25s ease;
+}
+.global-logo:hover {
+    transform: rotate(-6deg) scale(1.06);
+}
+.global-logo:active {
+    transform: scale(0.92);
+}
+
+@keyframes logo-jiggle {
+    0%   { transform: translate(0, 0) rotate(0deg); }
+    25%  { transform: translate(9px, -7px) rotate(-14deg); }
+    50%  { transform: translate(-9px, 7px) rotate(14deg); }
+    75%  { transform: translate(6px, 5px) rotate(-7deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+}
+.global-logo.jiggling {
+    animation: logo-jiggle 0.7s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
 .nav-link {
     color: var(--text-muted); text-decoration: none; font-size: 13px;
     font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px;

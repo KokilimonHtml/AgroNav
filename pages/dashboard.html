@@ -485,8 +485,10 @@
 <body>
 
     <!-- ЛОГО ГОРЕ ВЛЯВО -->
-    <a href="#" class="global-logo" style="position:fixed; top:25px; left:40px; z-index:1000; font-family:var(--font-heading); font-size:22px; font-weight:700; color:var(--accent); text-decoration:none;">AG</a>
-    <a href="welcome.html" class="btn-back-game" style="padding: 5px 12px; font-size: 12px; border-radius: 20px;">← Назад</a>
+    <div class="logo-back-wrap">
+        <a href="#" class="global-logo" style="font-family:var(--font-heading); font-size:22px; font-weight:700; color:var(--accent); text-decoration:none;">AG</a>
+        <button type="button" class="btn-back-game" id="btn-back" style="padding: 5px 12px; font-size: 12px; border-radius: 20px;">← Назад</button>
+    </div>
     <!-- ЦЕНТРИРАНА НАВИГАЦИЯ -->
     <nav class="top-nav">
         <a href="../welcome.html" class="nav-link">Начало</a>
@@ -553,8 +555,8 @@
                     </div>
 
                     <div class="add-crop-ai-toggle">
-                        <button type="button" id="toggle-crop-ai-params" class="toggle-crop-ai-params-btn">
-                            <span>✨ Детайли за прецизен AI анализ (разсад, сорт, среда)</span>
+                        <button type="button" id="toggle-crop-ai-params" class="toggle-crop-ai-params-btn" title="Разгъва допълнителни детайли за културата">
+                            <span>✨ Допълнителни детайли (разсад, сорт, среда)</span>
                             <span id="ai-params-chevron">▾</span>
                         </button>
                         <span style="font-size: 11px; color: var(--text-muted);">По избор</span>

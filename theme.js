@@ -197,6 +197,27 @@
                 logo.href = targetUrl;
             });
         }
+        // --- АНИМАЦИЯ НА ЛОГОТО ПРИ КЛИК (мести се) ---
+        document.querySelectorAll('.global-logo').forEach(logo => {
+            logo.addEventListener('click', function () {
+                this.classList.remove('jiggling');
+                void this.offsetWidth; // forcira preizrisvane, за да се повтори анимацията при всеки клик
+                this.classList.add('jiggling');
+            });
+        });
+
+        // --- БУТОН "НАЗАД" – една стъпка назад в историята на сайта ---
+        document.querySelectorAll('#btn-back').forEach(btn => {
+            btn.addEventListener('click', function () {
+                if (window.history.length > 1) {
+                    window.history.back();
+                } else {
+                    const isSubPage = window.location.pathname.includes('/pages/');
+                    window.location.href = (isSubPage ? '../' : '') + 'welcome.html';
+                }
+            });
+        });
+
         // ----------------------------------
 
         setTimeout(async () => {
