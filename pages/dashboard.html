@@ -18,16 +18,21 @@
         .btn-switch-garden .arrow { display: inline-block; transition: transform 0.3s ease; }
         .btn-switch-garden.open .arrow { transform: rotate(180deg); }
 
-        .ai-widget-container { position: fixed; left: 25px; bottom: 25px; z-index: 9999; font-family: var(--font-body); }
+        .ai-widget-container { position: fixed; right: 25px; bottom: 25px; z-index: 9999; font-family: var(--font-body); }
         .ai-float-btn { width: 56px; height: 56px; border: 1px solid var(--border-glass); border-radius: 50%; color: #fff; background: linear-gradient(135deg, #22c55e, #15803d); font-size: 26px; cursor: pointer; box-shadow: 0 8px 20px rgba(0,0,0,.4); transition: transform .2s ease; }
         .ai-float-btn:hover { transform: scale(1.06); }
-        .ai-chat-box { display: none; position: absolute; left: 0; bottom: 70px; width: min(390px, calc(100vw - 32px)); height: min(560px, calc(100dvh - 110px)); flex-direction: column; overflow: hidden; color: var(--text-main); background: var(--bg-main); border: 1px solid var(--border-glass); border-radius: 16px; box-shadow: 0 15px 40px rgba(0,0,0,.5); }
+        .ai-chat-box { display: none; position: absolute; right: 0; bottom: 70px; width: min(390px, calc(100vw - 32px)); height: min(560px, calc(100dvh - 110px)); flex-direction: column; overflow: hidden; color: var(--text-main); background: var(--bg-main); border: 1px solid var(--border-glass); border-radius: 16px; box-shadow: 0 15px 40px rgba(0,0,0,.5); }
+        .ai-chat-box.is-floating { position: fixed; right: auto; bottom: auto; }
+        .ai-widget-container.dock-left .ai-chat-box { left: 0; right: auto; }
+        .ai-widget-container.chat-below .ai-chat-box { top: 70px; bottom: auto; }
         .ai-chat-box.open { display: flex; animation: ai-chat-in .2s ease-out; }
         .ai-chat-box.expanded { width: min(700px, calc(100vw - 32px)); height: min(760px, calc(100dvh - 110px)); }
         .ai-chat-box.history-open { width: min(660px, calc(100vw - 32px)); }
         .ai-chat-box.expanded.history-open { width: min(820px, calc(100vw - 32px)); }
         @keyframes ai-chat-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .ai-chat-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 12px; background: var(--bg-card); border-bottom: 1px solid var(--border-glass); }
+        .ai-chat-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 12px; background: var(--bg-card); border-bottom: 1px solid var(--border-glass); cursor: grab; touch-action: none; user-select: none; }
+        .ai-chat-box.is-dragging .ai-chat-header { cursor: grabbing; }
+        .ai-chat-drag-handle { color: var(--text-muted); font-size: 16px; line-height: 1; }
         .ai-header-title { display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 14px; font-weight: 600; }
         .ai-status-dot { flex: 0 0 8px; width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 8px #22c55e; }
         .ai-header-actions { display: flex; align-items: center; gap: 3px; }
@@ -64,14 +69,24 @@
         .ai-typing-reply .ai-reply-word.is-visible { display: inline; animation: ai-word-in .12s ease-out both; }
         @keyframes ai-reply-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes ai-word-in { from { opacity: 0; } to { opacity: 1; } }
-        .ai-input-area { display: flex; gap: 8px; padding: 10px; background: var(--bg-surface); border-top: 1px solid var(--border-glass); }
-        .ai-input-area input { flex: 1; min-width: 0; padding: 10px 12px; color: var(--text-main); background: var(--bg-input); border: 1px solid var(--border-glass); border-radius: 9px; font: inherit; font-size: 13px; }
-        .ai-input-area input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
-        .ai-input-area button { padding: 0 14px; color: var(--btn-text-color); background: var(--accent); border: 0; border-radius: 9px; font-size: 16px; cursor: pointer; }
-        .ai-input-area button:disabled { opacity: .55; cursor: wait; }
+        .ai-input-area { display: flex; flex-direction: column; gap: 8px; padding: 10px; background: var(--bg-surface); border-top: 1px solid var(--border-glass); }
+        .ai-input-row { display: flex; gap: 8px; min-width: 0; }
+        .ai-input-row input[type="text"] { flex: 1; min-width: 0; padding: 10px 12px; color: var(--text-main); background: var(--bg-input); border: 1px solid var(--border-glass); border-radius: 9px; font: inherit; font-size: 13px; }
+        .ai-input-row input[type="text"]:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+        .ai-input-row button { display: grid; flex: 0 0 42px; place-items: center; padding: 0; color: var(--btn-text-color); background: var(--accent); border: 0; border-radius: 9px; font-size: 16px; cursor: pointer; }
+        .ai-input-row button:disabled { opacity: .55; cursor: wait; }
+        .ai-input-row .ai-attach-btn { color: var(--text-main); background: var(--bg-input); border: 1px solid var(--border-glass); font-size: 20px; }
+        .ai-image-preview { display: flex; align-items: center; gap: 9px; min-width: 0; padding: 6px; background: var(--bg-input); border: 1px solid var(--border-glass); border-radius: 9px; }
+        .ai-image-preview[hidden] { display: none; }
+        .ai-image-preview img { width: 42px; height: 42px; object-fit: cover; border-radius: 6px; }
+        .ai-image-preview-name { flex: 1; overflow: hidden; color: var(--text-muted); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+        .ai-image-preview-remove { width: 32px !important; height: 32px; color: var(--text-main) !important; background: transparent !important; font-size: 20px !important; }
+        .ai-message-image { display: block; max-width: min(260px, 100%); max-height: 220px; margin-top: 8px; border-radius: 8px; object-fit: contain; }
+        .ai-image-attachment-note { display: block; margin-top: 6px; color: var(--text-muted); font-size: 11px; }
         .ai-typing-indicator { color: var(--text-muted); font-style: italic; }
         @media (max-width: 600px) {
-            .ai-widget-container { left: 16px; bottom: 16px; }
+            .ai-widget-container { right: 16px; bottom: 16px; }
+            .scroll-to-top-btn { right: 16px; bottom: 84px; }
             .ai-chat-box, .ai-chat-box.expanded, .ai-chat-box.history-open, .ai-chat-box.expanded.history-open { width: calc(100vw - 32px); height: min(600px, calc(100dvh - 100px)); }
             .ai-chat-history { flex-basis: 145px; }
         }
@@ -271,12 +286,13 @@
         </div>
     </div>
 
-    <button id="scroll-to-top" class="scroll-to-top-btn" style="display:none;">↑</button>
+    <button id="scroll-to-top" class="scroll-to-top-btn" style="display:none;" aria-label="Към началото на страницата">↑</button>
 
     <div id="ai-chat-widget" class="ai-widget-container">
         <button id="ai-toggle-btn" class="ai-float-btn" type="button" title="Попитай AgroNav AI" aria-label="Попитай AgroNav AI">🤖</button>
         <div id="ai-chat-window" class="ai-chat-box">
-            <div class="ai-chat-header">
+            <div class="ai-chat-header" title="Плъзни, за да преместиш чата">
+                <span class="ai-chat-drag-handle" aria-hidden="true">⠿</span>
                 <div class="ai-header-title"><span class="ai-status-dot"></span><span>AgroNav AI Асистент</span></div>
                 <div class="ai-header-actions">
                     <button id="ai-history-toggle-btn" type="button" title="Запазени разговори" aria-label="Запазени разговори" aria-expanded="false">☷</button>
@@ -297,8 +313,17 @@
                         <div class="ai-msg bot-msg">Здравей! Аз съм твоят агрономически асистент. Попитай ме за култури, поливане или времето. 🌱</div>
                     </div>
                     <div class="ai-input-area">
-                        <input type="text" id="ai-user-input" placeholder="Напиши въпрос..." autocomplete="off" aria-label="Съобщение до AgroNav AI">
-                        <button id="ai-send-btn" type="button" aria-label="Изпрати">➤</button>
+                        <div id="ai-image-preview" class="ai-image-preview" hidden>
+                            <img id="ai-image-preview-img" alt="Избрано изображение">
+                            <span id="ai-image-preview-name" class="ai-image-preview-name"></span>
+                            <button id="ai-image-remove-btn" class="ai-image-preview-remove" type="button" aria-label="Премахни изображението">×</button>
+                        </div>
+                        <div class="ai-input-row">
+                            <input id="ai-image-input" type="file" accept="image/jpeg,image/png,image/webp" hidden aria-label="Избери изображение">
+                            <button id="ai-attach-btn" class="ai-attach-btn" type="button" aria-label="Прикачи изображение" title="Прикачи изображение">＋</button>
+                            <input type="text" id="ai-user-input" placeholder="Напиши въпрос..." autocomplete="off" aria-label="Съобщение до AgroNav AI">
+                            <button id="ai-send-btn" type="button" aria-label="Изпрати">➤</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1246,6 +1271,7 @@
     scrollBtn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
 
     const aiToggleBtn = document.getElementById("ai-toggle-btn");
+    const aiWidget = document.getElementById("ai-chat-widget");
     const aiCloseBtn = document.getElementById("ai-close-btn");
     const aiExpandBtn = document.getElementById("ai-expand-btn");
     const aiHistoryToggleBtn = document.getElementById("ai-history-toggle-btn");
@@ -1254,12 +1280,23 @@
     const aiHistoryList = document.getElementById("ai-chat-history-list");
     const aiStorageStatus = document.getElementById("ai-chat-storage-status");
     const aiChatWindow = document.getElementById("ai-chat-window");
+    const aiChatHeader = aiChatWindow.querySelector(".ai-chat-header");
     const aiSendBtn = document.getElementById("ai-send-btn");
     const aiUserInput = document.getElementById("ai-user-input");
+    const aiAttachBtn = document.getElementById("ai-attach-btn");
+    const aiImageInput = document.getElementById("ai-image-input");
+    const aiImagePreview = document.getElementById("ai-image-preview");
+    const aiImagePreviewImg = document.getElementById("ai-image-preview-img");
+    const aiImagePreviewName = document.getElementById("ai-image-preview-name");
+    const aiImageRemoveBtn = document.getElementById("ai-image-remove-btn");
     const aiMessagesArea = document.getElementById("ai-chat-messages");
     const aiWelcomeMessage = "Здравей! Аз съм твоят агрономически асистент. Попитай ме за култури, поливане или времето. 🌱";
+    const maxAiImageBytes = 2 * 1024 * 1024;
+    let aiSelectedImage = null;
     let aiSavedChats = [];
     let aiActiveChatId = null;
+    let aiDragPointer = null;
+    let aiDragMoved = false;
 
     function getAiChatStorageKey() {
         return currentUser ? `agronav-ai-chats:${currentUser.id}` : null;
@@ -1284,10 +1321,22 @@
         }
     }
 
-    function appendAiMessage(text, isUser) {
+    function appendAiMessage(text, isUser, imageUrl, imageName) {
         const message = document.createElement("div");
         message.classList.add("ai-msg", isUser ? "user-msg" : "bot-msg");
         message.textContent = text;
+        if (imageUrl) {
+            const image = document.createElement("img");
+            image.className = "ai-message-image";
+            image.src = imageUrl;
+            image.alt = imageName || "Изпратено изображение";
+            message.appendChild(image);
+        } else if (imageName) {
+            const attachmentNote = document.createElement("span");
+            attachmentNote.className = "ai-image-attachment-note";
+            attachmentNote.textContent = `Прикачено изображение: ${imageName} (не е запазено локално).`;
+            message.appendChild(attachmentNote);
+        }
         aiMessagesArea.appendChild(message);
         aiMessagesArea.scrollTop = aiMessagesArea.scrollHeight;
         return message;
@@ -1337,7 +1386,8 @@
                     chat.messages.every(message =>
                         message &&
                         ["user", "assistant"].includes(message.role) &&
-                        typeof message.content === "string"
+                        typeof message.content === "string" &&
+                        (!("imageName" in message) || typeof message.imageName === "string")
                     )
                 );
                 aiActiveChatId = aiSavedChats.some(chat => chat.id === parsed.activeChatId)
@@ -1361,7 +1411,7 @@
             return;
         }
         chat.messages.forEach(message => {
-            if (message.role === "user") appendAiMessage(message.content, true);
+            if (message.role === "user") appendAiMessage(message.content, true, null, message.imageName);
             else appendAiMarkdownMessage(message.content);
         });
     }
@@ -1385,13 +1435,106 @@
         aiUserInput.focus();
     }
 
+    function updateAiWidgetPlacement() {
+        const expanded = aiChatWindow.classList.contains("expanded");
+        const historyOpen = aiChatWindow.classList.contains("history-open");
+        const requestedWidth = expanded ? (historyOpen ? 820 : 700) : (historyOpen ? 660 : 390);
+        const panelWidth = Math.min(requestedWidth, window.innerWidth - 32);
+        const mobileViewport = window.matchMedia("(max-width: 600px)").matches;
+        const viewportHeightLimit = window.innerHeight - (mobileViewport ? 100 : 110);
+        const requestedHeight = mobileViewport ? 600 : (expanded ? 760 : 560);
+        const panelHeight = Math.min(requestedHeight, viewportHeightLimit);
+        if (aiChatWindow.classList.contains("is-floating")) {
+            aiChatWindow.style.maxHeight = `${Math.max(180, Math.min(requestedHeight, window.innerHeight - 24))}px`;
+            if (aiChatWindow.classList.contains("open")) constrainAiChatWindow();
+            return;
+        }
+
+        const widgetRect = aiWidget.getBoundingClientRect();
+        const leftSpace = widgetRect.right;
+        const rightSpace = window.innerWidth - widgetRect.left;
+        const canDockRight = leftSpace >= panelWidth + 12;
+        const canDockLeft = rightSpace >= panelWidth + 12;
+        const dockLeft = canDockLeft
+            ? (!canDockRight || widgetRect.left < window.innerWidth / 2)
+            : (!canDockRight && rightSpace > leftSpace);
+        aiWidget.classList.toggle("dock-left", dockLeft);
+
+        const aboveSpace = widgetRect.top;
+        const belowSpace = window.innerHeight - widgetRect.bottom;
+        const canOpenAbove = aboveSpace >= panelHeight + 14;
+        const canOpenBelow = belowSpace >= panelHeight + 14;
+        const chatBelow = canOpenBelow
+            ? (!canOpenAbove || belowSpace > aboveSpace)
+            : (!canOpenAbove && belowSpace > aboveSpace);
+        const availableSpace = chatBelow ? belowSpace : aboveSpace;
+        aiWidget.classList.toggle("chat-below", chatBelow);
+        aiChatWindow.style.maxHeight = `${Math.max(180, Math.min(panelHeight, availableSpace - 14))}px`;
+    }
+
+    function constrainAiChatWindow() {
+        const rect = aiChatWindow.getBoundingClientRect();
+        const maxLeft = Math.max(12, window.innerWidth - rect.width - 12);
+        const maxTop = Math.max(12, window.innerHeight - rect.height - 12);
+        const left = Number.parseFloat(aiChatWindow.style.left);
+        const top = Number.parseFloat(aiChatWindow.style.top);
+        aiChatWindow.style.left = `${Math.max(12, Math.min(Number.isFinite(left) ? left : rect.left, maxLeft))}px`;
+        aiChatWindow.style.top = `${Math.max(12, Math.min(Number.isFinite(top) ? top : rect.top, maxTop))}px`;
+    }
+
+    function moveAiChatWindow(left, top) {
+        aiChatWindow.classList.add("is-floating");
+        aiChatWindow.style.left = `${left}px`;
+        aiChatWindow.style.top = `${top}px`;
+        aiChatWindow.style.right = "auto";
+        aiChatWindow.style.bottom = "auto";
+        updateAiWidgetPlacement();
+    }
+
+    aiChatHeader.addEventListener("pointerdown", event => {
+        if (event.button !== 0 || !event.isPrimary || event.target.closest(".ai-header-actions")) return;
+        const rect = aiChatWindow.getBoundingClientRect();
+        aiDragPointer = {
+            id: event.pointerId,
+            startX: event.clientX,
+            startY: event.clientY,
+            left: rect.left,
+            top: rect.top
+        };
+        aiDragMoved = false;
+        aiChatHeader.setPointerCapture(event.pointerId);
+    });
+    window.addEventListener("pointermove", event => {
+        if (!aiDragPointer || event.pointerId !== aiDragPointer.id) return;
+        const deltaX = event.clientX - aiDragPointer.startX;
+        const deltaY = event.clientY - aiDragPointer.startY;
+        if (!aiDragMoved && Math.hypot(deltaX, deltaY) < 5) return;
+        aiDragMoved = true;
+        aiChatWindow.classList.add("is-dragging");
+        moveAiChatWindow(aiDragPointer.left + deltaX, aiDragPointer.top + deltaY);
+    });
+    function finishAiChatDrag(event) {
+        if (!aiDragPointer || event.pointerId !== aiDragPointer.id) return;
+        aiDragPointer = null;
+        aiChatWindow.classList.remove("is-dragging");
+    }
+    window.addEventListener("pointerup", finishAiChatDrag);
+    window.addEventListener("pointercancel", finishAiChatDrag);
+    window.addEventListener("resize", () => {
+        updateAiWidgetPlacement();
+    });
+
     aiToggleBtn.addEventListener("click", () => {
         aiChatWindow.classList.toggle("open");
-        if (aiChatWindow.classList.contains("open")) aiUserInput.focus();
+        if (aiChatWindow.classList.contains("open")) {
+            updateAiWidgetPlacement();
+            aiUserInput.focus();
+        }
     });
     aiCloseBtn.addEventListener("click", () => aiChatWindow.classList.remove("open"));
     aiExpandBtn.addEventListener("click", () => {
         const expanded = aiChatWindow.classList.toggle("expanded");
+        updateAiWidgetPlacement();
         aiExpandBtn.setAttribute("aria-expanded", String(expanded));
         aiExpandBtn.setAttribute("aria-label", expanded ? "Свий чата" : "Разшири чата");
         aiExpandBtn.title = expanded ? "Свий чата" : "Разшири чата";
@@ -1399,11 +1542,87 @@
     });
     aiHistoryToggleBtn.addEventListener("click", () => {
         const isOpen = aiChatWindow.classList.toggle("history-open");
+        updateAiWidgetPlacement();
         aiHistoryToggleBtn.setAttribute("aria-expanded", String(isOpen));
     });
     aiNewChatBtn.addEventListener("click", startAiNewChat);
     aiHistoryNewBtn.addEventListener("click", startAiNewChat);
     profileReady.then(restoreAiChats);
+
+    function clearAiSelectedImage() {
+        aiSelectedImage = null;
+        aiImageInput.value = "";
+        aiImagePreviewImg.removeAttribute("src");
+        aiImagePreviewName.textContent = "";
+        aiImagePreview.hidden = true;
+    }
+
+    async function prepareAiImage(file) {
+        const supportedTypes = ["image/jpeg", "image/png", "image/webp"];
+        if (!supportedTypes.includes(file.type)) {
+            throw new Error("Поддържат се изображения във формат JPG, PNG или WebP.");
+        }
+        if (file.size > 15 * 1024 * 1024) {
+            throw new Error("Изображението е твърде голямо. Избери файл до 15 MB.");
+        }
+
+        const imageUrl = URL.createObjectURL(file);
+        try {
+            const sourceImage = new Image();
+            await new Promise((resolve, reject) => {
+                sourceImage.onload = resolve;
+                sourceImage.onerror = () => reject(new Error("Изображението не може да бъде заредено."));
+                sourceImage.src = imageUrl;
+            });
+
+            const scale = Math.min(1, 1600 / Math.max(sourceImage.naturalWidth, sourceImage.naturalHeight));
+            const canvas = document.createElement("canvas");
+            canvas.width = Math.max(1, Math.round(sourceImage.naturalWidth * scale));
+            canvas.height = Math.max(1, Math.round(sourceImage.naturalHeight * scale));
+            const context = canvas.getContext("2d");
+            if (!context) throw new Error("Изображението не може да бъде обработено в този браузър.");
+            context.fillStyle = "#fff";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(sourceImage, 0, 0, canvas.width, canvas.height);
+
+            const compressedImage = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", 0.82));
+            if (!compressedImage) throw new Error("Изображението не може да бъде обработено.");
+            if (compressedImage.size > maxAiImageBytes) {
+                throw new Error("Изображението остава над 2 MB след компресиране. Избери по-малък файл.");
+            }
+
+            const dataUrl = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => reject(new Error("Изображението не може да бъде прочетено."));
+                reader.readAsDataURL(compressedImage);
+            });
+            return {
+                name: file.name,
+                mimeType: "image/jpeg",
+                data: dataUrl.split(",")[1],
+                dataUrl
+            };
+        } finally {
+            URL.revokeObjectURL(imageUrl);
+        }
+    }
+
+    aiAttachBtn.addEventListener("click", () => aiImageInput.click());
+    aiImageInput.addEventListener("change", async () => {
+        const file = aiImageInput.files && aiImageInput.files[0];
+        if (!file) return;
+        try {
+            aiSelectedImage = await prepareAiImage(file);
+            aiImagePreviewImg.src = aiSelectedImage.dataUrl;
+            aiImagePreviewName.textContent = file.name;
+            aiImagePreview.hidden = false;
+        } catch (error) {
+            aiImageInput.value = "";
+            appendAiMessage(error instanceof Error ? error.message : "Изображението не може да бъде обработено.", false);
+        }
+    });
+    aiImageRemoveBtn.addEventListener("click", clearAiSelectedImage);
 
     function escapeAiHtml(text) {
         return text.replace(/[&<>"']/g, character => ({
@@ -1548,9 +1767,12 @@
             const label = item.role === "user" ? "Потребител: " : "Асистент: ";
             const lineBudget = remaining - label.length - 1;
             if (lineBudget <= 1) break;
-            const content = item.content.length > lineBudget
-                ? `…${item.content.slice(-(lineBudget - 1))}`
+            const historyContent = item.imageName
+                ? `${item.content}\n[Изображение: ${item.imageName}]`
                 : item.content;
+            const content = historyContent.length > lineBudget
+                ? `…${historyContent.slice(-(lineBudget - 1))}`
+                : historyContent;
             const line = `${label}${content}`;
             contextLines.unshift(line);
             remaining -= line.length + 1;
@@ -1560,9 +1782,12 @@
         return `${guidance}${prefix}${contextLines.join("\n")}\n${questionLine}`;
     }
 
-    async function askAgroNavAI(question) {
+    async function askAgroNavAI(question, image) {
         const { data, error } = await supabaseClient.functions.invoke("ask-ai", {
-            body: { question }
+            body: {
+                question,
+                image: image ? { mimeType: image.mimeType, data: image.data } : null
+            }
         });
         if (error) {
             const response = error.context;
@@ -1582,7 +1807,8 @@
     }
 
     async function handleAiSendMessage() {
-        const question = aiUserInput.value.trim();
+        const selectedImage = aiSelectedImage;
+        const question = aiUserInput.value.trim() || (selectedImage ? "Моля, анализирай това изображение." : "");
         if (!question || aiSendBtn.disabled) return;
         if (question.length > 1000) {
             appendAiMessage("Въпросът трябва да е до 1000 символа.", false);
@@ -1605,18 +1831,24 @@
             aiActiveChatId = id;
         }
 
-        chat.messages.push({ role: "user", content: question });
+        chat.messages.push({
+            role: "user",
+            content: question,
+            ...(selectedImage ? { imageName: selectedImage.name } : {})
+        });
         chat.updatedAt = new Date().toISOString();
         saveAiChats();
         renderAiChatHistory();
-        appendAiMessage(question, true);
+        appendAiMessage(question, true, selectedImage ? selectedImage.dataUrl : null, selectedImage ? selectedImage.name : null);
         aiUserInput.value = "";
         const loadingMessage = appendAiMessage("Моля изчакайте...", false);
         loadingMessage.classList.add("ai-typing-indicator");
         aiSendBtn.disabled = true;
+        aiAttachBtn.disabled = true;
+        aiImageRemoveBtn.disabled = true;
 
         try {
-            const reply = await askAgroNavAI(prompt);
+            const reply = await askAgroNavAI(prompt, selectedImage);
             loadingMessage.remove();
             const answer = reply || "Няма отговор от AI.";
             await appendTypedAiMarkdownMessage(answer);
@@ -1624,6 +1856,7 @@
             chat.updatedAt = new Date().toISOString();
             saveAiChats();
             renderAiChatHistory();
+            if (selectedImage && aiSelectedImage === selectedImage) clearAiSelectedImage();
         } catch (error) {
             console.error("Грешка с AgroNav AI:", error);
             const errorMessage = error instanceof Error ? error.message : "AI асистентът временно не е достъпен.";
@@ -1631,6 +1864,8 @@
             else appendAiMessage(errorMessage, false);
         } finally {
             aiSendBtn.disabled = false;
+            aiAttachBtn.disabled = false;
+            aiImageRemoveBtn.disabled = false;
         }
     }
 
