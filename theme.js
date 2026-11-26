@@ -206,15 +206,11 @@
             });
         });
 
-        // --- БУТОН "НАЗАД" – една стъпка назад в историята на сайта ---
+        // --- БУТОН "НАЗАД" – винаги към началната страница ---
         document.querySelectorAll('#btn-back').forEach(btn => {
             btn.addEventListener('click', function () {
-                if (window.history.length > 1) {
-                    window.history.back();
-                } else {
-                    const isSubPage = window.location.pathname.includes('/pages/');
-                    window.location.href = (isSubPage ? '../' : '') + 'welcome.html';
-                }
+                const isSubPage = window.location.pathname.includes('/pages/');
+                window.location.href = (isSubPage ? '../' : '') + 'index.html';
             });
         });
 
